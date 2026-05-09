@@ -7,6 +7,7 @@ import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
 import { GlassPanel } from '@/components/GlassPanel';
 import { Slider } from '@/components/Slider';
+import { StarRow } from '@/components/StarRow';
 import { StatBox } from '@/components/StatBox';
 import { Toggle } from '@/components/Toggle';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
@@ -23,6 +24,7 @@ export default function Index() {
   const [haptics, setHaptics] = useState(false);
   const [height, setHeight] = useState(15);
   const [waterTemp, setWaterTemp] = useState(18);
+  const [rating, setRating] = useState(4);
   const toggleChip = (key: string) => {
     setChips((prev) => {
       const next = new Set(prev);
@@ -84,6 +86,20 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>star row</Text>
+        <View style={{ gap: t.spacing.sm }}>
+          <View style={{ flexDirection: 'row', gap: t.spacing.sm, alignItems: 'center' }}>
+            <Text style={[t.typography.body, { color: t.palette.ink2, width: 96 }]}>read-only:</Text>
+            <StarRow value={4} />
+          </View>
+          <View style={{ flexDirection: 'row', gap: t.spacing.sm, alignItems: 'center' }}>
+            <Text style={[t.typography.body, { color: t.palette.ink2, width: 96 }]}>interactive:</Text>
+            <StarRow value={rating} onValueChange={setRating} />
+          </View>
         </View>
       </View>
 

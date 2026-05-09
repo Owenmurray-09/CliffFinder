@@ -452,6 +452,42 @@ Token corrections:
 
 **Out of scope**: animated count-up on mount (defer to later); icon variant.
 
+---
+
+## Feature: StarRow component
+
+**Loop status**: complete
+
+**Files**:
+- `components/StarRow.tsx` — `<StarRow value max=5 onValueChange? size=20 />`. Interactive when `onValueChange` is provided; read-only otherwise (or explicitly via `readonly`).
+- `components/__tests__/StarRow.test.tsx`
+- `app/index.tsx` — adds StarRow gallery (one read-only at 3.6, one interactive at 4)
+
+**Design source** (`Components.html:480–484`):
+- Row of 5 stars at 20×20, gap 3, color `#E8B742` (interactive)
+- Read-only stars use `#C9A227` (HANDOFF "distilled" — `STAR.readonly`)
+- Star icon: lucide-react-native `Star` (filled with `fill` prop)
+
+**Acceptance criteria**:
+- [ ] Renders `max` stars (default 5)
+- [ ] Stars at index < `value` are filled with `palette.star.interactive` (`#E8B742`) when `onValueChange` is provided, or `palette.star.readonly` (`#C9A227`) when not
+- [ ] Unfilled stars are stroked-only, color = `palette.ink3` for subtle outline
+- [ ] When `onValueChange` is provided: tap on star at index `i` calls `onValueChange(i + 1)` (1-based rating)
+- [ ] When read-only / no `onValueChange`: tap is a no-op
+- [ ] `size` prop sets star dimensions (default 20), gap 3
+- [ ] No hard-coded colors
+
+**Tests**:
+- read-only: 5 stars rendered, value=3 → 3 stars filled with readonly color, 2 stroked
+- interactive: tap on star at index 2 fires `onValueChange(3)`
+- interactive vs read-only fill colors differ
+- `value=0` renders all stars stroked
+- `value=max` renders all stars filled
+- `size` overrides star dimensions
+- accessibilityRole="adjustable" with current rating in accessibilityLabel
+
+**Out of scope**: half-star fractional display (read-only meta typically shows "4.6 / (128)" as numeric text — call site composes a single lucide Star + Text rather than a partial fill).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
