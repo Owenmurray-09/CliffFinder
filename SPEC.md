@@ -560,6 +560,41 @@ Token corrections:
 
 **Out of scope**: photo thumbnail variants (deferred — Map screen will use solid pins); pulsing/scale-up animation on selected pin (deferred to Map screen interaction).
 
+---
+
+## Feature: FAB component
+
+**Loop status**: complete
+
+**Files**:
+- `components/FAB.tsx` — `<FAB onPress icon? size=54 />`
+- `components/__tests__/FAB.test.tsx`
+
+**Design source** (`Components.html:120`):
+- `.fab`: 54×54, radius 99, accent bg, white color, shadow `0 8px 22px ${accent}@45%`
+
+**Acceptance criteria**:
+- [ ] 54×54 default, radius 999 (pill)
+- [ ] bg = `palette.accent`, icon color = `palette.on.accent` (white)
+- [ ] Shadow from `fabShadow(palette.accent)` builder (already in tokens — alpha 0.45, radius 22, offset 0/8)
+- [ ] Default icon: `lucide-react-native` `Plus`
+- [ ] `size` prop scales width/height/icon
+- [ ] `onPress` fires on tap
+- [ ] `accessibilityRole="button"`, `accessibilityLabel` passthrough
+- [ ] No hard-coded colors (white icon comes from `palette.on.accent`)
+
+**Tests**:
+- 54×54 default, radius 999
+- bg = accent (resolves with theme.accent change)
+- icon color = on.accent
+- shadow color matches current accent
+- onPress fires on tap
+- size override scales dimensions
+- icon prop overrides default Plus
+- accessibilityLabel passes through
+
+**Out of scope**: marginTop: -22 (HANDOFF spec) — that's consumer-side positioning relative to the tab bar; the Tab bar / Map screen will set it. Animated press scale (deferred).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

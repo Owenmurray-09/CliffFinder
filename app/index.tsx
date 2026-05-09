@@ -4,6 +4,7 @@ import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Chip } from '@/components/Chip';
+import { FAB } from '@/components/FAB';
 import { Field } from '@/components/Field';
 import { GlassPanel } from '@/components/GlassPanel';
 import { PinMarker } from '@/components/PinMarker';
@@ -90,6 +91,11 @@ export default function Index() {
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
         </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>fab</Text>
+        <FAB onPress={() => {}} accessibilityLabel="Add spot" />
       </View>
 
       <View style={{ gap: t.spacing.sm }}>
