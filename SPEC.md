@@ -253,6 +253,43 @@ Verification:
 
 **Layout fix from review**: added `flexShrink: 0` to chip root style so chips don't squeeze inside horizontal-scroll filter rows (Map screen will use this).
 
+---
+
+## Feature: Toggle component
+
+**Loop status**: complete
+
+**Files**:
+- `components/Toggle.tsx` — `<Toggle>` with `value`, `onValueChange`
+- `components/__tests__/Toggle.test.tsx`
+- `app/index.tsx` — adds toggle gallery
+
+**Design source** (`Components.html` lines 153–157):
+- `.toggle`: 44×26, radius 999, accent bg when on, line bg when off
+- `.toggle:after` (thumb): 20×20, radius 999, top 3 / left 3, white bg, shadow `0 2px 4px rgba(0,0,0,.2)`, `transition: transform .15s`
+- `.toggle.on:after`: `translateX(18px)`
+
+**Acceptance criteria**:
+- [ ] Track: 44×26, radius 999, bg = `palette.accent` when value=true / `palette.line` when value=false
+- [ ] Thumb: 20×20, radius 999, white bg, shadow (0 2px 4px black 0.2), positioned absolutely top:3 left:3
+- [ ] Animated thumb: translateX 0 → 18 over 150ms when value flips
+- [ ] Press fires `onValueChange(!value)` with the new boolean
+- [ ] Accessibility: `accessibilityRole="switch"`, `accessibilityState.checked` reflects value
+- [ ] Disabled: `disabled` prop gates onValueChange and drops opacity to 0.5
+- [ ] No hard-coded colors in `components/Toggle.tsx` (white thumb is allowed; design hard-codes `#fff` for the thumb)
+- [ ] Visual side-by-side vs `Components.html` Toggle panel
+
+**Tests**:
+- value=false: track bg = line, thumb at translateX 0
+- value=true: track bg = accent, thumb at translateX 18
+- press fires onValueChange with the inverted value
+- track bg respects accent change
+- disabled gates the press + reduces opacity
+
+**Out of scope**: spring animation tuning (use simple `Animated.timing` for now); haptic on toggle (native-only deferred).
+
+**Native-only verification deferred**: thumb animation timing on simulator (web `Animated` performs differently).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

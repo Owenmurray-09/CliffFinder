@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
+import { Toggle } from '@/components/Toggle';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
@@ -13,6 +14,8 @@ export default function Index() {
   const [password, setPassword] = useState('••••••••');
   const [bad, setBad] = useState('not-an-email');
   const [chips, setChips] = useState<Set<string>>(new Set(['Trending']));
+  const [notif, setNotif] = useState(true);
+  const [haptics, setHaptics] = useState(false);
   const toggleChip = (key: string) => {
     setChips((prev) => {
       const next = new Set(prev);
@@ -74,6 +77,15 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>toggles</Text>
+        <View style={{ flexDirection: 'row', gap: t.spacing.lg, alignItems: 'center' }}>
+          <Toggle value={notif} onValueChange={setNotif} />
+          <Toggle value={haptics} onValueChange={setHaptics} />
+          <Toggle value={true} onValueChange={() => {}} disabled />
         </View>
       </View>
 
