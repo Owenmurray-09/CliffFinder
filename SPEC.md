@@ -374,6 +374,46 @@ Token corrections:
 
 **Out of scope**: animated card lift on press (deferred until Spot Details screen needs it), saturate filter on tab bar (CSS-only, expo-blur doesn't expose).
 
+---
+
+## Feature: Avatar component
+
+**Loop status**: complete
+
+**Files**:
+- `components/Avatar.tsx` — `<Avatar name? uri? size? />`; renders an image or gradient + initial fallback
+- `components/__tests__/Avatar.test.tsx`
+- `app/index.tsx` — adds Avatar gallery
+
+**Design source** (`Components.html:182`):
+- `.avatar`: 64×64, radius 999, linear-gradient(160deg, #7d9b6e 0%, #3d5b34 100%) (default green), white text, Poppins 700 / 22, 3px solid `var(--paper)` border
+- Smaller variant: 42×42, font 14 (`Components.html:727`)
+- Alt gradient sample: #c89868 → #7a5230 (warm)
+
+**Acceptance criteria**:
+- [ ] `name` prop: shows the first letter (uppercased) over a deterministic gradient picked from a small palette
+- [ ] `uri` prop: shows the image instead (covers); same circular shape + 3px paper border
+- [ ] `size` prop: sets width/height (default 64); font size scales (`size * 22 / 64`)
+- [ ] `gradient` prop: optional override `[from, to]`
+- [ ] 3px solid `palette.paper` border (so the avatar pops from any bg)
+- [ ] Hash function deterministic — same `name` → same gradient
+- [ ] Linear gradient via `expo-linear-gradient` OR a single solid + tonal stack? **Decision**: use `expo-linear-gradient` (will need to add as a dep).
+- [ ] No hard-coded colors — gradient palette + white initial color stay in this file (the white is design-specified `color:#fff`); border pulls from `palette.paper`
+
+**Tests**:
+- name="Alex" renders "A" initial
+- name="alex" still renders "A" (uppercased)
+- empty/missing name → falls back to "?" or no initial
+- same name → same gradient (deterministic)
+- different names usually pick different gradients (non-trivial palette)
+- gradient prop overrides hash pick
+- size scales font + dimensions
+- uri renders Image instead of initial
+
+**Out of scope**: status dot overlay (notification dot is a separate component flagged in HANDOFF as a future "Indicators" item); fancy fallback handling for image load errors.
+
+**Native-only verification deferred**: `expo-linear-gradient` renders consistently on both web (SVG) and native (CAGradientLayer / Android). Should be fine, but flag.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

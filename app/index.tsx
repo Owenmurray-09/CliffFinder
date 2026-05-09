@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Chip } from '@/components/Chip';
@@ -82,6 +83,17 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>avatars</Text>
+        <View style={{ flexDirection: 'row', gap: t.spacing.sm, alignItems: 'center' }}>
+          <Avatar name="Alex" />
+          <Avatar name="Maya" size={42} />
+          <Avatar name="Jordan" size={42} />
+          <Avatar name="Sasha" size={42} />
+          <Avatar name="" size={42} />
         </View>
       </View>
 
