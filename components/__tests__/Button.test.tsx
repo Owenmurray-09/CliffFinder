@@ -126,7 +126,7 @@ describe('<Button /> — variants', () => {
     expect(rootStyle.backgroundColor).toBe(ACCENTS.blue);
   });
 
-  test('non-link variants use radius.card (14) and 13/18 padding', () => {
+  test('non-link variants use radius.control (14) and 13/18 padding', () => {
     const { getByRole } = render(<Button label="Sign in" variant="primary" />);
     const rootStyle = flattenStyle(getByRole('button').props.style);
     expect(rootStyle.borderRadius).toBe(14);
@@ -134,7 +134,7 @@ describe('<Button /> — variants', () => {
     expect(rootStyle.paddingHorizontal).toBe(18);
   });
 
-  test('link variant has radius.card (14) so a future hover/pressed bg rounds correctly', () => {
+  test('link variant has radius.control (14) so a future hover/pressed bg rounds correctly', () => {
     const { getByRole } = render(<Button label="link" variant="link" />);
     const rootStyle = flattenStyle(getByRole('button').props.style);
     expect(rootStyle.borderRadius).toBe(14);

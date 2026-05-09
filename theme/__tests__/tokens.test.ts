@@ -14,7 +14,7 @@ import {
   typography,
 } from '../tokens';
 
-const colorKeys = ['paper', 'paper2', 'sheetBg', 'sheetSoft', 'ink', 'ink2', 'ink3', 'line', 'line2', 'chipBorder'].sort();
+const colorKeys = ['paper', 'paper2', 'sheetBg', 'sheetSoft', 'ink', 'ink2', 'ink3', 'line', 'line2', 'chipBorder', 'glassBorder'].sort();
 
 describe('tokens — palettes', () => {
   test('light palette has the exact expected key set', () => {
@@ -37,6 +37,7 @@ describe('tokens — palettes', () => {
       line: 'rgba(30,47,35,0.12)',
       line2: 'rgba(30,47,35,0.06)',
       chipBorder: 'rgba(30,47,35,0.12)',
+      glassBorder: 'rgba(30,47,35,0.08)',
     });
   });
 
@@ -52,6 +53,7 @@ describe('tokens — palettes', () => {
       line: 'rgba(234,226,200,0.14)',
       line2: 'rgba(234,226,200,0.06)',
       chipBorder: 'rgba(234,226,200,0.12)',
+      glassBorder: 'rgba(234,226,200,0.12)',
     });
   });
 
@@ -136,7 +138,8 @@ describe('tokens — geometry', () => {
     expect(radius.pill).toBe(999);
     expect(radius.sheet).toBe(28);
     expect(radius.tabBar).toBe(22);
-    expect(radius.card).toBe(14);
+    expect(radius.card).toBe(16); // .card surfaces
+    expect(radius.control).toBe(14); // buttons, fields, glass
     expect(radius.cardSm).toBe(12);
   });
 });

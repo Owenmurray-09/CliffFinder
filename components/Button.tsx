@@ -56,7 +56,7 @@ export function Button({
     if (variant === 'primary') {
       variantStyle = {
         backgroundColor: t.palette.accent,
-        borderRadius: t.radius.card,
+        borderRadius: t.radius.control,
         paddingVertical: BASE_PADDING_V,
         paddingHorizontal: BASE_PADDING_H,
       };
@@ -64,7 +64,7 @@ export function Button({
     } else if (variant === 'ghost') {
       variantStyle = {
         backgroundColor: t.palette.sheetSoft,
-        borderRadius: t.radius.card,
+        borderRadius: t.radius.control,
         paddingVertical: BASE_PADDING_V,
         paddingHorizontal: BASE_PADDING_H,
       };
@@ -72,7 +72,7 @@ export function Button({
     } else if (variant === 'outline') {
       variantStyle = {
         backgroundColor: 'transparent',
-        borderRadius: t.radius.card,
+        borderRadius: t.radius.control,
         borderWidth: OUTLINE_BORDER,
         borderColor: t.palette.line,
         paddingVertical: BASE_PADDING_V,
@@ -83,7 +83,7 @@ export function Button({
       // link
       variantStyle = {
         backgroundColor: 'transparent',
-        borderRadius: t.radius.card,
+        borderRadius: t.radius.control,
         paddingVertical: LINK_PADDING_V,
         paddingHorizontal: LINK_PADDING_H,
       };
@@ -99,7 +99,7 @@ export function Button({
         fontWeight: labelWeight,
       } satisfies TextStyle,
     };
-  }, [variant, disabled, t.palette, t.radius.card, t.spacing.sm, t.typography.button]);
+  }, [variant, disabled, t.palette, t.radius.control, t.spacing.sm, t.typography.button]);
 
   return (
     <Pressable

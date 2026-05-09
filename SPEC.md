@@ -330,6 +330,50 @@ Verification:
 
 **Native-only verification deferred**: PanResponder gesture smoothness on simulator; on web, dragging works via mouse events.
 
+---
+
+## Feature: Card + GlassPanel components
+
+**Loop status**: complete
+
+**Files**:
+- `components/Card.tsx` — solid surface (paper2 bg, 1px line border, radius 16, padding 18, flex col gap 14)
+- `components/GlassPanel.tsx` — `expo-blur` BlurView wrapper for floating UI (search bar, filter bar, tab bar)
+- `components/__tests__/Card.test.tsx`
+- `components/__tests__/GlassPanel.test.tsx`
+- `theme/tokens.ts` — adds `palette.glassBorder` (light `rgba(30,47,35,0.08)` / dark `rgba(234,226,200,0.12)`); refactors `radius.card` from 14 → 16 to match design and adds `radius.control = 14` for the now-renamed buttons/fields use
+
+**Design source**:
+- `Components.html:63` → `.card{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px}`
+- `Components.html:92–93` → `.glass{backdrop-filter:blur(18px);background:rgba(255,255,255,.85);border:1px solid rgba(30,47,35,.08);border-radius:14px}` and `body.dark .glass{background:rgba(30,47,35,.62);border-color:rgba(234,226,200,.12)}`
+- `Map.html:16–17` confirms `--ui-border` = `rgba(30,47,35,0.08)` light / `rgba(234,226,200,0.12)` dark
+
+**Acceptance criteria**:
+
+Card:
+- [ ] bg `palette.paper2`, 1px `palette.line` border, `radius.card` (16), padding 18
+- [ ] flex column with gap 14 by default
+- [ ] `style` passthrough for overrides
+- [ ] No hard-coded colors
+
+GlassPanel:
+- [ ] Wraps `expo-blur` `BlurView`
+- [ ] `variant?: 'search' | 'topbar' | 'tabBar'` selects intensity (24 / 18 / 20) and tint
+- [ ] BlurView `tint` prop set to `'light'` or `'dark'` based on theme dark mode (so it falls back gracefully on platforms without backdrop-filter)
+- [ ] Wrapping View provides border `palette.glassBorder` and any radius/padding via passed style
+- [ ] `style` passthrough — caller sets borderRadius to 14 (search/glass), 22 (tabBar), etc.
+- [ ] children rendered inside the blur surface
+
+Token corrections:
+- [ ] `radius.card` changes from 14 → 16 (matches `.card` design)
+- [ ] New `radius.control` = 14 (used by Button, Field, GlassPanel default)
+- [ ] Button + Field switch from `radius.card` to `radius.control` (visible result unchanged — both still 14)
+- [ ] `palette.glassBorder` added to both palettes; key-set + byte-exact tests updated
+
+**Native-only verification deferred to simulator**: BlurView native blur (web uses CSS backdrop-filter, which differs visually). Flag the search bar, filter bar, and tab bar for simulator verification once Map screen lands.
+
+**Out of scope**: animated card lift on press (deferred until Spot Details screen needs it), saturate filter on tab bar (CSS-only, expo-blur doesn't expose).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

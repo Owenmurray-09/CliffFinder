@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
+import { GlassPanel } from '@/components/GlassPanel';
 import { Slider } from '@/components/Slider';
 import { Toggle } from '@/components/Toggle';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
@@ -80,6 +82,28 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>card + glass</Text>
+        <View style={{ gap: t.spacing.sm, maxWidth: 360 }}>
+          <Card>
+            <Text style={[t.typography.cardTitle, { color: t.palette.ink }]}>Card surface</Text>
+            <Text style={[t.typography.body, { color: t.palette.ink2 }]}>
+              paper2 bg, 1px line border, radius 16, padding 18, gap 14.
+            </Text>
+          </Card>
+          <GlassPanel variant="search" style={{ borderRadius: 14, padding: 14 }}>
+            <Text style={[t.typography.body, { color: t.palette.ink }]}>
+              GlassPanel · search (intensity 24)
+            </Text>
+          </GlassPanel>
+          <GlassPanel variant="tabBar" style={{ borderRadius: 22, padding: 14 }}>
+            <Text style={[t.typography.body, { color: t.palette.ink }]}>
+              GlassPanel · tabBar (intensity 20)
+            </Text>
+          </GlassPanel>
         </View>
       </View>
 

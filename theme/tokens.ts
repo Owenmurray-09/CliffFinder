@@ -35,6 +35,9 @@ export const lightColors = {
   // (Components.html line 102: `body.dark .chip-pill{...border-color:rgba(234,226,200,.12)}`).
   // Keeping this as its own token preserves the design's deliberate override.
   chipBorder: 'rgba(30,47,35,0.12)',
+  // Glass surface border — distinct from `line`. Matches Map.html's
+  // `--ui-border` and Components.html `.glass` border-color.
+  glassBorder: 'rgba(30,47,35,0.08)',
 } as const;
 
 export const darkColors = {
@@ -48,6 +51,7 @@ export const darkColors = {
   line: 'rgba(234,226,200,0.14)',
   line2: 'rgba(234,226,200,0.06)',
   chipBorder: 'rgba(234,226,200,0.12)',
+  glassBorder: 'rgba(234,226,200,0.12)',
 } as const;
 
 // Dark mode background uses a radial gradient centered at 30%/0%, not flat.
@@ -96,9 +100,13 @@ export const spacing = {
 
 export const radius = {
   pill: 999,
-  card: 14,
+  // Cards: solid surfaces like `.card` use 16 (Components.html:63).
+  card: 16,
   cardSm: 12,
-  // Tab bar / segmented control / sheet-mock visual radius (Components.html:123).
+  // Buttons / fields / glass surfaces use 14 (`.btn-demo`, `.field`,
+  // `.glass` — Components.html lines 92, 111, 223).
+  control: 14,
+  // Tab bar / segmented control (Components.html:123).
   tabBar: 22,
   // Sheet top corners (Map.html:54).
   sheet: 28,

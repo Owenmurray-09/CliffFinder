@@ -58,7 +58,7 @@ export function Field({
     backgroundColor: t.palette.paper2,
     borderWidth: 1,
     borderColor,
-    borderRadius: t.radius.card,
+    borderRadius: t.radius.control,
     paddingVertical: 12,
     paddingHorizontal: 16,
     width: '100%',
