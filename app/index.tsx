@@ -7,6 +7,7 @@ import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
 import { GlassPanel } from '@/components/GlassPanel';
 import { Slider } from '@/components/Slider';
+import { StatBox } from '@/components/StatBox';
 import { Toggle } from '@/components/Toggle';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
@@ -83,6 +84,15 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>statbox</Text>
+        <View style={{ flexDirection: 'row', gap: t.spacing.sm }}>
+          <StatBox value="42m" label="Height" />
+          <StatBox value="12m" label="Depth" />
+          <StatBox value="18°" label="Water" />
         </View>
       </View>
 

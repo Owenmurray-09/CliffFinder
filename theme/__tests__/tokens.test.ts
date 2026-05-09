@@ -151,9 +151,17 @@ describe('tokens — typography', () => {
     expect(typography.display.fontWeight).toBe('700');
   });
 
-  test('statNumber is Montserrat 700 / 22', () => {
+  test('statNumber is Montserrat 700 / 18 (design source, not HANDOFF\'s 22)', () => {
     expect(typography.statNumber.fontFamily).toBe('Montserrat_700Bold');
-    expect(typography.statNumber.fontSize).toBe(22);
+    expect(typography.statNumber.fontSize).toBe(18);
+  });
+
+  test('statLabel is Inter 400 / 10.5, uppercase, letterSpacing 0.6', () => {
+    expect(typography.statLabel.fontFamily).toBe('Inter_400Regular');
+    expect(typography.statLabel.fontSize).toBe(10.5);
+    expect(typography.statLabel.fontWeight).toBe('400');
+    expect(typography.statLabel.textTransform).toBe('uppercase');
+    expect(typography.statLabel.letterSpacing).toBe(0.6);
   });
 
   test('fieldLabel is uppercase with letterSpacing 0.6', () => {

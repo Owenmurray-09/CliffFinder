@@ -414,6 +414,44 @@ Token corrections:
 
 **Native-only verification deferred**: `expo-linear-gradient` renders consistently on both web (SVG) and native (CAGradientLayer / Android). Should be fine, but flag.
 
+---
+
+## Feature: StatBox component
+
+**Loop status**: complete
+
+**Files**:
+- `components/StatBox.tsx` — `<StatBox value="42m" label="Height" />`
+- `components/__tests__/StatBox.test.tsx`
+- `theme/tokens.ts` — corrects `typography.statNumber` from 22 → 18 to match design; adds `typography.statLabel` (Inter 400 / 10.5)
+- `app/index.tsx` — adds StatBox row
+
+**Design source** (`Components.html:185–187`):
+- `.stat`: flex col, items center, gap 2, paper2 bg, 1px line border, radius 12, padding 10/14, min-width 68
+- `.stat .v` (value): Montserrat 700 / **18** (HANDOFF said 22, design says 18 — design wins)
+- `.stat .l` (label): Inter 400 / 10.5, ink3, uppercase, letterSpacing 0.06em
+
+**Acceptance criteria**:
+- [ ] Container: paper2 bg, 1px line border, radius 12 (`radius.cardSm`), padding 10/14, min-width 68, flex col items center, gap 2
+- [ ] Value: `typography.statNumber` (Montserrat 700 / 18), ink color
+- [ ] Label: `typography.statLabel` (Inter 400 / 10.5, uppercase, letterSpacing 0.6), ink3 color
+- [ ] No hard-coded colors
+- [ ] Visual side-by-side vs `Components.html` "Stat box" panel
+
+**Tests**:
+- renders value + label text
+- container chrome: paper2 bg, line border, radius 12, padding 10/14, min-width 68
+- value uses typography.statNumber (Montserrat 700 / 18)
+- label uses typography.statLabel (uppercase, 10.5)
+- ink/ink3 colors per mode
+
+**Token corrections**:
+- [ ] `typography.statNumber.fontSize`: 22 → 18 (matches design `.stat .v`)
+- [ ] New `typography.statLabel`: Inter 400 / 10.5 / uppercase / letterSpacing 0.6
+- [ ] tokens.test.ts updated
+
+**Out of scope**: animated count-up on mount (defer to later); icon variant.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

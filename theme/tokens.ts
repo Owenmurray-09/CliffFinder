@@ -170,10 +170,21 @@ export const typography = {
     letterSpacing: 0.6,
     textTransform: 'uppercase',
   },
+  // Design's `.stat .v` uses 18 (Components.html:186). HANDOFF said 22 —
+  // design source wins, since it's what `.stat-box` actually renders.
   statNumber: {
     fontFamily: 'Montserrat_700Bold',
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
+  },
+  // Stat box label — note this differs from `fieldLabel` in size (10.5 vs 11)
+  // and weight (400 vs 500). Per Components.html `.stat .l`.
+  statLabel: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 10.5,
+    fontWeight: '400',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
   },
 } as const satisfies Record<string, TextStyle>;
 
