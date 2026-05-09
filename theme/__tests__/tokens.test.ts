@@ -14,7 +14,7 @@ import {
   typography,
 } from '../tokens';
 
-const colorKeys = ['paper', 'paper2', 'sheetBg', 'sheetSoft', 'ink', 'ink2', 'ink3', 'line', 'line2'].sort();
+const colorKeys = ['paper', 'paper2', 'sheetBg', 'sheetSoft', 'ink', 'ink2', 'ink3', 'line', 'line2', 'chipBorder'].sort();
 
 describe('tokens — palettes', () => {
   test('light palette has the exact expected key set', () => {
@@ -36,6 +36,7 @@ describe('tokens — palettes', () => {
       ink3: '#7a8579',
       line: 'rgba(30,47,35,0.12)',
       line2: 'rgba(30,47,35,0.06)',
+      chipBorder: 'rgba(30,47,35,0.12)',
     });
   });
 
@@ -50,7 +51,16 @@ describe('tokens — palettes', () => {
       ink3: '#9AB096',
       line: 'rgba(234,226,200,0.14)',
       line2: 'rgba(234,226,200,0.06)',
+      chipBorder: 'rgba(234,226,200,0.12)',
     });
+  });
+
+  test('chipBorder diverges from line in dark mode (design overrides --line specifically for chip)', () => {
+    // Light: chipBorder == line (both 0.12)
+    expect(lightColors.chipBorder).toBe(lightColors.line);
+    // Dark: chipBorder is 0.12 vs line 0.14 — deliberate per Components.html
+    expect(darkColors.chipBorder).not.toBe(darkColors.line);
+    expect(darkColors.chipBorder).toBe('rgba(234,226,200,0.12)');
   });
 
   test('sheetSoft is an alpha overlay, not a solid hex', () => {

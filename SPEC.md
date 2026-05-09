@@ -206,6 +206,53 @@ Verification:
 
 **Native-only verification deferred to simulator**: keyboard show/hide affordances, autoFocus behavior, secure entry on iOS/Android.
 
+---
+
+## Feature: Chip pill component
+
+**Loop status**: complete
+
+**Files**:
+- `components/Chip.tsx` — `<Chip>` with `label`, `selected`, `onPress`
+- `components/__tests__/Chip.test.tsx` — default + selected + press
+- `theme/tokens.ts` — adds `typography.chip` (Inter 500 / 12.5)
+- `app/index.tsx` — debug surface adds a filter-chip row
+
+**Design source** (`Components.html` lines 101–103):
+- `.chip-pill` (light): bg `rgba(255,255,255,.85)`, border `1px solid var(--line)`, color ink
+- `body.dark .chip-pill`: bg `rgba(30,47,35,.62)`, border `1px solid rgba(234,226,200,.12)`, color ink (dark mode ink)
+- `.chip-pill.on` (any mode): bg `var(--accent)`, color `#fff`, border-color `transparent`
+- padding: 7/12, radius: 999, typography: Inter 500 / 12.5, gap: 6 (icon ↔ label)
+
+**Acceptance criteria**:
+- [ ] Default: bg matches the search-glass tint per mode (`glass.search.tint`), 1px line border, ink label
+- [ ] Selected (`selected={true}`): bg = `palette.accent`, label = `palette.on.accent` (`#FFFFFF`), border `transparent`
+- [ ] Press fires `onPress`
+- [ ] Padding `7/12`, radius `pill` (999)
+- [ ] Typography from new `typography.chip` token (Inter 500 / 12.5)
+- [ ] Optional `icon` slot before label with `gap: 6`
+- [ ] No hard-coded colors in `components/Chip.tsx`
+- [ ] Tests pass (≥ 8 chip tests)
+- [ ] Visual side-by-side vs `Components.html` "Filter chip" panel
+
+**Tests**:
+- default state: glass tint bg, line border, ink label
+- selected state: accent bg, on.accent label, transparent border
+- press fires onPress
+- selected accent flips when accent changes (orange/green/ink)
+- dark mode: bg switches to dark glass tint
+- icon renders before label
+- typography uses `typography.chip` (12.5)
+- accessibilityRole="button", accessibilityState.selected reflects prop
+
+**Out of scope**: chip group / multi-select state mgmt — chip is a controlled toggle; group state lives at call site (Map filter row, Filters sheet). `disabled` state on chips not implemented (YAGNI for v1; flag for backlog if Filters needs it).
+
+**Native-only verification deferred**: none; chip is pure styling + press.
+
+**Discrepancy resolved during review**: HANDOFF + spec implied chip border = `palette.line`, but the design HTML's `body.dark .chip-pill` rule explicitly overrides to `rgba(234,226,200,0.12)` (NOT the `--line` 0.14 alpha). Added `chipBorder` to both palettes — light `rgba(30,47,35,0.12)` (coincides with light `line`), dark `rgba(234,226,200,0.12)` (deliberately distinct from dark `line` 0.14). Token test pins this divergence so it can't drift silently.
+
+**Layout fix from review**: added `flexShrink: 0` to chip root style so chips don't squeeze inside horizontal-scroll filter rows (Map screen will use this).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

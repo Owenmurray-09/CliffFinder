@@ -30,6 +30,11 @@ export const lightColors = {
   ink3: '#7a8579',
   line: 'rgba(30,47,35,0.12)',
   line2: 'rgba(30,47,35,0.06)',
+  // Chip pill border — matches `line` in light, but the design uses a
+  // subtler 0.12 alpha for the dark chip border instead of `line`'s 0.14
+  // (Components.html line 102: `body.dark .chip-pill{...border-color:rgba(234,226,200,.12)}`).
+  // Keeping this as its own token preserves the design's deliberate override.
+  chipBorder: 'rgba(30,47,35,0.12)',
 } as const;
 
 export const darkColors = {
@@ -42,6 +47,7 @@ export const darkColors = {
   ink3: '#9AB096',
   line: 'rgba(234,226,200,0.14)',
   line2: 'rgba(234,226,200,0.06)',
+  chipBorder: 'rgba(234,226,200,0.12)',
 } as const;
 
 // Dark mode background uses a radial gradient centered at 30%/0%, not flat.
@@ -137,6 +143,12 @@ export const typography = {
     fontFamily: 'Inter_400Regular',
     fontSize: 14.5,
     fontWeight: '400',
+  },
+  // Chip pill — Inter 500 / 12.5 per Components.html `.chip-pill`.
+  chip: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12.5,
+    fontWeight: '500',
   },
   label: {
     fontFamily: 'Inter_500Medium',
