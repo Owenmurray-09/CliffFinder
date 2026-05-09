@@ -523,6 +523,43 @@ Token corrections:
 
 **Out of scope**: animated thumb sliding between options (RN's `LayoutAnimation` could do it, but design doesn't show this; keeping it simple).
 
+---
+
+## Feature: PinMarker component
+
+**Loop status**: complete
+
+**Files**:
+- `components/PinMarker.tsx` — `<PinMarker category count? size? />`
+- `components/__tests__/PinMarker.test.tsx`
+- `app/index.tsx` — adds PinMarker row
+
+**Design source** (`Components.html:128–131`):
+- `.pin`: 32×32, radius 99, 3px solid `#fff` border, shadow `0 4px 14px rgba(0,0,0,.25)`, color `#fff`, Inter 700 / 13
+- `.pin.tr` (trending): bg `#E07A2E` → `palette.pin.trending`
+- `.pin.sv` (saved): bg `#E8B742` → `palette.pin.saved`
+- `.pin.fr` (friends): bg `#D17EA8` → `palette.pin.friends`
+
+**Acceptance criteria**:
+- [ ] Three categories: `trending` / `saved` / `friends`
+- [ ] Bg per category from `palette.pin.{category}`
+- [ ] 32×32 default size, radius 999, 3px white border (design hard-codes `#fff`), shadow `0 4px 14px rgba(0,0,0,0.25)`
+- [ ] Optional `count` rendered inside as Inter 700 / 13 in `palette.on.pin` (white)
+- [ ] `size` override scales width/height; font scales `size * 13 / 32`
+- [ ] Pin colors are SEMANTIC — they do NOT change with the user's accent
+- [ ] Border `#FFFFFF` matches design's `border:3px solid #fff` literal
+
+**Tests**:
+- each category: bg matches the right pin color
+- 32×32 default with radius 999
+- 3px white border, shadow color/offset/radius
+- count rendered when provided (Inter 700 / 13, white text)
+- count omitted when undefined
+- size scales font + dimensions
+- accent change does NOT change pin color (semantic invariance)
+
+**Out of scope**: photo thumbnail variants (deferred — Map screen will use solid pins); pulsing/scale-up animation on selected pin (deferred to Map screen interaction).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

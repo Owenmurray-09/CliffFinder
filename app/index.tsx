@@ -6,6 +6,7 @@ import { Card } from '@/components/Card';
 import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
 import { GlassPanel } from '@/components/GlassPanel';
+import { PinMarker } from '@/components/PinMarker';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { Slider } from '@/components/Slider';
 import { StarRow } from '@/components/StarRow';
@@ -88,6 +89,17 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>pin markers</Text>
+        <View style={{ flexDirection: 'row', gap: t.spacing.md, alignItems: 'center' }}>
+          <PinMarker category="trending" count={2} />
+          <PinMarker category="saved" count={2} />
+          <PinMarker category="friends" count={3} />
+          <PinMarker category="trending" />
+          <PinMarker category="trending" size={48} count={5} />
         </View>
       </View>
 
