@@ -30,8 +30,13 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# local env files (NEVER commit secrets — repo is public)
+.env
+.env.*
 .env*.local
+
+# Vercel
+.vercel
 
 # typescript
 *.tsbuildinfo
