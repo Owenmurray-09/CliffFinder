@@ -38,6 +38,8 @@ export const lightColors = {
   // Glass surface border — distinct from `line`. Matches Map.html's
   // `--ui-border` and Components.html `.glass` border-color.
   glassBorder: 'rgba(30,47,35,0.08)',
+  // Bottom-sheet drag handle — ink at 0.2 alpha (HANDOFF "Bottom sheet").
+  handle: 'rgba(30,47,35,0.2)',
 } as const;
 
 export const darkColors = {
@@ -52,6 +54,7 @@ export const darkColors = {
   line2: 'rgba(234,226,200,0.06)',
   chipBorder: 'rgba(234,226,200,0.12)',
   glassBorder: 'rgba(234,226,200,0.12)',
+  handle: 'rgba(234,226,200,0.2)',
 } as const;
 
 // Dark mode background uses a radial gradient centered at 30%/0%, not flat.

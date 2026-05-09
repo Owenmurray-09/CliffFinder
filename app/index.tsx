@@ -6,6 +6,7 @@ import { Card } from '@/components/Card';
 import { Chip } from '@/components/Chip';
 import { FAB } from '@/components/FAB';
 import { Field } from '@/components/Field';
+import { Sheet } from '@/components/Sheet';
 import { GlassPanel } from '@/components/GlassPanel';
 import { PinMarker } from '@/components/PinMarker';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -29,6 +30,7 @@ export default function Index() {
   const [waterTemp, setWaterTemp] = useState(18);
   const [rating, setRating] = useState(4);
   const [tab, setTab] = useState<'visited' | 'saved'>('visited');
+  const [sheetOpen, setSheetOpen] = useState(false);
   const toggleChip = (key: string) => {
     setChips((prev) => {
       const next = new Set(prev);
@@ -94,9 +96,22 @@ export default function Index() {
       </View>
 
       <View style={{ gap: t.spacing.sm }}>
-        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>fab</Text>
-        <FAB onPress={() => {}} accessibilityLabel="Add spot" />
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>fab + sheet</Text>
+        <View style={{ flexDirection: 'row', gap: t.spacing.md, alignItems: 'center' }}>
+          <FAB onPress={() => {}} accessibilityLabel="Add spot" />
+          <Button label="Open sheet" variant="outline" onPress={() => setSheetOpen(true)} />
+        </View>
       </View>
+
+      <Sheet visible={sheetOpen} onClose={() => setSheetOpen(false)}>
+        <View style={{ padding: t.spacing.xl, gap: t.spacing.md }}>
+          <Text style={[t.typography.title, { color: t.palette.ink }]}>Bottom sheet</Text>
+          <Text style={[t.typography.body, { color: t.palette.ink2 }]}>
+            Drag down or tap the backdrop to dismiss.
+          </Text>
+          <Button label="Close" variant="primary" onPress={() => setSheetOpen(false)} />
+        </View>
+      </Sheet>
 
       <View style={{ gap: t.spacing.sm }}>
         <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>pin markers</Text>

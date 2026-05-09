@@ -676,6 +676,71 @@ Token corrections:
 
 **Out of scope**: voice input; recent-search dropdown.
 
+---
+
+## Feature: PhotoCarousel component
+
+**Loop status**: complete
+
+**Files**: `components/PhotoCarousel.tsx`, `components/__tests__/PhotoCarousel.test.tsx`
+
+**Design source** (HANDOFF "Spot Details"): photo carousel hero with 4 photos, page dots bottom, ~350ms swipe transform.
+
+**Acceptance criteria**:
+- [ ] Horizontal paginated FlatList of `photos: string[]` (URIs)
+- [ ] Each image fills the carousel width (controlled by `width` prop or onLayout)
+- [ ] Page dots at bottom: small circles (`6×6`) with active dot wider (e.g. `16×6`)
+- [ ] Active dot uses `palette.on.accent` (white) on dark image overlay; inactive dots use white at 50% opacity
+- [ ] `onIndexChange?: (i) => void` reports the active index
+- [ ] `initialIndex?: number` for resuming a position
+- [ ] No hard-coded colors except white dot variants (matches design's `color:#fff` overlays)
+
+**Tests**: render N images, dot count matches photos, active dot index reflects state, swipe-driven onIndexChange (limited — viewability is hard to test), uri prop renders Image with right source.
+
+**Out of scope**: pinch-to-zoom; lightbox; share button overlay.
+
+---
+
+## Feature: Sheet component
+
+**Loop status**: complete
+
+**Files**:
+- `components/Sheet.tsx` — bottom sheet with backdrop + drag-to-dismiss
+- `components/__tests__/Sheet.test.tsx`
+
+**Design source** (HANDOFF "Bottom sheet" section):
+- Max height 78% of viewport
+- Handle 40×4, `rgba(30,47,35,0.2)`, centered, 10px from top (and a dark-mode variant)
+- Top corners radius 28 (`radius.sheet`)
+- Backdrop `rgba(0,0,0,0.35)`, 0.3s fade
+- Slide: `translateY(100%) → 0` over 0.35s, `Easing.bezier(0.2, 0.8, 0.2, 1)`
+- Sheet bg = `palette.sheetBg` (the new token from Loop 8)
+
+**Acceptance criteria**:
+- [ ] `<Sheet visible onClose>{children}</Sheet>`
+- [ ] When `visible`: backdrop fades in (0 → 1 over 300ms), sheet slides up from below (translateY 100% → 0 over 350ms with bezier easing)
+- [ ] When `!visible`: backdrop fades out, sheet slides down, then unmounts (or hidden)
+- [ ] Backdrop tap fires `onClose`
+- [ ] Drag handle at top (40×4 pill, ink color at 0.2 opacity)
+- [ ] PanGesture on the handle area: drag down past 80px (or velocity > 800) calls `onClose`
+- [ ] Sheet bg = `palette.sheetBg`, top corners radius 28, max-height 78% of screen
+- [ ] No hard-coded colors except backdrop `rgba(0,0,0,0.35)` (design literal)
+- [ ] Visual verification on web (gesture works via mouse on RN-Web)
+
+**Tests**:
+- `visible=false` → renders nothing (or hidden via display:none)
+- `visible=true` → renders children + backdrop + handle
+- backdrop tap fires onClose
+- handle is 40×4 with ink-at-0.2 bg
+- sheet bg = sheetBg per mode
+- max-height = 78% of provided window height
+- top corners radius 28
+
+**Out of scope**: multi-snap-point (e.g. half / full) — single snap to fully open or closed; if Filters or Spot Details need a half-snap, add later. Backdrop blur (deferred). KeyboardAvoidingView integration (call site can wrap if needed).
+
+**Native-only verification deferred to simulator**: gesture smoothness, spring physics on flick-to-dismiss, and gesture-handler / reanimated worklet behavior on iOS/Android.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
