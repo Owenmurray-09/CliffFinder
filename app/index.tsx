@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
+import { Slider } from '@/components/Slider';
 import { Toggle } from '@/components/Toggle';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
@@ -16,6 +17,8 @@ export default function Index() {
   const [chips, setChips] = useState<Set<string>>(new Set(['Trending']));
   const [notif, setNotif] = useState(true);
   const [haptics, setHaptics] = useState(false);
+  const [height, setHeight] = useState(15);
+  const [waterTemp, setWaterTemp] = useState(18);
   const toggleChip = (key: string) => {
     setChips((prev) => {
       const next = new Set(prev);
@@ -77,6 +80,20 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>sliders</Text>
+        <View style={{ gap: t.spacing.lg, maxWidth: 360 }}>
+          <View style={{ gap: t.spacing.xs }}>
+            <Text style={[t.typography.body, { color: t.palette.ink2 }]}>height: {height}m</Text>
+            <Slider value={height} onValueChange={setHeight} min={0} max={50} />
+          </View>
+          <View style={{ gap: t.spacing.xs }}>
+            <Text style={[t.typography.body, { color: t.palette.ink2 }]}>water temp: {waterTemp}°C</Text>
+            <Slider value={waterTemp} onValueChange={setWaterTemp} min={0} max={30} />
+          </View>
         </View>
       </View>
 

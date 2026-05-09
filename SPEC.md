@@ -290,6 +290,46 @@ Verification:
 
 **Native-only verification deferred**: thumb animation timing on simulator (web `Animated` performs differently).
 
+---
+
+## Feature: Slider component
+
+**Loop status**: complete
+
+**Files**:
+- `components/Slider.tsx` — `<Slider>` with `value`, `onValueChange`, `min`, `max`, `step`
+- `components/__tests__/Slider.test.tsx` — math + render + drag behavior
+
+**Design source** (`Components.html` lines 148–151):
+- `.slider-track`: height 6, width 100%, radius 999, bg `var(--line)`
+- `.slider-fill`: absolute left:0, full height, radius 999, bg `var(--accent)`, width derived from value
+- `.slider-thumb`: 20×20, white bg, 2px accent border, radius 999, shadow `0 2px 8px rgba(0,0,0,.18)`, `transform: translate(-50%,-50%)` so it centers on the value position
+
+**Acceptance criteria**:
+- [ ] Track 6px tall, line bg, pill radius
+- [ ] Fill width = `(value - min) / (max - min)` × track width; bg = accent
+- [ ] Thumb 20×20 white, 2px accent border, shadow per design; centered on the value position
+- [ ] Drag (PanResponder) updates value; tap on track jumps to position
+- [ ] `step` prop snaps to whole units (default 1)
+- [ ] `min`/`max` clamp the value
+- [ ] No hard-coded colors except `'#FFFFFF'` thumb (design uses `#fff`)
+- [ ] Hit area extends vertically beyond the 6px track (12px each side via wrapper padding) so it's tappable
+- [ ] Pure math helpers tested independently: `clamp`, `roundToStep`, `positionToValue`, `valueToRatio`
+
+**Tests**:
+- math: clamp below min / above max / inside range
+- math: roundToStep: 5.4 step 1 → 5; 5.4 step 0.5 → 5.5; 5.4 step 5 → 5
+- math: valueToRatio: at min → 0, at max → 1, halfway → 0.5
+- math: positionToValue: 0 → min, full width → max, half → midpoint
+- render: track has line bg, fill has accent bg, thumb has 2px accent border
+- value=50 with min=0/max=100 places thumb at 50% of track width
+- onValueChange fires on press with new value
+- accent change updates fill + thumb border colors
+
+**Out of scope**: range (dual-thumb) slider — single-thumb only. If Filters sheet needs range, build as a separate `<RangeSlider>` later.
+
+**Native-only verification deferred**: PanResponder gesture smoothness on simulator; on web, dragging works via mouse events.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
