@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CliffFinder · Wireframes v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Architects+Daughter&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3ecd9; --paper-2:#ebe2c9;
+    --ink:#1c1a16; --ink-2:#3a352b; --ink-3:#6b6553;
+    --accent:#2f6b3a; --accent-soft:rgba(47,107,58,.12);
+    --paperlines:rgba(28,26,22,.06);
+  }
+  body[data-scheme="green"]{ --accent:#2f6b3a; --accent-soft:rgba(47,107,58,.12) }
+  body[data-scheme="sand"] { --accent:#9b7a32; --accent-soft:rgba(155,122,50,.14) }
+  body[data-scheme="blue"] { --accent:#3b54a4; --accent-soft:rgba(59,84,164,.14) }
+  body[data-scheme="charcoal"]{ --accent:#2a2a2a; --accent-soft:rgba(0,0,0,.10) }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:"Patrick Hand",ui-monospace,monospace}
+  body{background-image:linear-gradient(transparent 27px,var(--paperlines) 28px),radial-gradient(1200px 600px at 20% -10%,rgba(255,255,255,.4),transparent 60%);background-size:100% 28px,auto;min-height:100vh}
+  .app{max-width:1480px;margin:0 auto;padding:28px 32px 80px}
+  .top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:8px}
+  .brand{font-family:"Caveat",cursive;font-weight:700;font-size:46px;line-height:.95}
+  .brand .x{color:var(--accent)}
+  .sub{font-family:"Caveat",cursive;font-size:22px;color:var(--ink-2);margin-top:-2px}
+  .meta{font-family:"Caveat",cursive;font-size:18px;color:var(--ink-3);text-align:right;line-height:1.2}
+  .meta b{color:var(--ink-2);font-weight:600}
+  .lede{font-family:"Caveat",cursive;font-size:22px;color:var(--ink-2);margin:6px 2px 22px}
+  .lede b{color:var(--ink);font-weight:700}
+
+  .sec{margin:14px 0 36px;padding-top:14px;border-top:1.6px dashed var(--ink-3)}
+  .sec-h{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:6px}
+  .sec-h h2{font-family:"Caveat",cursive;font-size:34px;font-weight:700;margin:0;line-height:1}
+  .sec-h .num{font-family:"Architects Daughter",cursive;font-size:14px;color:var(--ink-3);margin-right:6px;font-weight:400}
+  .sec-h .from{font-family:"Caveat",cursive;font-size:18px;color:var(--ink-3)}
+  .sec-h .from em{font-style:normal;color:var(--accent);font-weight:600}
+  .sec-note{font-family:"Caveat",cursive;font-size:19px;color:var(--ink-2);margin:2px 2px 14px;max-width:700px}
+
+  .row-phones{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .pf{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .pf .pf-cap{font-family:"Caveat",cursive;font-size:20px;text-align:center}
+  .pf .pf-cap em{font-style:normal;color:var(--ink-3);font-size:16px;display:block;margin-top:-2px}
+
+  .change{font-family:"Caveat",cursive;font-size:18px;color:var(--ink-2);background:#fff8e6;border:1.6px solid var(--ink);border-radius:10px 12px 9px 13px / 12px 10px 13px 9px;padding:8px 12px;max-width:340px}
+  .change b{color:var(--accent);font-weight:700}
+  .change ul{margin:4px 0 0;padding-left:20px}
+  .change li{margin:2px 0}
+
+  /* Phone primitives */
+  .phone{width:300px;height:610px;background:#fbf6e7;border:2.2px solid var(--ink);border-radius:28px 30px 26px 30px / 32px 26px 30px 26px;position:relative;overflow:hidden;box-shadow:2px 3px 0 rgba(28,26,22,.18),6px 9px 0 rgba(28,26,22,.05);filter:url(#wob)}
+  .phone .notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:64px;height:6px;background:var(--ink);border-radius:6px;opacity:.7}
+  .phone-status{display:flex;justify-content:space-between;padding:14px 16px 4px;font-family:"Architects Daughter",cursive;font-size:11px;color:var(--ink-3)}
+  .phone-content{padding:6px 12px 12px;height:calc(100% - 28px);overflow:hidden;display:flex;flex-direction:column;gap:8px}
+
+  .h{font-family:"Caveat",cursive}
+  .hh{font-family:"Caveat",cursive;font-weight:700}
+  .ad{font-family:"Architects Daughter",cursive}
+  .box{border:1.6px solid var(--ink);border-radius:10px 12px 9px 13px / 12px 10px 13px 9px;padding:8px 10px}
+  .box-soft{border:1.4px dashed var(--ink-3);border-radius:8px 10px 9px 11px;padding:6px 8px;color:var(--ink-3)}
+  .pill{border:1.6px solid var(--ink);border-radius:20px;padding:3px 10px 4px;display:inline-flex;align-items:center;gap:6px;font-size:14px}
+  .pill.acc{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .row{display:flex;gap:6px;align-items:center}
+  .row.wrap{flex-wrap:wrap}
+  .col{display:flex;flex-direction:column;gap:6px}
+  .grow{flex:1}
+  .center{display:flex;align-items:center;justify-content:center}
+  .between{display:flex;align-items:center;justify-content:space-between}
+  .small{font-size:12px;color:var(--ink-3)}
+  .tiny{font-size:11px;color:var(--ink-3)}
+  .big{font-size:22px;font-family:"Caveat",cursive;font-weight:700;line-height:1}
+  .huge{font-size:34px;font-family:"Caveat",cursive;font-weight:700;line-height:.9}
+  .hr{height:0;border-top:1.4px solid var(--ink);margin:4px 0;border-radius:2px}
+  .hr.dash{border-top:1.4px dashed var(--ink-3)}
+
+  .sb{display:flex;align-items:center;gap:8px;border:1.8px solid var(--ink);border-radius:30px;padding:6px 10px;background:#fff8e6}
+  .nav{position:absolute;left:8px;right:8px;bottom:8px;height:54px;border:1.8px solid var(--ink);border-radius:18px 22px 18px 22px / 22px 18px 22px 18px;background:#fff8e6;display:flex;align-items:center;justify-content:space-around;padding:0 6px}
+  .navi{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:13px;color:var(--ink-2);font-family:"Architects Daughter",cursive}
+  .navi.on{color:var(--ink);font-weight:700}
+  .navi.fab{width:42px;height:42px;border-radius:50%;background:var(--accent);color:#fff;border:1.8px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;margin-top:-22px}
+
+  .map{position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(28,26,22,.05) 0 2px,transparent 2px 14px),repeating-linear-gradient(-45deg,rgba(28,26,22,.04) 0 2px,transparent 2px 18px),#ece2c2}
+
+  .pin{display:inline-flex;align-items:center;justify-content:center}
+  .pin svg{width:100%;height:100%}
+
+  .imgph{border:1.6px solid var(--ink);background:linear-gradient(135deg,transparent 49%,var(--ink) 49.5% 50.5%,transparent 51%),linear-gradient(45deg,transparent 49%,var(--ink) 49.5% 50.5%,transparent 51%),#f0e6c8;border-radius:8px 10px 8px 10px;position:relative}
+  .imgph .lbl{position:absolute;left:6px;top:4px;font-size:12px;color:var(--ink);background:#fff8e6;padding:0 5px;border:1.2px solid var(--ink);border-radius:4px}
+
+  .stars{letter-spacing:1px;font-family:"Architects Daughter",cursive;font-size:14px}
+
+  .slider{position:relative;height:14px}
+  .slider .track{position:absolute;left:0;right:0;top:6px;height:2px;background:var(--ink)}
+  .slider .fill{position:absolute;left:0;top:6px;height:2px;background:var(--accent)}
+  .slider .knob{position:absolute;top:0;width:14px;height:14px;border-radius:50%;background:#fff;border:1.6px solid var(--ink)}
+
+  .tog{width:34px;height:18px;border:1.6px solid var(--ink);border-radius:20px;position:relative;background:#fff8e6;flex:none}
+  .tog .d{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--ink);top:1.5px;left:2px}
+  .tog.on{background:var(--accent-soft)}
+  .tog.on .d{left:18px;background:var(--accent)}
+
+  .legend{font-family:"Architects Daughter",cursive;font-size:12px}
+  .legend .dot{width:9px;height:9px;border-radius:50%;border:1.4px solid var(--ink);display:inline-block;margin-right:5px;vertical-align:middle}
+
+  .phone.dark{background:#1a1a1a;color:#f1ead7}
+  .phone.dark .nav{background:#222;color:#f1ead7;border-color:#f1ead7}
+  .phone.dark .navi{color:#bbb}
+  .phone.dark .navi.on{color:#fff}
+  .phone.dark .box,.phone.dark .pill,.phone.dark .sb,.phone.dark .imgph,.phone.dark .tog{border-color:#f1ead7;color:#f1ead7}
+  .phone.dark .box-soft{border-color:#888;color:#aaa}
+  .phone.dark .imgph{background:linear-gradient(135deg,transparent 49%,#f1ead7 49.5% 50.5%,transparent 51%),linear-gradient(45deg,transparent 49%,#f1ead7 49.5% 50.5%,transparent 51%),#2a2a2a}
+  .phone.dark .hr{border-color:#666}
+  .phone.dark .small,.phone.dark .tiny{color:#bbb}
+
+  /* Flow arrow between phones */
+  .arrow{align-self:center;font-family:"Caveat",cursive;font-size:30px;color:var(--ink-3);padding:0 4px;margin-top:280px}
+</style>
+</head>
+<body data-scheme="green">
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <filter id="wob" x="-2%" y="-2%" width="104%" height="104%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="3"/>
+    <feDisplacementMap in="SourceGraphic" scale="1.2"/>
+  </filter>
+</defs></svg>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="react">
+// v2-app.jsx — CliffFinder Wireframes v2 (chosen + edited)
+
+const Pin = ({ color = "#1c1a16", size = 22 }) => (
+  <span className="pin" style={{ width: size, height: size + 4 }}>
+    <svg viewBox="0 0 24 30" fill="none">
+      <path d="M12 2C7 2 3.5 5.6 3.5 10c0 6 8.5 17 8.5 17s8.5-11 8.5-17C20.5 5.6 17 2 12 2z" stroke={color} strokeWidth="1.8" fill="#fff8e6"/>
+      <circle cx="12" cy="10" r="3" stroke={color} strokeWidth="1.6" fill="none"/>
+    </svg>
+  </span>
+);
+
+const Phone = ({ children, dark = false }) => (
+  <div className={`phone${dark?" dark":""}`}>
+    <div className="notch"></div>
+    <div className="phone-status"><span>9:41</span><span>● ● ● ▮</span></div>
+    <div className="phone-content">{children}</div>
+  </div>
+);
+
+const BottomNav = ({ active = "Map" }) => (
+  <div className="nav">
+    {["Map","Radar"].map(k=>(
+      <div key={k} className={"navi"+(active===k?" on":"")}>
+        <div style={{fontSize:18,lineHeight:1}}>{k==="Map"?"◇":"◉"}</div><div>{k}</div>
+      </div>
+    ))}
+    <div className="navi fab">+</div>
+    {["Logbook","Profile"].map(k=>(
+      <div key={k} className={"navi"+(active===k?" on":"")}>
+        <div style={{fontSize:18,lineHeight:1}}>{k==="Logbook"?"☰":"◯"}</div><div>{k}</div>
+      </div>
+    ))}
+  </div>
+);
+
+const ImgPh = ({ label = "", h = 90, style = {} }) => (
+  <div className="imgph" style={{ height: h, ...style }}>{label && <span className="lbl">{label}</span>}</div>
+);
+
+const Stars = ({ n = 4, of = 5 }) => <span className="stars">{"★".repeat(n)}{"☆".repeat(of-n)}</span>;
+
+const Slider = ({ pct = 40, lo = "0", hi = "30m", lbl }) => (
+  <div className="col" style={{gap:2}}>
+    {lbl && <div className="between" style={{fontSize:14}}><span>{lbl}</span><span className="ad" style={{fontSize:12}}>{hi}</span></div>}
+    <div className="slider"><div className="track"></div><div className="fill" style={{width:pct+"%"}}></div><div className="knob" style={{left:`calc(${pct}% - 7px)`}}></div></div>
+    <div className="between tiny ad"><span>{lo}</span><span>{hi}</span></div>
+  </div>
+);
+
+const Toggle = ({ on = false }) => <div className={"tog"+(on?" on":"")}><div className="d"></div></div>;
+const Scribble = ({ w = 60 }) => (<svg width={w} height="6" viewBox="0 0 60 6"><path d="M1 4 Q 8 1 15 4 T 30 4 T 45 4 T 59 3" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round"/></svg>);
+
+const MapPins = ({ withMe = true }) => (
+  <>
+    <div className="map"></div>
+    <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none"}} viewBox="0 0 280 540" preserveAspectRatio="none">
+      <path d="M-10 200 Q 60 180 100 220 T 200 240 T 300 230" stroke="#7da7c4" strokeWidth="6" fill="none" opacity=".55" strokeLinecap="round"/>
+      <path d="M40 60 Q 80 110 70 180 T 110 320 T 70 480" stroke="#7da7c4" strokeWidth="4" fill="none" opacity=".5"/>
+      <path d="M260 80 Q 220 140 230 220 T 200 360" stroke="#7da7c4" strokeWidth="3" fill="none" opacity=".5"/>
+    </svg>
+    <div style={{position:"absolute",left:"22%",top:"22%"}}><Pin/></div>
+    <div style={{position:"absolute",left:"58%",top:"18%"}}><Pin/></div>
+    <div style={{position:"absolute",left:"40%",top:"42%"}}><Pin/></div>
+    <div style={{position:"absolute",left:"68%",top:"50%"}}><Pin/></div>
+    <div style={{position:"absolute",left:"30%",top:"62%"}}><Pin/></div>
+    <div style={{position:"absolute",left:"55%",top:"72%"}}><Pin/></div>
+    {withMe && <div style={{position:"absolute",left:"46%",top:"50%",width:14,height:14,border:"2px solid #fff",background:"var(--accent)",borderRadius:"50%",boxShadow:"0 0 0 1.6px var(--ink)"}}></div>}
+  </>
+);
+
+// ========== 1. SIGN-IN (v1 form → v3 location prompt) ==========
+const SignIn_Form = () => (
+  <Phone>
+    <div className="col" style={{padding:"40px 6px 8px",gap:14,flex:1}}>
+      <div className="huge center" style={{marginTop:30}}>CliffFinder</div>
+      <div className="h center" style={{fontSize:18,color:"var(--ink-3)",marginTop:-8}}>Explore more. Share safe.</div>
+      <div className="center" style={{margin:"18px 0 4px"}}><Scribble w={120}/></div>
+      <div className="box"><div className="tiny">email</div><div className="ad">you@email.com</div></div>
+      <div className="box"><div className="tiny">password</div><div className="ad">••••••••</div></div>
+      <div className="box center" style={{background:"var(--accent)",color:"#fff",borderColor:"var(--accent)",fontWeight:700,fontSize:18,padding:"10px"}}>Sign in</div>
+      <div className="tiny center" style={{marginTop:-2}}>Forgot password?</div>
+      <div className="hr dash" style={{margin:"10px 30px"}}></div>
+      <div className="box center" style={{padding:"10px",fontSize:16}}>Create account</div>
+    </div>
+  </Phone>
+);
+
+const SignIn_Location = () => (
+  <Phone>
+    <div className="col" style={{padding:"6px 4px",gap:10,flex:1}}>
+      <div className="big" style={{padding:"30px 6px 0"}}>One last thing…</div>
+      <div className="h" style={{fontSize:18,padding:"0 6px",color:"var(--ink-3)"}}>Allow location so we can show jumps near you and tag spots you add.</div>
+      <div className="center" style={{margin:"24px 0"}}>
+        <div style={{width:140,height:140,border:"2px solid var(--ink)",borderRadius:"50%",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <Pin size={48}/>
+          <div style={{position:"absolute",inset:-8,border:"1.5px dashed var(--ink-3)",borderRadius:"50%"}}></div>
+        </div>
+      </div>
+      <div className="col" style={{gap:8,marginTop:"auto",padding:"0 4px 6px"}}>
+        <div className="box center" style={{background:"var(--accent)",color:"#fff",borderColor:"var(--accent)",fontWeight:700,padding:10,fontSize:17}}>Allow while using app</div>
+        <div className="tiny center">Maybe later</div>
+      </div>
+    </div>
+  </Phone>
+);
+
+// ========== 2. HOME / MAP (v3 minimal — single long search + filter btn) ==========
+const HomeMap = () => (
+  <Phone>
+    <div style={{position:"relative",flex:1,margin:"-6px -12px -12px",overflow:"hidden"}}>
+      <MapPins withMe/>
+      {/* one long search box + filter button on the right */}
+      <div style={{position:"absolute",left:10,right:10,top:8,display:"flex",gap:8,alignItems:"center"}}>
+        <div className="sb grow"><span>🔍</span><span className="ad small">Search for spots…</span></div>
+        <div className="box center" style={{width:42,height:42,padding:0,background:"#fff8e6",fontSize:18}}>≡</div>
+      </div>
+      {/* tiny corner legend */}
+      <div style={{position:"absolute",left:8,bottom:74,background:"#fff8e6",border:"1.6px solid var(--ink)",borderRadius:"10px",padding:"4px 8px",fontSize:11}}>
+        <div className="legend"><span className="dot" style={{background:"var(--accent)"}}></span>saved</div>
+        <div className="legend"><span className="dot" style={{background:"#c9a13a"}}></span>trending</div>
+        <div className="legend"><span className="dot" style={{background:"#a06868"}}></span>friends</div>
+      </div>
+      <div style={{position:"absolute",right:10,bottom:76}}>
+        <div className="box center" style={{width:36,height:36,padding:0,background:"#fff8e6"}}>◎</div>
+      </div>
+      <BottomNav active="Map"/>
+    </div>
+  </Phone>
+);
+
+// ========== 3. FILTERS (v2 drawer size, all sketch filters) ==========
+const Filters = () => (
+  <Phone>
+    <div style={{position:"absolute",inset:0,opacity:.35}}><MapPins/></div>
+    <div style={{position:"absolute",inset:0,background:"rgba(28,26,22,.25)"}}></div>
+    <div style={{position:"absolute",left:6,right:6,bottom:8,top:60,background:"#fff8e6",border:"1.8px solid var(--ink)",borderRadius:"16px 18px 14px 18px",padding:"10px 12px",display:"flex",flexDirection:"column",gap:8,overflow:"hidden"}}>
+      <div className="center"><div style={{width:40,height:3,background:"var(--ink)",borderRadius:3}}></div></div>
+      <div className="row between"><span className="hh" style={{fontSize:20}}>Filters</span><span className="ad small" style={{color:"var(--accent)"}}>clear all</span></div>
+      <Slider lbl="Jump height" pct={50} hi="30m"/>
+      <div className="row between"><span className="ad small">♥ favorites only</span><Toggle on/></div>
+      <div className="row between"><span className="ad small">📷 has photos / videos</span><Toggle/></div>
+      <div className="row between"><span className="ad small">★ minimum rating</span><span className="ad small">3.0+ ▾</span></div>
+      <div className="row between"><span className="ad small">👣 has been jumped</span><Toggle/></div>
+      <div>
+        <div className="ad small">Distance</div>
+        <div className="row" style={{gap:6,marginTop:4}}>
+          <span className="pill ad" style={{fontSize:11}}>10km</span>
+          <span className="pill acc ad" style={{fontSize:11}}>50km</span>
+          <span className="pill ad" style={{fontSize:11}}>100km</span>
+        </div>
+      </div>
+      <Slider lbl="Water depth" pct={28} hi="10m"/>
+      <div className="row between"><span className="ad small">experience needed</span><span className="ad small">any ▾</span></div>
+      <div className="row" style={{gap:8,marginTop:"auto"}}>
+        <div className="box grow center" style={{padding:8}}>Reset</div>
+        <div className="box grow center" style={{background:"var(--accent)",color:"#fff",borderColor:"var(--accent)",fontWeight:700,padding:8}}>Apply (24)</div>
+      </div>
+    </div>
+  </Phone>
+);
+
+// ========== 4. SPOT DETAILS (v1 hero, single avg stars, + access box) ==========
+const SpotDetails = () => (
+  <Phone>
+    <div style={{flex:1,display:"flex",flexDirection:"column",gap:6,margin:"-6px -12px",padding:"6px 12px",overflow:"hidden"}}>
+      <div style={{position:"relative",margin:"-6px -12px 4px"}}>
+        <ImgPh label="hero · cliff" h={170} style={{borderRadius:0,borderLeft:0,borderRight:0,borderTop:0}}/>
+        <div style={{position:"absolute",left:8,top:8}} className="box center">‹</div>
+        <div style={{position:"absolute",right:8,top:8,display:"flex",gap:6}}>
+          <div className="box center" style={{width:32,height:32,padding:0}}>♡</div>
+          <div className="box center" style={{width:32,height:32,padding:0}}>⋯</div>
+        </div>
+        <div style={{position:"absolute",left:0,right:0,bottom:6,display:"flex",justifyContent:"center",gap:4}}>
+          {[1,0,0,0].map((v,i)=><span key={i} style={{width:6,height:6,borderRadius:"50%",background:v?"#fff":"rgba(255,255,255,.5)",border:"1px solid #1c1a16"}}></span>)}
+        </div>
+      </div>
+      <div className="row between"><div className="hh" style={{fontSize:22}}>Eagle Cliff</div><span className="ad small">★ 4.6 (128)</span></div>
+      <div className="small ad">Squamish, BC · 32 km</div>
+      <div className="row" style={{gap:6,marginTop:2}}>
+        <div className="box grow" style={{padding:"4px 6px"}}><div className="tiny">jump h.</div><div className="ad">18 m</div></div>
+        <div className="box grow" style={{padding:"4px 6px"}}><div className="tiny">depth</div><div className="ad">6+ m</div></div>
+        <div className="box grow" style={{padding:"4px 6px"}}><div className="tiny">exp.</div><div className="ad">int.</div></div>
+      </div>
+      {/* simplified safety — single avg row */}
+      <div className="box row between" style={{padding:"6px 8px",alignItems:"center"}}>
+        <div><div className="tiny">Safety rating</div><div className="ad" style={{fontSize:14}}><Stars n={5}/> 4.6 / 5</div></div>
+        <div className="ad small" style={{color:"var(--ink-3)"}}>128 reviews</div>
+      </div>
+      {/* NEW: how to access */}
+      <div className="box" style={{padding:"6px 8px"}}>
+        <div className="tiny">How to access</div>
+        <div className="ad small" style={{lineHeight:1.3}}>Park at the trailhead lot. 15-min hike up the south path; rope assist on the last 20 ft.</div>
+      </div>
+      <div className="hh small">Notes</div>
+      <div className="ad tiny" style={{lineHeight:1.3}}>Watch for boats in summer. Check water level after heavy rain.</div>
+      <div className="row" style={{gap:6,marginTop:"auto",padding:"4px 0 0"}}>
+        <div className="box grow center" style={{background:"var(--accent)",color:"#fff",borderColor:"var(--accent)",fontWeight:700,padding:8}}>Directions</div>
+        <div className="box grow center" style={{padding:8}}>+ Logbook</div>
+      </div>
+    </div>
+  </Phone>
+);
+
+// ========== 5. ADD SPOT (v2 wizard) ==========
+const AddSpot = () => (
+  <Phone>
+    <div className="row between" style={{padding:"2px 2px"}}><span className="big">‹</span><span className="hh" style={{fontSize:20}}>Add spot</span><span className="ad small">2/5</span></div>
+    <div className="row" style={{gap:4}}>
+      {[1,1,0,0,0].map((v,i)=><div key={i} style={{flex:1,height:4,background:v?"var(--accent)":"#d8cfb1",borderRadius:3}}></div>)}
+    </div>
+    <div className="row" style={{gap:0,padding:"4px 0",fontFamily:"Architects Daughter",fontSize:11,color:"var(--ink-3)"}}>
+      <span style={{flex:1,textAlign:"center"}}>location</span>
+      <span style={{flex:1,textAlign:"center",color:"var(--ink)",fontWeight:700}}>details</span>
+      <span style={{flex:1,textAlign:"center"}}>safety</span>
+      <span style={{flex:1,textAlign:"center"}}>media</span>
+      <span style={{flex:1,textAlign:"center"}}>review</span>
+    </div>
+    <div className="hh" style={{fontSize:20,marginTop:4}}>Tell us about it</div>
+    <div className="ad small" style={{color:"var(--ink-3)"}}>You can edit any of this later.</div>
+    <div className="col" style={{gap:8,marginTop:6,overflow:"hidden"}}>
+      <div className="box"><div className="tiny">name of spot</div><div className="ad">Eagle Cliff</div></div>
+      <div className="box" style={{minHeight:60}}><div className="tiny">description</div><div className="ad small" style={{color:"var(--ink-3)"}}>cliff on the south side, climb up the trail…</div></div>
+      <Slider lbl="jump height" pct={60} hi="30m"/>
+      <Slider lbl="water depth" pct={28} hi="10m"/>
+      <div className="row between"><span className="ad small">access difficulty</span><span className="ad small">moderate ▾</span></div>
+    </div>
+    <div className="row" style={{gap:6,marginTop:"auto"}}>
+      <div className="box grow center" style={{padding:9}}>← back</div>
+      <div className="box grow center" style={{background:"var(--accent)",color:"#fff",borderColor:"var(--accent)",fontWeight:700,padding:9}}>next: safety →</div>
+    </div>
+  </Phone>
+);
+
+// ========== 6. LOGBOOK (v1 cards) ==========
+const Logbook = () => (
+  <Phone>
+    <div className="row between" style={{padding:"2px 2px"}}><span className="hh" style={{fontSize:22}}>My Logbook</span><span style={{fontSize:18}}>🔍</span></div>
+    <div className="row" style={{gap:0,background:"#fff8e6",border:"1.6px solid var(--ink)",borderRadius:14,padding:2}}>
+      <div className="ad small" style={{flex:1,textAlign:"center",padding:"4px 0",background:"var(--accent)",color:"#fff",borderRadius:10}}>Visited</div>
+      <div className="ad small" style={{flex:1,textAlign:"center",padding:"4px 0"}}>Saved</div>
+    </div>
+    <div className="col" style={{gap:8,overflow:"hidden",marginTop:2}}>
+      {[
+        {n:"Eagle Cliff",l:"Squamish, BC",d:"May 12, 2024",r:"4.6"},
+        {n:"Hidden Quarry",l:"Whistler, BC",d:"Apr 28, 2024",r:"4.3"},
+        {n:"Riverside Bridge",l:"Vancouver",d:"Apr 10, 2024",r:"3.8"},
+        {n:"Catarata Vita",l:"Costa Rica",d:"Mar 02, 2024",r:"4.9"},
+      ].map((s,i)=>(
+        <div key={i} className="box row" style={{gap:8,padding:6,alignItems:"center"}}>
+          <ImgPh h={48} style={{width:54,flex:"none"}}/>
+          <div className="grow">
+            <div className="ad" style={{fontSize:14,fontWeight:700}}>{s.n}</div>
+            <div className="tiny ad">{s.l}</div>
+            <div className="tiny ad">{s.d}</div>
+          </div>
+          <div className="ad small">★ {s.r}</div>
+        </div>
+      ))}
+    </div>
+    <BottomNav active="Logbook"/>
+    <div style={{height:64,flex:"none"}}></div>
+  </Phone>
+);
+
+// ========== 7. LOG ENTRY (v1 scroll, no stats row) ==========
+const LogEntry = () => (
+  <Phone>
+    <div className="row between" style={{padding:"2px 2px"}}><span className="big">‹</span><span className="hh" style={{fontSize:18}}>Eagle Cliff</span><span className="ad tiny">⋯</span></div>
+    <div className="ad tiny" style={{padding:"0 2px"}}>logged May 12, 2024</div>
+    <div className="hr"></div>
+    <div className="col" style={{gap:10,overflow:"hidden"}}>
+      <div>
+        <div className="ad small">Your rating</div>
+        <div style={{fontSize:24,letterSpacing:3,fontFamily:"Architects Daughter"}}>★★★★☆</div>
+      </div>
+      <div>
+        <div className="ad small">Tricks</div>
+        <div className="row wrap" style={{gap:5,marginTop:2}}>
+          <span className="pill ad" style={{fontSize:11}}>cannonball</span>
+          <span className="pill ad" style={{fontSize:11}}>backflip</span>
+          <span className="pill" style={{fontSize:11,borderStyle:"dashed",color:"var(--ink-3)"}}>+ add</span>
+        </div>
+      </div>
+      <div className="box-soft" style={{minHeight:64}}>
+        <div className="tiny">notes</div>
+        <div className="ad small" style={{lineHeight:1.3}}>Water was cold but crystal clear. Sun was out, perfect day!</div>
+      </div>
+      <div>
+        <div className="ad small">Photos / videos</div>
+        <div className="row" style={{gap:5,marginTop:3}}>
+          <ImgPh h={56} style={{flex:1}}/>
+          <ImgPh h={56} style={{flex:1}}/>
+          <ImgPh h={56} style={{flex:1}}/>
+          <div className="box center" style={{flex:1,height:56,fontSize:18,borderStyle:"dashed",color:"var(--ink-3)"}}>+</div>
+        </div>
+      </div>
+    </div>
+    <div className="row" style={{gap:6,marginTop:"auto"}}>
+      <div className="box grow center" style={{padding:8}}>delete</div>
+      <div className="box grow center" style={{background:"var(--accent)",color:"#fff",borderColor:"var(--accent)",fontWeight:700,padding:8}}>save</div>
+    </div>
+  </Phone>
+);
+
+// ========== 8. RADAR (v3 sectioned) ==========
+const Radar = () => (
+  <Phone>
+    <div className="row between" style={{padding:"2px 2px"}}><span className="hh" style={{fontSize:22}}>Radar</span><span style={{fontSize:18}}>🔍</span></div>
+    <div className="ad small" style={{padding:"0 2px"}}>Trending around the world</div>
+    <div className="row" style={{gap:6,overflow:"hidden"}}>
+      <div className="box" style={{flex:1,padding:4}}>
+        <ImgPh h={56}/>
+        <div className="ad tiny" style={{fontWeight:700,marginTop:2}}>Catarata Vita</div>
+        <div className="tiny ad">Costa Rica</div>
+      </div>
+      <div className="box" style={{flex:1,padding:4}}>
+        <ImgPh h={56}/>
+        <div className="ad tiny" style={{fontWeight:700,marginTop:2}}>Bajos del Toro</div>
+        <div className="tiny ad">Costa Rica</div>
+      </div>
+    </div>
+    <div className="ad small" style={{marginTop:4}}>Near you</div>
+    <div className="col" style={{gap:5}}>
+      <div className="box row between" style={{padding:6,alignItems:"center"}}>
+        <div className="row" style={{gap:6}}><Pin size={18}/><span className="ad small">Eagle Cliff</span></div>
+        <span className="ad tiny">2.1km · ★4.6</span>
+      </div>
+      <div className="box row between" style={{padding:6,alignItems:"center"}}>
+        <div className="row" style={{gap:6}}><Pin size={18}/><span className="ad small">Hidden Quarry</span></div>
+        <span className="ad tiny">5.4km · ★4.3</span>
+      </div>
+    </div>
+    <div className="ad small" style={{marginTop:2}}>Activity</div>
+    <div className="col" style={{gap:4,overflow:"hidden"}}>
+      <div className="ad tiny">• <b>@diveking</b> jumped from Eagle Cliff · 2m</div>
+      <div className="ad tiny">• <b>@explorekate</b> rated Hidden Quarry · 15m</div>
+      <div className="ad tiny">• <b>@adventure.joe</b> explored a new spot · 1h</div>
+    </div>
+    <BottomNav active="Radar"/>
+    <div style={{height:60,flex:"none"}}></div>
+  </Phone>
+);
+
+// ========== 9b. SETTINGS (sheet from Profile) ==========
+const Settings = () => (
+  <Phone>
+    <div className="row between" style={{padding:"2px 2px"}}><span className="big">‹</span><span className="hh" style={{fontSize:20}}>Settings</span><span className="ad small" style={{visibility:"hidden"}}>x</span></div>
+    <div className="hr"></div>
+    <div className="ad tiny" style={{color:"var(--ink-3)",marginTop:2}}>ACCOUNT</div>
+    <div className="col" style={{gap:0}}>
+      <div className="box row" style={{padding:6,gap:8,alignItems:"center",borderRadius:"10px 10px 0 0"}}>
+        <div style={{width:36,height:36,borderRadius:"50%",border:"1.6px solid var(--ink)",overflow:"hidden",flex:"none"}}><ImgPh h={34} style={{border:"none",borderRadius:0}}/></div>
+        <div className="grow"><div className="ad small" style={{fontWeight:700}}>Profile picture</div><div className="tiny ad">tap to change</div></div>
+        <span className="ad small">›</span>
+      </div>
+      <div className="box row between" style={{padding:8,borderRadius:0,borderTop:0}}><span><div className="tiny">username</div><div className="ad">@owen.explores</div></span><span className="ad small">edit ›</span></div>
+      <div className="box row between" style={{padding:8,borderRadius:0,borderTop:0}}><span><div className="tiny">display name</div><div className="ad">Owen Murray</div></span><span className="ad small">edit ›</span></div>
+      <div className="box row between" style={{padding:8,borderRadius:0,borderTop:0}}><span><div className="tiny">email</div><div className="ad">owen@email.com</div></span><span className="ad small">edit ›</span></div>
+      <div className="box row between" style={{padding:8,borderRadius:"0 0 10px 10px",borderTop:0}}><span className="ad small">Change password</span><span className="ad small">›</span></div>
+    </div>
+    <div className="ad tiny" style={{color:"var(--ink-3)",marginTop:6}}>PREFERENCES</div>
+    <div className="col" style={{gap:0}}>
+      <div className="box row between" style={{padding:8,alignItems:"center",borderRadius:"10px 10px 0 0"}}><span className="ad small">Dark mode</span><Toggle on/></div>
+      <div className="box row between" style={{padding:8,alignItems:"center",borderRadius:0,borderTop:0}}><span className="ad small">Push notifications</span><Toggle/></div>
+      <div className="box row between" style={{padding:8,alignItems:"center",borderRadius:"0 0 10px 10px",borderTop:0}}><span className="ad small">Units (metric)</span><span className="ad small">m ▾</span></div>
+    </div>
+    <div className="box center" style={{padding:9,marginTop:"auto",fontWeight:700,color:"#a04040",borderColor:"#a04040"}}>Log out</div>
+    <div className="tiny ad center" style={{color:"var(--ink-3)"}}>v2.0.1 · about · privacy</div>
+  </Phone>
+);
+
+// ========== 9. PROFILE (v2 hero + stats) ==========
+const Profile = () => (
+  <Phone>
+    <div style={{position:"relative",margin:"-6px -12px 0"}}>
+      <ImgPh label="cover" h={70}/>
+      <div style={{position:"absolute",right:8,top:8,display:"flex",gap:6}}>
+        <div className="box center" style={{width:30,height:30,padding:0,fontSize:14}}>☾</div>
+        <div className="box center" style={{width:30,height:30,padding:0,fontSize:14}}>⚙</div>
+      </div>
+      <div style={{position:"absolute",left:"50%",top:"100%",transform:"translate(-50%,-50%)",width:74,height:74,borderRadius:"50%",border:"2px solid var(--ink)",overflow:"hidden",background:"#fbf6e7"}}>
+        <ImgPh h={70} style={{border:"none",borderRadius:0}}/>
+      </div>
+    </div>
+    <div style={{height:38}}></div>
+    <div className="hh center" style={{fontSize:20}}>Owen Murray</div>
+    <div className="ad tiny center">@owen.explores · explorer</div>
+    <div className="row" style={{gap:6,marginTop:6}}>
+      <div className="box grow center col" style={{gap:0,padding:6}}><div className="huge">10</div><div className="tiny ad">total jumps</div></div>
+      <div className="box grow center col" style={{gap:0,padding:6}}><div className="huge">4s</div><div className="tiny ad">air time</div></div>
+      <div className="box grow center col" style={{gap:0,padding:6}}><div className="huge">300m</div><div className="tiny ad">fallen</div></div>
+    </div>
+    <div className="hh small" style={{marginTop:4}}>Achievements</div>
+    <div className="row" style={{gap:6,overflow:"hidden"}}>
+      {["🏅","🎖","⭐","🚀"].map((b,i)=>(
+        <div key={i} className="box center" style={{flex:1,padding:8,fontSize:18}}>{b}</div>
+      ))}
+    </div>
+    <div className="hh small" style={{marginTop:4}}>Recent</div>
+    <div className="ad tiny">• Logged Eagle Cliff · ★4.6</div>
+    <div className="ad tiny">• Added Hidden Quarry · 1 mo ago</div>
+    <BottomNav active="Profile"/>
+    <div style={{height:60,flex:"none"}}></div>
+  </Phone>
+);
+
+// ============== APP ==============
+const SECTIONS = [
+  { n:"01", title:"Sign-in", from:"v1 form, then v3 location prompt", note:"After Sign in, the app pushes the GPS prompt before the map loads — you only see this once.",
+    phones:[ {C:SignIn_Form,cap:"step 1 · sign in"}, {C:SignIn_Location,cap:"step 2 · allow location"} ],
+    arrow:true,
+    changes:["Login form shown first","Then GPS prompt screen","No 'maybe later' bypass on first launch"] },
+  { n:"02", title:"Home / Map", from:"v3 minimal", note:"One long search box, filter button on the right. Tiny corner legend stays.",
+    phones:[ {C:HomeMap,cap:"map · home"} ],
+    changes:["Search bar full-width","Filter button (≡) in right corner","Compact legend bottom-left"] },
+  { n:"03", title:"Filters", from:"v2 drawer", note:"Bottom-drawer size, but with every filter from your sketch.",
+    phones:[ {C:Filters,cap:"filters · drawer"} ],
+    changes:["+ Favorites only","+ Has photos / videos","+ Min rating","+ Has been jumped","+ Water depth slider","+ Experience needed"] },
+  { n:"04", title:"Spot Details", from:"v1 hero", note:"Single average star line for safety. New 'How to access' box.",
+    phones:[ {C:SpotDetails,cap:"spot · detail"} ],
+    changes:["Removed star histogram","Avg ★ 4.6 / 5 only","+ How to access box"] },
+  { n:"05", title:"Add Spot", from:"v2 wizard", note:"5-step wizard: location → details → safety → media → review.",
+    phones:[ {C:AddSpot,cap:"add · step 2"} ],
+    changes:["Unchanged from v2"] },
+  { n:"06", title:"Logbook", from:"v1 cards", note:"Visited / Saved tabs, card list. Tap a card to open the entry.",
+    phones:[ {C:Logbook,cap:"logbook · cards"} ],
+    changes:["Unchanged from v1"] },
+  { n:"07", title:"Log Entry", from:"v1 scroll", note:"Rating, tricks, notes, photos/videos. No jumps/air time/height row.",
+    phones:[ {C:LogEntry,cap:"entry · detail"} ],
+    changes:["Removed stats row (jumps · air time · height)"] },
+  { n:"08", title:"Radar", from:"v3 sectioned", note:"World cards · near-you list · activity feed.",
+    phones:[ {C:Radar,cap:"radar · list"} ],
+    changes:["Unchanged from v3"] },
+  { n:"09", title:"Profile", from:"v2 hero + stats", note:"Tap the gear icon to open Settings — log out, change username, profile picture, etc.",
+    phones:[ {C:Profile,cap:"profile · hero"}, {C:Settings,cap:"settings · sheet"} ],
+    arrow:true,
+    changes:["+ Settings sheet","Change profile picture","Edit username · name · email","Change password","Dark mode · notifications · units","Log out"] },
+];
+
+function App() {
+  return (
+    <div className="app">
+      <div className="top">
+        <div>
+          <div className="brand">Cliff<span className="x">Finder</span></div>
+          <div className="sub">Wireframes · v2 · chosen variations + edits</div>
+        </div>
+        <div className="meta">
+          one screen per feature<br/>
+          <b>9 screens · 10 phones</b>
+        </div>
+      </div>
+      <div className="lede">Each section shows the variation you picked, with your edits applied. The <b>change list</b> on the right of every row notes what's different from v1.</div>
+
+      {SECTIONS.map((s,i)=>(
+        <section className="sec" key={i}>
+          <div className="sec-h">
+            <h2><span className="num">{s.n}</span>{s.title}</h2>
+            <div className="from">picked: <em>{s.from}</em></div>
+          </div>
+          <div className="sec-note">{s.note}</div>
+          <div className="row-phones">
+            {s.phones.map((p,j)=>(
+              <React.Fragment key={j}>
+                <div className="pf">
+                  {React.createElement(p.C)}
+                  <div className="pf-cap">{p.cap}</div>
+                </div>
+                {s.arrow && j===0 && s.phones.length>1 && <div className="arrow">→</div>}
+              </React.Fragment>
+            ))}
+            <div className="change">
+              <b>edits applied</b>
+              <ul>{s.changes.map((c,k)=><li key={k}>{c}</li>)}</ul>
+            </div>
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
+</script>
+
+</body>
+</html>

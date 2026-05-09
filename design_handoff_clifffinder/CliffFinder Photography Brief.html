@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CliffFinder · Photography Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EAD0;
+    --paper-2:#E8DDBE;
+    --ink:#1E2F23;
+    --ink-2:#3a4a3e;
+    --ink-3:#7a8579;
+    --line:rgba(30,47,35,.12);
+    --line-2:rgba(30,47,35,.06);
+    --accent:#7BA7C8;
+    --warn:#B0413E;
+    --ok:#3F8B5C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;color:var(--ink);font-family:"Inter",ui-sans-serif,system-ui,sans-serif;line-height:1.55;background:radial-gradient(1200px 700px at 30% 0%,#e6dab6,#cfc4a3 70%);min-height:100vh}
+  .wrap{max-width:980px;margin:0 auto;padding:48px 36px 96px}
+  h1{font-family:"Poppins",sans-serif;font-weight:700;font-size:42px;letter-spacing:-.025em;margin:0 0 6px}
+  .subtitle{font-family:"Inter",sans-serif;font-size:16px;color:var(--ink-3);margin:0 0 36px}
+  h2{font-family:"Poppins",sans-serif;font-weight:700;font-size:24px;margin:48px 0 16px;letter-spacing:-.01em;border-bottom:2px solid var(--ink);padding-bottom:8px}
+  h3{font-family:"Poppins",sans-serif;font-weight:700;font-size:17px;margin:24px 0 8px;letter-spacing:-.005em}
+  p{margin:0 0 12px}
+  code{font-family:"JetBrains Mono",monospace;background:var(--paper-2);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:13px}
+  ul{margin:0 0 14px;padding-left:20px}
+  li{margin:4px 0}
+
+  .lead{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;padding:20px 24px;font-size:15px}
+  .lead b{color:var(--ink)}
+
+  /* TL;DR card */
+  .tldr{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0 8px}
+  .tldr .b{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .tldr .b .h{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .tldr .b .v{font-family:"Poppins",sans-serif;font-weight:700;font-size:24px;line-height:1.1;margin-bottom:4px}
+  .tldr .b .d{font-size:12.5px;color:var(--ink-3)}
+
+  /* asset table */
+  table{width:100%;border-collapse:separate;border-spacing:0;margin:14px 0;background:var(--paper-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:12px 16px;font-size:13.5px;border-bottom:1px solid var(--line-2);vertical-align:top}
+  th{font-family:"Poppins",sans-serif;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);background:rgba(30,47,35,.04)}
+  tr:last-child td{border-bottom:none}
+  td code{font-size:12px}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-family:"Inter",sans-serif;font-size:11px;font-weight:600}
+  .pill.must{background:#B0413E;color:#fff}
+  .pill.want{background:#E8B742;color:#1E2F23}
+  .pill.nice{background:#9AB096;color:#1E2F23}
+
+  /* mood board */
+  .mood{display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:14px;margin:18px 0 8px}
+  .mood .c{display:flex;flex-direction:column;gap:8px}
+  .mood .c .frame{aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:#000;position:relative}
+  .mood .c .frame img{width:100%;height:100%;object-fit:cover;display:block}
+  .mood .c .lbl{font-family:"Poppins",sans-serif;font-weight:600;font-size:13px}
+  .mood .c .meta{font-size:11.5px;color:var(--ink-3);font-family:"Inter",sans-serif;line-height:1.4}
+
+  /* checklist */
+  .checklist{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:18px 24px;font-size:14px}
+  .checklist li{margin:6px 0}
+
+  /* dos / donts */
+  .dosdonts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .dosdonts .col{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .dosdonts .col h4{font-family:"Poppins",sans-serif;font-weight:700;font-size:14px;margin:0 0 10px}
+  .dosdonts .col.do h4{color:var(--ok)}
+  .dosdonts .col.dont h4{color:var(--warn)}
+  .dosdonts .col ul{padding-left:18px;margin:0;font-size:13.5px}
+
+  /* callout */
+  .callout{background:rgba(123,167,200,.16);border-left:4px solid var(--accent);padding:14px 18px;border-radius:6px;margin:14px 0;font-size:14px}
+  .callout b{color:var(--ink)}
+
+  .footer{font-size:13px;color:var(--ink-3);border-top:1px solid var(--line);margin-top:60px;padding-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Photography Brief</h1>
+  <p class="subtitle">CliffFinder · what to shoot, license, and ship — for v1 launch</p>
+
+  <div class="lead">
+    <p style="margin:0"><b>Purpose.</b> CliffFinder lives or dies on its imagery. The whole product is "this place looks worth the trip." Ugly photos kill that. This document defines the photo set we need before launch, the technical specs, the mood, and the per-screen usage rules. Hand it to a stock buyer, a contracted photographer, or an internal asset team and they should be able to deliver without further questions.</p>
+  </div>
+
+  <div class="tldr">
+    <div class="b"><div class="h">v1 launch</div><div class="v">~28 photos</div><div class="d">Across 5 spot stories + UI imagery</div></div>
+    <div class="b"><div class="h">Format</div><div class="v">JPEG · 2x</div><div class="d">2400×1600 long edge, sRGB, &lt;400KB</div></div>
+    <div class="b"><div class="h">Aspect ratios</div><div class="v">3:2 · 4:5 · 1:1</div><div class="d">Hero · card · avatar/thumb</div></div>
+  </div>
+
+  <h2>1 · Image categories</h2>
+  <p>Every photo in CliffFinder serves one of seven jobs. Each has its own composition rule.</p>
+
+  <table>
+    <thead><tr><th style="width:18%">Category</th><th style="width:30%">Where it appears</th><th style="width:22%">Aspect</th><th>Composition rule</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Hero · Spot</b></td>
+        <td>Spot Details photo carousel (4 per spot)</td>
+        <td>3:2 · 2400×1600</td>
+        <td>The cliff <em>and</em> the water visible in one frame. Wide enough to gauge height. Bottom 30% reads as cliff/water (not sky) so the title overlay has dark bed.</td>
+      </tr>
+      <tr>
+        <td><b>Card · Spot</b></td>
+        <td>Map mini-cards, Logbook entries, Radar feed thumbs</td>
+        <td>4:5 · 1200×1500</td>
+        <td>Vertical crop of the hero. Subject centered or left-third (right side hosts the heart icon). Edges read clearly at 200px width.</td>
+      </tr>
+      <tr>
+        <td><b>Action</b></td>
+        <td>Spot Details secondary photos, "Trending" chips, Sign-in hero</td>
+        <td>3:2 · 2400×1600</td>
+        <td>A jumper mid-air or on the edge, framed small inside the landscape (not portrait-style). Implies "people use this app," doesn't put faces front and center.</td>
+      </tr>
+      <tr>
+        <td><b>Detail</b></td>
+        <td>Spot Details secondary photos (texture, water, rocks)</td>
+        <td>1:1 · 1200×1200</td>
+        <td>Close-ups: water surface, rock face, mossy ledge, depth marker. Adds texture; reduces "another mountain pic" fatigue.</td>
+      </tr>
+      <tr>
+        <td><b>Onboarding</b></td>
+        <td>Sign-in hero, splash (skipped for v1 but reserved)</td>
+        <td>3:2 · 2400×1600</td>
+        <td>One signature image: a waterfall or a sunlit cliff over still water. Saturated, golden-hour. This is the brand image.</td>
+      </tr>
+      <tr>
+        <td><b>Avatar</b></td>
+        <td>Profile, Radar friend rows</td>
+        <td>1:1 · 600×600</td>
+        <td>User-generated. Square, face-centered. App auto-crops. We supply 6 placeholder gradient initials for empty states.</td>
+      </tr>
+      <tr>
+        <td><b>Map tile mood</b></td>
+        <td>Background under glass overlays</td>
+        <td>n/a · ESRI</td>
+        <td>Not photographed — sourced from <code>ESRI World Imagery</code>. Just verify our 5 launch spots have clean satellite coverage.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2 · v1 asset list</h2>
+  <p>Every photo we need before the app ships. <span class="pill must">MUST</span> = blocker for launch. <span class="pill want">WANT</span> = strongly preferred. <span class="pill nice">NICE</span> = post-launch.</p>
+
+  <table>
+    <thead><tr><th style="width:38%">Asset</th><th style="width:14%">Priority</th><th style="width:14%">Aspect</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>1 · Sign-in hero</b> — waterfall, golden-hour, no people</td><td><span class="pill must">MUST</span></td><td>3:2</td><td>Sets the brand emotion. Should also work on a dark-mode tinted background.</td></tr>
+      <tr><td><b>5 × Spot hero</b> — one per launch spot (Eagle Cliff, Hidden Quarry, Riverside Bridge, Mossy Falls, Vista Point)</td><td><span class="pill must">MUST</span></td><td>3:2</td><td>Each spot is real and has a real location. Photo must match the location convincingly.</td></tr>
+      <tr><td><b>15 × Spot supporting</b> — 3 per spot (action, detail, alt-angle)</td><td><span class="pill want">WANT</span></td><td>mix</td><td>Used in carousel and Logbook recents. v1 can ship with 1 per spot if budget tight.</td></tr>
+      <tr><td><b>3 × Action shot</b> — anonymous jumpers from behind / silhouette</td><td><span class="pill want">WANT</span></td><td>3:2</td><td>Mid-air, no recognizable faces (avoids release-form headaches).</td></tr>
+      <tr><td><b>6 × Avatar placeholders</b> — gradient + initial</td><td><span class="pill must">MUST</span></td><td>1:1</td><td>Generated, not photographed. Already in design system.</td></tr>
+      <tr><td><b>Empty-state illustration</b> — "no jumps logged" / "no friends yet"</td><td><span class="pill nice">NICE</span></td><td>n/a</td><td>Hand-drawn or icon style, not photo. Optional for v1.</td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="4" style="font-size:12.5px;color:var(--ink-3);padding:10px 16px"><b>Total v1 floor:</b> 6 photos (must) · <b>v1 ideal:</b> 24 photos · <b>full set:</b> 28 + illustrations</td></tr></tfoot>
+  </table>
+
+  <h2>3 · Mood &amp; reference</h2>
+  <p>The aesthetic: <b>natural, warm, slightly cinematic.</b> Not commercial-stock, not GoPro-action. Think: a friend who's a good photographer, sending you their best shots from a weekend trip.</p>
+
+  <div class="mood">
+    <div class="c">
+      <div class="frame"><img src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=600&q=80" alt=""></div>
+      <div class="lbl">Hero · waterfall, forest light</div>
+      <div class="meta">This is the mood for the Sign-in screen. Saturated greens, mist, a hint of sun. No people in frame.</div>
+    </div>
+    <div class="c">
+      <div class="frame"><img src="https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?w=600&q=80" alt=""></div>
+      <div class="lbl">Spot · sea cliff</div>
+      <div class="meta">Cliff and water in one frame, height legible. Bottom third reads dark. Eagle Cliff template.</div>
+    </div>
+    <div class="c">
+      <div class="frame"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" alt=""></div>
+      <div class="lbl">Spot · alpine quarry / lake</div>
+      <div class="meta">Pristine water, granite, mountains behind. The "Hidden Quarry" archetype.</div>
+    </div>
+    <div class="c">
+      <div class="frame"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&q=80" alt=""></div>
+      <div class="lbl">Vista · panoramic</div>
+      <div class="meta">Wide landscape, atmospheric. Used as Logbook empty-state background and Vista Point hero.</div>
+    </div>
+  </div>
+
+  <p style="margin-top:18px;font-size:13.5px;color:var(--ink-3)">Reference photos above are placeholder hotlinks from Unsplash for mockup use only. <b>Production assets must be licensed or commissioned.</b> See §5.</p>
+
+  <h2>4 · Technical specs</h2>
+
+  <h3>Format &amp; sizing</h3>
+  <ul>
+    <li><b>Format:</b> JPEG, quality 80, sRGB color profile.</li>
+    <li><b>Master size:</b> 2400×1600 (3:2) or 2400×3000 (4:5). Long edge ≥ 2400px.</li>
+    <li><b>Two delivery resolutions:</b> <code>@2x</code> (2400px long edge) and <code>@1x</code> (1200px long edge). The app picks based on device DPR.</li>
+    <li><b>Target weight:</b> &lt; 400 KB at @2x, &lt; 150 KB at @1x. Use mozjpeg or squoosh.</li>
+    <li><b>EXIF:</b> stripped except orientation. No GPS coordinates in production photos.</li>
+  </ul>
+
+  <h3>Naming convention</h3>
+  <ul>
+    <li>Spot heroes: <code>spot-{id}-hero-{1..4}.jpg</code> → e.g. <code>spot-eagle-hero-1.jpg</code></li>
+    <li>Action: <code>action-jumper-{1..3}.jpg</code></li>
+    <li>UI: <code>ui-signin-hero.jpg</code>, <code>ui-empty-logbook.png</code></li>
+  </ul>
+
+  <h3>Color &amp; tone</h3>
+  <ul>
+    <li><b>Lean warm</b> — slight golden-hour bias. Avoid cold cyan-shifted shadows.</li>
+    <li><b>Greens should read as forest green</b> (#2E7D32 territory), not lime or olive.</li>
+    <li><b>Water should look cold</b> — muted teal/slate, not pool-blue.</li>
+    <li><b>Avoid HDR oversaturation.</b> If it looks like a desktop wallpaper, it's wrong.</li>
+  </ul>
+
+  <h2>5 · Sourcing</h2>
+
+  <h3>Three legitimate paths</h3>
+
+  <ol style="font-size:14px;line-height:1.55">
+    <li>
+      <b>Licensed stock.</b> Unsplash+, Adobe Stock, Stocksy. Budget $30–80 per image, $200–600 for the v1 set. Fastest. Caveat: photos appear in other apps; we don't own them.
+    </li>
+    <li>
+      <b>Commissioned shoot.</b> One photographer, one weekend, all 5 spots. Budget $1.5K–4K. Best result, exclusive rights. Requires actually being able to access these locations.
+    </li>
+    <li>
+      <b>User-submitted.</b> Long-term direction. Once we have 50+ active users, photos come from the community via Spot submissions. Each submission needs a click-through license grant. <span class="pill nice">NICE</span> for v1.
+    </li>
+  </ol>
+
+  <div class="callout">
+    <b>Recommendation.</b> Ship v1 on stock (path 1) — 6 must-have photos, ~$300 total. Within 60 days, commission a single weekend shoot covering all 5 launch spots (path 2). Begin user-submitted intake at month 3.
+  </div>
+
+  <h3>License hygiene</h3>
+  <ul>
+    <li>Every photo file has a sibling <code>.license.txt</code> with: source, photographer, license type, date acquired, link to receipt.</li>
+    <li>If using Unsplash free tier, credit photographer in the app's <code>Settings → Credits</code> screen — already in scope.</li>
+    <li>No Pinterest, no Google Image search, no "I'll just use this one." Ever.</li>
+  </ul>
+
+  <h2>6 · Do &amp; don't</h2>
+
+  <div class="dosdonts">
+    <div class="col do">
+      <h4>✓ Do</h4>
+      <ul>
+        <li>Show the cliff and the water in the same frame</li>
+        <li>Compose with a clear height cue (a person, a railing, a tree)</li>
+        <li>Use available light. Golden hour, overcast diffuse, dappled forest</li>
+        <li>Crop tight on detail shots — moss, water, granite</li>
+        <li>Leave room at edges for UI overlays (top 80px, bottom 120px)</li>
+      </ul>
+    </div>
+    <div class="col dont">
+      <h4>✗ Don't</h4>
+      <ul>
+        <li>Center a single jumper mid-air filling the frame (looks like a GoPro ad)</li>
+        <li>Drone-top-down shots — they hide the height, which is the whole point</li>
+        <li>Recognizable faces without a release form</li>
+        <li>Overcast featureless gray skies — replace or recompose</li>
+        <li>Heavy filters or visible HDR halos</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>7 · Per-screen usage map</h2>
+
+  <table>
+    <thead><tr><th>Screen</th><th>Photo slot</th><th>Asset</th><th>Aspect / size</th></tr></thead>
+    <tbody>
+      <tr><td><b>Sign-in</b></td><td>Top hero, 280px tall</td><td><code>ui-signin-hero.jpg</code></td><td>3:2 · faded into paper bg at bottom</td></tr>
+      <tr><td><b>Map</b></td><td>None — uses ESRI satellite</td><td>—</td><td>—</td></tr>
+      <tr><td><b>Spot Details</b></td><td>Carousel (4 photos)</td><td><code>spot-{id}-hero-1..4.jpg</code></td><td>3:2 full-bleed, dark-overlay bottom for title</td></tr>
+      <tr><td><b>Spot Details</b></td><td>"Recent jumps" thumbs (3)</td><td><code>action-jumper-1..3.jpg</code></td><td>1:1 · 48×48 in row + tap-to-expand</td></tr>
+      <tr><td><b>Logbook</b></td><td>Entry card (per row)</td><td>spot's <code>hero-1</code> as 4:5 crop</td><td>4:5 · 80×80 thumb</td></tr>
+      <tr><td><b>Logbook</b></td><td>Empty state</td><td><code>ui-empty-logbook.png</code></td><td>n/a — illustration</td></tr>
+      <tr><td><b>Radar</b></td><td>Friend activity row</td><td>friend's avatar + spot's <code>hero-1</code></td><td>1:1 · 42 avatar + 80×80 thumb</td></tr>
+      <tr><td><b>Profile</b></td><td>Avatar + cover photo</td><td>user-uploaded</td><td>1:1 avatar · 16:9 cover</td></tr>
+      <tr><td><b>Add Spot</b></td><td>Photo upload UI</td><td>user-uploaded (1–6 photos)</td><td>app validates 4:5 or 3:2</td></tr>
+    </tbody>
+  </table>
+
+  <h2>8 · Pre-launch checklist</h2>
+
+  <div class="checklist">
+    <ul style="padding-left:0;list-style:none">
+      <li>☐ All 6 <span class="pill must">MUST</span> photos licensed and in <code>/assets/photos/</code></li>
+      <li>☐ Every photo has a <code>.license.txt</code> sibling</li>
+      <li>☐ Photos compressed to under target file size (mozjpeg run)</li>
+      <li>☐ Each photo manually checked at 200px (card view) — does the subject still read?</li>
+      <li>☐ Each photo manually checked at 800px (hero) — does it look in-place, or like stock?</li>
+      <li>☐ Settings → Credits screen lists every photographer + license</li>
+      <li>☐ Avatar fallback gradients render for users with no photo</li>
+      <li>☐ Image upload flow handles HEIC (iPhone default) → JPEG conversion</li>
+      <li>☐ Photo failure / offline state shows a graceful gradient, not a broken icon</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Sister documents: <code>CliffFinder Components.html</code> · <code>CliffFinder Map.html</code> · <code>CliffFinder v2.html</code> (wireframes).
+  </div>
+
+</div>
+</body>
+</html>
