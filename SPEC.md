@@ -632,6 +632,50 @@ Token corrections:
 
 **Out of scope**: swipe actions (deferred); group/section headers (deferred to whichever screen needs them).
 
+---
+
+## Feature: EmptyState component
+
+**Loop status**: complete
+
+**Files**: `components/EmptyState.tsx`, `components/__tests__/EmptyState.test.tsx`
+
+**Design source** (`Components.html:198`): `.empty{display:flex;flex-direction:column;align-items:center;gap:10;padding:18;text-align:center;color:var(--ink-3);font-family:"Inter";font-size:13;line-height:1.5;max-width:240}`
+
+**Acceptance criteria**:
+- [ ] Flex column, align center, gap 10, padding 18, max-width 240
+- [ ] Icon slot at top (caller passes `lucide` icon at appropriate size)
+- [ ] Message text: Inter / 13, line-height 1.5, ink3, center-aligned
+- [ ] Optional title above message (if needed for screens; HANDOFF says "icon + 2-line message" so title is optional)
+- [ ] No hard-coded colors
+
+**Tests**: render icon + message, layout, typography, dark-mode flip.
+
+**Out of scope**: action button slot — call sites can wrap EmptyState + Button manually.
+
+---
+
+## Feature: SearchBar component
+
+**Loop status**: complete
+
+**Files**: `components/SearchBar.tsx`, `components/__tests__/SearchBar.test.tsx`
+
+**Design source**: HANDOFF "Map UI layout" — Search bar (top, 48px tall, glass, radius 16). Components.html `.demo-search` shows: max-width 300, padding 11/14, gap 10, radius 14, with input inside.
+
+**Acceptance criteria**:
+- [ ] Composes `<GlassPanel variant="search">` for the blur surface
+- [ ] 48px tall, padding ~11/14, radius 16 (per HANDOFF), gap 10
+- [ ] Leading lucide `Search` icon (size 20, ink2 color)
+- [ ] TextInput with placeholder, ink color, Inter / 14
+- [ ] `value` + `onChangeText` controlled
+- [ ] Optional `onClear` shown when value is non-empty (lucide `X` icon)
+- [ ] No hard-coded colors
+
+**Tests**: render placeholder, typing fires onChangeText, search icon present, clear button shows when value non-empty, clear button fires onClear, dimensions/radius.
+
+**Out of scope**: voice input; recent-search dropdown.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
