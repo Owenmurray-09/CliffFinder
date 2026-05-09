@@ -595,6 +595,43 @@ Token corrections:
 
 **Out of scope**: marginTop: -22 (HANDOFF spec) — that's consumer-side positioning relative to the tab bar; the Tab bar / Map screen will set it. Animated press scale (deferred).
 
+---
+
+## Feature: ListRow component
+
+**Loop status**: complete
+
+**Files**:
+- `components/ListRow.tsx` — `<ListRow icon? title subtitle? trailing? onPress? />`
+- `components/__tests__/ListRow.test.tsx`
+
+**Design source** (`Components.html:141–142`):
+- `.list-row`: flex row, align center, gap 12, padding 12/14, paper2 bg, 1px line border, radius 12 (cardSm), width 100%
+- `.list-row .ic`: 34×34, radius 10, paper bg, ink2 color, centered
+
+**Acceptance criteria**:
+- [ ] Container: paper2 bg, 1px line border, radius 12 (`cardSm`), padding 12/14, full width, flex row, gap 12, align center
+- [ ] Optional leading `icon` slot rendered inside a 34×34 paper-bg square (radius 10, ink2 color)
+- [ ] Title (`cardTitle` typography → Poppins 600 / 15, ink color)
+- [ ] Optional subtitle below title (`label` typography → Inter 500 / 12, ink3 color)
+- [ ] Title/subtitle stack takes flex 1 so trailing pins to the right
+- [ ] `trailing` slot renders custom node (typically `<ChevronRight />` or `<Toggle />`); defaults to `<ChevronRight />` in `palette.ink3`
+- [ ] When `onPress` is provided, wrap in Pressable; otherwise plain View
+- [ ] No hard-coded colors
+
+**Tests**:
+- container chrome
+- title text + typography
+- subtitle text + typography (when provided / omitted)
+- icon slot renders when provided / omitted
+- icon container chrome (34×34, paper bg, radius 10)
+- trailing default is ChevronRight in ink3
+- trailing prop overrides default
+- onPress fires when pressed
+- without onPress: no Pressable wrapper
+
+**Out of scope**: swipe actions (deferred); group/section headers (deferred to whichever screen needs them).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
