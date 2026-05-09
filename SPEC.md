@@ -488,6 +488,41 @@ Token corrections:
 
 **Out of scope**: half-star fractional display (read-only meta typically shows "4.6 / (128)" as numeric text — call site composes a single lucide Star + Text rather than a partial fill).
 
+---
+
+## Feature: SegmentedControl component
+
+**Loop status**: complete
+
+**Files**:
+- `components/SegmentedControl.tsx` — `<SegmentedControl options value onValueChange />`
+- `components/__tests__/SegmentedControl.test.tsx`
+- `app/index.tsx` — adds segmented control gallery
+
+**Design source** (`Components.html:106–108`):
+- `.seg`: paper2 bg, 1px line border, radius 12, padding 3, gap 2, flex row
+- `.seg button`: transparent bg, ink2 color, Poppins 600 / 13, padding 7/14, radius 9
+- `.seg button.on`: ink bg, paper color (note: NOT accent — ink is the active surface)
+
+**Acceptance criteria**:
+- [ ] Container: paper2 bg, 1px line border, radius `cardSm` (12), padding 3, gap 2, flex row
+- [ ] Each option: button with transparent bg, ink2 color, Poppins 600 / 13, padding 7/14, radius 9
+- [ ] Selected option: bg = `palette.ink`, color = `palette.onInk` (mode-resolved paper)
+- [ ] Press fires `onValueChange` with the selected value
+- [ ] Options can be `string[]` (label === value) or `Array<{ label, value }>`
+- [ ] No hard-coded colors
+
+**Tests**:
+- renders all options
+- selected option has ink bg + onInk text color
+- non-selected options have transparent bg + ink2 text
+- press fires onValueChange with the right value
+- handles {label, value} option shape
+- handles string option shape
+- accessibilityRole="tab", accessibilityState.selected reflects the value
+
+**Out of scope**: animated thumb sliding between options (RN's `LayoutAnimation` could do it, but design doesn't show this; keeping it simple).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

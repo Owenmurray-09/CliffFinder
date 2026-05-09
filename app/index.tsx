@@ -6,6 +6,7 @@ import { Card } from '@/components/Card';
 import { Chip } from '@/components/Chip';
 import { Field } from '@/components/Field';
 import { GlassPanel } from '@/components/GlassPanel';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import { Slider } from '@/components/Slider';
 import { StarRow } from '@/components/StarRow';
 import { StatBox } from '@/components/StatBox';
@@ -25,6 +26,7 @@ export default function Index() {
   const [height, setHeight] = useState(15);
   const [waterTemp, setWaterTemp] = useState(18);
   const [rating, setRating] = useState(4);
+  const [tab, setTab] = useState<'visited' | 'saved'>('visited');
   const toggleChip = (key: string) => {
     setChips((prev) => {
       const next = new Set(prev);
@@ -87,6 +89,15 @@ export default function Index() {
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
         </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>segmented</Text>
+        <SegmentedControl
+          options={[{ label: 'Visited', value: 'visited' }, { label: 'Saved', value: 'saved' }]}
+          value={tab}
+          onValueChange={setTab}
+        />
       </View>
 
       <View style={{ gap: t.spacing.sm }}>
