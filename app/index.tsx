@@ -1,9 +1,17 @@
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button } from '@/components/Button';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
 export default function Index() {
   const t = useTheme();
+  const [busy, setBusy] = useState(false);
+
+  const triggerBusy = () => {
+    setBusy(true);
+    setTimeout(() => setBusy(false), 700);
+  };
 
   return (
     <ScrollView
@@ -17,21 +25,8 @@ export default function Index() {
         </Text>
       </View>
 
-      <View style={{ flexDirection: 'row', gap: t.spacing.sm }}>
-        <Pressable
-          onPress={t.toggleDark}
-          style={[
-            styles.btn,
-            {
-              backgroundColor: t.palette.accent,
-              borderRadius: t.radius.cardSm,
-              paddingHorizontal: t.spacing.lg,
-              paddingVertical: t.spacing.md,
-            },
-          ]}
-        >
-          <Text style={[t.typography.button, { color: t.palette.on.accent }]}>toggle dark</Text>
-        </Pressable>
+      <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
+        <Button label="toggle dark" variant="ghost" onPress={t.toggleDark} />
       </View>
 
       <View style={{ gap: t.spacing.sm }}>
@@ -51,6 +46,20 @@ export default function Index() {
               }}
             />
           ))}
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>buttons</Text>
+        <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
+          <Button label="Sign in" variant="primary" onPress={triggerBusy} busy={busy} />
+          <Button label="Cancel" variant="ghost" />
+          <Button label="Create account" variant="outline" />
+          <Button label="Forgot password?" variant="link" />
+        </View>
+        <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
+          <Button label="disabled primary" variant="primary" disabled />
+          <Button label="disabled outline" variant="outline" disabled />
         </View>
       </View>
 
@@ -99,5 +108,4 @@ function Swatch({ label, hex, fg }: { label: string; hex: string; fg: string }) 
 
 const styles = StyleSheet.create({
   content: { paddingTop: 64 },
-  btn: { alignSelf: 'flex-start' },
 });

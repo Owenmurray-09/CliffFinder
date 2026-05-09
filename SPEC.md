@@ -97,6 +97,65 @@ Verification:
 
 **Out of scope**: persisting theme choice across app launches (covered by Settings later); font loading (Loop 3 will load Poppins/Inter/Montserrat via expo-font).
 
+---
+
+## Feature: Font loading + Button component
+
+**Loop status**: complete
+
+**Files**:
+- `app/_layout.tsx` — load Poppins (400/600/700), Inter (400/500), Montserrat (700) via `@expo-google-fonts/*`; render nothing until fonts load (or show splash)
+- `components/Button.tsx` — `<Button>` with variants `primary` / `ghost` / `outline` / `link`, plus `busy` and `disabled` states
+- `components/__tests__/Button.test.tsx` — variant + state behavior
+- `app/index.tsx` — extend the debug screen with a Button gallery (one of each variant + a busy demo)
+
+**Design source** (`CliffFinder Components.html` lines 111–117):
+- Base `.btn-demo`: padding `13/18`, radius `14`, font `Poppins 14.5 / 400`, gap `8`, border none, `transition: transform .12s ease`
+- `primary`: bg `var(--accent)`, color `#fff`, weight `400`
+- `ghost`: bg `rgba(30,47,35,.06)` light / `rgba(234,226,200,.08)` dark (same as `sheetSoft`!), color `ink`
+- `outline`: bg transparent, color `ink`, border `1.5px solid var(--line)`
+- `link`: bg transparent, color `var(--accent)`, weight `600`, padding `6/8` (smaller)
+
+**Acceptance criteria**:
+
+Font loading:
+- [x] `useFonts` loads `Poppins_400Regular`, `Poppins_600SemiBold`, `Poppins_700Bold`, `Inter_400Regular`, `Inter_500Medium`, `Montserrat_700Bold`
+- [x] **`expo-splash-screen` integration**: `preventAutoHideAsync()` at module scope, `hideAsync()` on `loaded || error` so the OS splash holds until JS-side fonts resolve (no flash of blank screen on native)
+- [x] Font-load errors don't hang the app — proceed with system fallbacks if `error` is non-null
+- [x] On the local + deployed web build, the title and button labels render Poppins — verified via Chrome DevTools (`fontFamily` resolves to Poppins glyphs)
+
+Button component:
+- [x] `<Button label="..." variant="primary" />` renders accent fill + white label using `palette.on.accent`
+- [x] `variant="ghost"` consumes `palette.sheetSoft` (the alpha overlay) for the bg — token reuse, no new color
+- [x] `variant="outline"` renders 1.5px `palette.line` border, transparent bg, ink label
+- [x] `variant="link"` renders no bg, accent label, smaller padding (6/8), weight 600 — also has `borderRadius: 14` so a future hover/pressed bg would round correctly
+- [x] `busy={true}`: press is gated via `Pressable.disabled`; activity indicator replaces label + icon; variant chrome remains
+- [x] `disabled={true}`: press is gated; opacity drops to 0.5
+- [x] `busy && disabled` both gate the press; accessibilityState reflects both flags
+- [x] Optional `icon` prop renders before label with `gap: t.spacing.sm` (8); icon hides under busy
+- [x] Typography routed through `t.typography.button` (Poppins 400 / 14.5); `link` overrides weight to 600
+- [x] No hard-coded colors in `components/Button.tsx` — every value flows from the theme (`'transparent'` is a CSS keyword, matches design's literal `background:transparent`)
+
+Verification:
+- [x] `npx tsc --noEmit` clean
+- [x] `npm test` passes — **48 tests** across 3 suites (theme tokens 21 + theme store 4 + Button 23)
+- [x] Design HTML's `.btn-primary/.ghost/.outline/.link` computed styles read via `getComputedStyle()` and matched byte-exact against impl
+- [x] Light + dark both verified visually via Chrome DevTools side-by-side against `Components.html` Buttons panel
+- [ ] Re-deploy to Vercel after commit (next step)
+
+**Tests**:
+- `Button.test.tsx`:
+  - press fires `onPress` for normal state
+  - press is no-op when `busy`
+  - press is no-op when `disabled`
+  - busy state mounts an activity indicator and unmounts the label
+  - disabled root has opacity 0.5
+  - each variant resolves to the expected `backgroundColor` / `color` / `borderWidth` (introspect via `findAllByType(View/Text)` and read style)
+
+**Out of scope**: press/scale animation (`transform: scale`) — that's a Loop 3.5 polish item if it's not free with `Pressable`'s `pressed` prop; skip if non-trivial. Haptics on press — flagged for native only, deferred.
+
+**Native-only verification deferred to simulator**: button press feedback (scale animation, haptic) once added.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
