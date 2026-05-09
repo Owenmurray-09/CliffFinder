@@ -132,6 +132,12 @@ export const typography = {
     fontSize: 14,
     fontWeight: '400',
   },
+  // Field input text — Inter 14.5 per Components.html `.field input`.
+  input: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14.5,
+    fontWeight: '400',
+  },
   label: {
     fontFamily: 'Inter_500Medium',
     fontSize: 12,

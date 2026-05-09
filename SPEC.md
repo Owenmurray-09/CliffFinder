@@ -156,6 +156,56 @@ Verification:
 
 **Native-only verification deferred to simulator**: button press feedback (scale animation, haptic) once added.
 
+---
+
+## Feature: Field component
+
+**Loop status**: in progress
+
+**Files**:
+- `components/Field.tsx` — `<Field>` with `label`, `value`, `onChangeText`, optional `error`, `placeholder`, plus `secureTextEntry` / `keyboardType` / `autoCapitalize` / `autoComplete` / `autoCorrect` passthrough
+- `components/__tests__/Field.test.tsx` — state + a11y tests
+- `app/index.tsx` — debug surface adds a Field gallery
+
+**Design source** (`Components.html` lines 223–228):
+- `.field`: padding `12/16`, bg `var(--paper-2)`, border `1px solid var(--line)`, radius `14`, width 100%
+- `.field .lbl`: Inter 500 / 11px / uppercase / letter-spacing `.05em`, color `var(--ink-3)` — matches `typography.fieldLabel`
+- `.field input`: bg transparent, color `var(--ink)`, Inter 14.5, margin-top `4`
+- `.field.focus`: border-color `var(--accent)`
+- `.field.error`: border-color `#B0413E`
+- `.err-line` (rendered below): Inter / 12px, color `#B0413E`, ⚠ prefix, gap `6`, margin-top `6`
+
+**Acceptance criteria**:
+- [ ] Default state: bg `palette.paper2`, 1px `palette.line` border, radius 14
+- [ ] Focus state: border flips to `palette.accent` while focused
+- [ ] Error state: border flips to `palette.danger`; ⚠ helper line renders below at Inter 12 / danger color
+- [ ] Error wins over focus visually (red beats accent when both true)
+- [ ] Label uses `typography.fieldLabel` — uppercase, letter-spacing 0.6, ink3 color
+- [ ] Input uses Inter 14.5, color `palette.ink`
+- [ ] `onChangeText` fires correctly
+- [ ] `secureTextEntry`, `keyboardType`, `autoCapitalize`, `autoComplete`, `autoCorrect` pass through to TextInput
+- [x] Accessibility: input has `accessibilityLabel = label`; if error, `accessibilityHint = error` (RN does not support `accessibilityState.invalid` — switched to `accessibilityHint` per RN convention so screen readers announce label + error in sequence)
+- [ ] No hard-coded colors in `components/Field.tsx`
+
+Verification:
+- [ ] `npx tsc --noEmit` clean
+- [ ] `npm test` adds Field tests; total ≥ 60
+- [ ] Visual side-by-side vs `Components.html` "Inputs" panel — default / focus / error all match
+- [ ] Re-deploy to Vercel; spot-check on the live URL
+
+**Tests**:
+- default render: paper2 bg, line border, label text rendered
+- typing fires onChangeText with the new value
+- onFocus → border switches to accent
+- onBlur → border returns to line
+- error prop renders the error message text + danger border
+- error overrides focus (red beats accent when both)
+- secureTextEntry passes through (`props.secureTextEntry === true`)
+
+**Out of scope**: password show/hide toggle — call site (sign-in) will wire its own; right-side icons; multiline/textarea variant (Loop 6 Log Entry can add).
+
+**Native-only verification deferred to simulator**: keyboard show/hide affordances, autoFocus behavior, secure entry on iOS/Android.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

@@ -148,6 +148,12 @@ describe('tokens — typography', () => {
     expect(typography.fieldLabel.letterSpacing).toBe(0.6);
     expect(typography.fieldLabel.fontSize).toBe(11);
   });
+
+  test('input is Inter 400 / 14.5 (matches design `.field input`)', () => {
+    expect(typography.input.fontFamily).toBe('Inter_400Regular');
+    expect(typography.input.fontSize).toBe(14.5);
+    expect(typography.input.fontWeight).toBe('400');
+  });
 });
 
 describe('tokens — shadows', () => {

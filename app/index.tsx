@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/Button';
+import { Field } from '@/components/Field';
 import { ACCENTS, ACCENT_KEYS } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
 export default function Index() {
   const t = useTheme();
   const [busy, setBusy] = useState(false);
+  const [email, setEmail] = useState('alex@cliffjumper.app');
+  const [password, setPassword] = useState('••••••••');
+  const [bad, setBad] = useState('not-an-email');
 
   const triggerBusy = () => {
     setBusy(true);
@@ -60,6 +64,15 @@ export default function Index() {
         <View style={{ flexDirection: 'row', gap: t.spacing.sm, flexWrap: 'wrap' }}>
           <Button label="disabled primary" variant="primary" disabled />
           <Button label="disabled outline" variant="outline" disabled />
+        </View>
+      </View>
+
+      <View style={{ gap: t.spacing.sm }}>
+        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>fields</Text>
+        <View style={{ gap: t.spacing.sm, maxWidth: 360 }}>
+          <Field label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+          <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry />
+          <Field label="Email" value={bad} onChangeText={setBad} error="Enter a valid email." autoCapitalize="none" />
         </View>
       </View>
 
