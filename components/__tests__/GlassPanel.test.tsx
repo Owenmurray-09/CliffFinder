@@ -110,9 +110,10 @@ describe('<GlassPanel /> — composition invariants', () => {
     expect(blurStyle.right).toBe(0);
   });
 
-  test('wrapper View has no backgroundColor (so the blur shows through)', () => {
+  test('wrapper View applies the variant tint as backgroundColor (legibility fallback when backdrop-filter is a no-op)', () => {
     const tree = render(<GlassPanel testID="glass"><Text>x</Text></GlassPanel>);
     const style = flattenStyle(tree.getByTestId('glass').props.style);
-    expect(style.backgroundColor).toBeUndefined();
+    expect(typeof style.backgroundColor).toBe('string');
+    expect(style.backgroundColor).toMatch(/^rgba\(/);
   });
 });

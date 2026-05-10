@@ -29,6 +29,11 @@ export function GlassPanel({
 }: GlassPanelProps) {
   const t = useTheme();
   const intensity = t.glass[variant].intensity;
+  // Tint the wrapping View itself, not just the BlurView, so the panel stays
+  // legible when backdrop-filter can't see through (e.g. over an iframe on
+  // web — the blur falls back to a no-op and the BlurView's tint barely
+  // shows). The blur still adds depth where it works.
+  const tintColor = t.dark ? t.glass[variant].tint.dark : t.glass[variant].tint.light;
 
   return (
     <View
@@ -38,6 +43,7 @@ export function GlassPanel({
           overflow: 'hidden',
           borderWidth: 1,
           borderColor: t.palette.glassBorder,
+          backgroundColor: tintColor,
         },
         style,
       ]}
