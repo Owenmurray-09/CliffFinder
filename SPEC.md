@@ -933,6 +933,28 @@ Token corrections:
 
 **Out of scope**: real persistence (commit to Zustand store) — defer; photo attach.
 
+---
+
+## Feature: Profile + Settings + Friend's Profile + Add Spot wizard (loops 29-31)
+
+**Loop status**: complete
+
+**Files added**:
+- `app/(tabs)/profile.tsx` — own profile with cover, avatar, stats row, list rows (My jumps, Achievements, Settings, Sign out)
+- `app/settings.tsx` — top bar with Back, sections for Display (dark mode toggle + accent picker), Notifications (3 toggles), Account (3 list rows)
+- `app/friend/[id].tsx` — friend's profile shell mirroring own Profile, but with Follow/Following toggle button instead of Edit profile
+- `app/add-spot.tsx` — 4-step wizard: location pick (stub) → form (name, height, depth, difficulty chips, water type chips, description) → photos (stub upload) → confirm. Submit → router.replace('/')
+- `app/(tabs)/_layout.tsx` — FAB now opens /add-spot
+
+**Acceptance criteria**:
+- [x] Profile cover + avatar + name + 3 stat boxes + edit link
+- [x] Settings dark-mode toggle + 4-accent picker live-update the theme
+- [x] Sign out resets auth state and routes to /signin
+- [x] Friend's Profile uses the same layout shell with Follow/Following button
+- [x] Add Spot 4 steps with progress indicator + back nav + Continue/Submit gating
+
+**Out of scope**: real photo upload (image picker); real persistence (Zustand store mutation); cover photo editor.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

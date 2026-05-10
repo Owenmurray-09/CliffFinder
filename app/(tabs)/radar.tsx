@@ -90,6 +90,7 @@ function RadarRow({ item }: { item: RadarItem }) {
       </View>
     );
   } else {
+    onPress = () => router.push(`/friend/${friend.id}`);
     body = (
       <View style={{ gap: 4, flex: 1 }}>
         <Text style={[t.typography.body, { color: t.palette.ink }]}>

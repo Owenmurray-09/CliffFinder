@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { BookOpen, Map, Radar, User } from 'lucide-react-native';
 import { TabBar, type TabBarItem } from '@/components/TabBar';
 
@@ -10,6 +10,7 @@ const ITEMS: ReadonlyArray<TabBarItem> = [
 ];
 
 export default function TabsLayout() {
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{ headerShown: false }}
@@ -17,9 +18,7 @@ export default function TabsLayout() {
         <TabBar
           {...props}
           items={ITEMS}
-          onFabPress={() => {
-            // Add Spot wizard lands in a later loop; this is the entry point.
-          }}
+          onFabPress={() => router.push('/add-spot')}
         />
       )}
     >
