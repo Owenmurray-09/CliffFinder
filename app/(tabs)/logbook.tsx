@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
+import { parseLocalDate } from '@/data/date';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
@@ -226,7 +227,7 @@ function SegmentedTabs({
 function VisitedCard({ entry, spot }: { entry: LogEntry; spot: Spot }) {
   const t = useTheme();
   const router = useRouter();
-  const dateLabel = new Date(entry.date).toLocaleDateString(undefined, {
+  const dateLabel = parseLocalDate(entry.date).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -338,7 +339,7 @@ function VisitedCard({ entry, spot }: { entry: LogEntry; spot: Spot }) {
 function SavedCard({ saved, spot }: { saved: SavedSpot; spot: Spot }) {
   const t = useTheme();
   const router = useRouter();
-  const savedLabel = `Saved ${new Date(saved.savedAt).toLocaleDateString(undefined, {
+  const savedLabel = `Saved ${parseLocalDate(saved.savedAt).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
   })}`;

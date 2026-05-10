@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { todayIso } from './date';
 import { LOG_ENTRIES as SEED } from './logEntries';
 import type { LogEntry } from './types';
 
@@ -13,7 +14,7 @@ type LogEntriesState = {
   reset: () => void;
 };
 
-const today = (): string => new Date().toISOString().slice(0, 10);
+const today = (): string => todayIso();
 let nextId = 1;
 const makeId = (): string => `log-${Date.now().toString(36)}-${nextId++}`;
 

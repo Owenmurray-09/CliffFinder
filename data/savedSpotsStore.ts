@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { todayIso } from './date';
 import type { SavedSpot } from './types';
 import { SAVED_SPOTS as SEED } from './logEntries';
 
@@ -9,7 +10,7 @@ type SavedSpotsState = {
   reset: () => void;
 };
 
-const today = (): string => new Date().toISOString().slice(0, 10);
+const today = (): string => todayIso();
 
 export const useSavedSpotsStore = create<SavedSpotsState>((set, get) => ({
   saved: [...SEED],

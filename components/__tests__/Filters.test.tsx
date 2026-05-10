@@ -104,7 +104,7 @@ describe('<Filters /> sheet', () => {
         initialValues={EMPTY_FILTERS}
         onApply={onApply}
         onClose={onClose}
-        matchCount={5}
+        previewCount={() => 5}
       />,
     );
     // Toggle "Favorites only" (exact text match for the row label)
@@ -122,7 +122,7 @@ describe('<Filters /> sheet', () => {
         initialValues={EMPTY_FILTERS}
         onApply={jest.fn()}
         onClose={jest.fn()}
-        matchCount={3}
+        previewCount={() => 3}
       />,
     );
     expect(tree.getByText('Apply · 3 spots')).toBeTruthy();
@@ -135,7 +135,7 @@ describe('<Filters /> sheet', () => {
         initialValues={EMPTY_FILTERS}
         onApply={jest.fn()}
         onClose={jest.fn()}
-        matchCount={1}
+        previewCount={() => 1}
       />,
     );
     expect(tree.getByText('Apply · 1 spot')).toBeTruthy();
@@ -149,7 +149,7 @@ describe('<Filters /> sheet', () => {
         initialValues={EMPTY_FILTERS}
         onApply={onApply}
         onClose={jest.fn()}
-        matchCount={5}
+        previewCount={() => 5}
       />,
     );
     fireEvent.press(tree.getByLabelText('Favorites only'));
@@ -165,7 +165,7 @@ describe('<Filters /> sheet', () => {
         initialValues={EMPTY_FILTERS}
         onApply={jest.fn()}
         onClose={jest.fn()}
-        matchCount={5}
+        previewCount={() => 5}
       />,
     );
     expect(tree.queryByText('Filters')).toBeNull();

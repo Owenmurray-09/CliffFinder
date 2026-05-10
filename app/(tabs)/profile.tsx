@@ -4,6 +4,7 @@ import { ChevronRight, Moon, Settings, Sun } from 'lucide-react-native';
 import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
+import { parseLocalDate } from '@/data/date';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { CURRENT_USER } from '@/data/user';
@@ -31,7 +32,8 @@ export default function ProfileScreen() {
   const t = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const recent = useLogEntriesStore((s) => s.entries.slice(0, 2));
+  const allEntries = useLogEntriesStore((s) => s.entries);
+  const recent = allEntries.slice(0, 2);
   const getSpotById = useSpotsStore((s) => s.getById);
 
   return (
@@ -178,7 +180,7 @@ export default function ProfileScreen() {
           {recent.map((entry) => {
             const spot = getSpotById(entry.spotId);
             if (!spot) return null;
-            const date = new Date(entry.date).toLocaleDateString(undefined, {
+            const date = parseLocalDate(entry.date).toLocaleDateString(undefined, {
               month: 'short',
               day: 'numeric',
             });

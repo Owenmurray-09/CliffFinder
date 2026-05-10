@@ -155,7 +155,14 @@ export default function MapScreen() {
       <Filters
         visible={filtersOpen}
         initialValues={filterValues}
-        matchCount={visibleSpots.length}
+        previewCount={(values) =>
+          allSpots.filter((s) => {
+            const inFilter = activeFilters.size === 0 || activeFilters.has(s.category);
+            const inSearch =
+              search.length === 0 || s.name.toLowerCase().includes(search.toLowerCase());
+            return inFilter && inSearch && passesFilters(s, values, savedIds, jumpedIds);
+          }).length
+        }
         onApply={setFilterValues}
         onClose={() => setFiltersOpen(false)}
       />

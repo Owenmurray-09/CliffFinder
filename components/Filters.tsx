@@ -94,11 +94,11 @@ export type FiltersProps = {
   initialValues: FilterValues;
   onApply: (next: FilterValues) => void;
   onClose: () => void;
-  /** Visible spot count after filters apply — feeds the "Apply · N spots" CTA. */
-  matchCount: number;
+  /** Live count of matches for the *pending* filter values; feeds the "Apply · N spots" CTA. */
+  previewCount: (values: FilterValues) => number;
 };
 
-export function Filters({ visible, initialValues, onApply, onClose, matchCount }: FiltersProps) {
+export function Filters({ visible, initialValues, onApply, onClose, previewCount }: FiltersProps) {
   const t = useTheme();
   const [v, setV] = useState<FilterValues>(initialValues);
 
@@ -218,7 +218,7 @@ export function Filters({ visible, initialValues, onApply, onClose, matchCount }
             }}
           />
           <Button
-            label={`Apply · ${matchCount} ${matchCount === 1 ? 'spot' : 'spots'}`}
+            label={`Apply · ${previewCount(v)} ${previewCount(v) === 1 ? 'spot' : 'spots'}`}
             variant="primary"
             onPress={() => {
               onApply(v);
