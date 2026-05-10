@@ -22,10 +22,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Slider } from '@/components/Slider';
+import { useAuthStore } from '@/auth/store';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { Difficulty, WaterType } from '@/data/types';
 import { pickImage } from '@/lib/pickImage';
+import { uploadPhoto } from '@/lib/uploadPhoto';
 import { useTheme } from '@/theme/useTheme';
 
 const STEPS = ['Location', 'Details', 'Safety', 'Media', 'Review'] as const;
@@ -78,10 +80,25 @@ export default function AddSpotScreen() {
     step === 'Review';
 
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const next = async () => {
     if (step === 'Review') {
       if (submitting) return;
+      const userId = useAuthStore.getState().session?.user.id;
+      if (!userId) {
+        setSubmitError('You need to be signed in to add a spot.');
+        return;
+      }
       setSubmitting(true);
+      setSubmitError(null);
+      let uploaded: string[];
+      try {
+        uploaded = await Promise.all(photos.map((uri) => uploadPhoto(uri, userId)));
+      } catch (e) {
+        setSubmitting(false);
+        setSubmitError(e instanceof Error ? e.message : 'Photo upload failed.');
+        return;
+      }
       const created = await addSpot({
         name: name.trim(),
         area: '',
@@ -90,12 +107,13 @@ export default function AddSpotScreen() {
         height_m: height,
         depth_m: depth,
         difficulty: access === 'expert' ? 'advanced' : access,
-        photos,
+        photos: uploaded,
         description: description.trim(),
         waterType,
       });
       if (!created) {
         setSubmitting(false);
+        setSubmitError('Could not save the spot. Try again.');
         return;
       }
       await toggleSaved(created.id);
@@ -238,6 +256,20 @@ export default function AddSpotScreen() {
             photoCount={photos.length}
           />
         ) : null}
+
+        {submitError ? (
+          <Text
+            style={{
+              marginTop: 14,
+              fontFamily: 'Inter_500Medium',
+              fontWeight: '500',
+              fontSize: 13,
+              color: t.palette.danger,
+            }}
+          >
+            {submitError}
+          </Text>
+        ) : null}
       </ScrollView>
 
       {/* FOOTER NAV */}
@@ -279,14 +311,14 @@ export default function AddSpotScreen() {
         <Pressable
           onPress={next}
           accessibilityRole="button"
-          disabled={!canNext}
+          disabled={!canNext || submitting}
           style={{
             flex: 2,
             paddingVertical: 15,
             borderRadius: 14,
             backgroundColor: t.palette.accent,
             alignItems: 'center',
-            opacity: canNext ? 1 : 0.5,
+            opacity: canNext && !submitting ? 1 : 0.5,
           }}
         >
           <Text
@@ -297,7 +329,11 @@ export default function AddSpotScreen() {
               color: t.palette.on.accent,
             }}
           >
-            {step === 'Review' ? 'Submit' : `Next: ${STEPS[stepIdx + 1]} →`}
+            {step === 'Review'
+              ? submitting
+                ? 'Submitting…'
+                : 'Submit'
+              : `Next: ${STEPS[stepIdx + 1]} →`}
           </Text>
         </Pressable>
       </View>
