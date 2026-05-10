@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Slider } from '@/components/Slider';
+import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { Difficulty, WaterType } from '@/data/types';
 import { pickImage } from '@/lib/pickImage';
@@ -66,6 +67,7 @@ export default function AddSpotScreen() {
   const [waterType, setWaterType] = useState<WaterType>('lake');
   const [photos, setPhotos] = useState<string[]>([]);
   const addSpot = useSpotsStore((s) => s.addSpot);
+  const toggleSaved = useSavedSpotsStore((s) => s.toggleSaved);
 
   const step = STEPS[stepIdx]!;
   const canNext =
@@ -89,6 +91,7 @@ export default function AddSpotScreen() {
         description: description.trim(),
         waterType,
       });
+      toggleSaved(created.id);
       router.replace(`/spot/${created.id}`);
       return;
     }
@@ -328,7 +331,7 @@ function LocationStep({
         </Text>
       </View>
       <Pressable
-        onPress={() => onChange({ lat: 49.7016, lng: -123.1558 })}
+        onPress={() => onChange({ lat: 9.9333, lng: -84.0833 })}
         style={{
           height: 280,
           borderRadius: 14,

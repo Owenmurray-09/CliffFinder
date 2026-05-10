@@ -42,9 +42,11 @@ export const LOG_ENTRIES: ReadonlyArray<LogEntry> = [
   },
 ];
 
-/** Spots the user has saved, with the date they saved them. */
+/** Spots the user has saved, with the date they saved them.
+ *  Mirrors the spots that have category 'saved' so the yellow pins on the
+ *  map align with what shows up in Logbook → Saved on first run. */
 export const SAVED_SPOTS: ReadonlyArray<SavedSpot> = [
-  { spotId: 'mossy', savedAt: '2026-04-22' },
+  { spotId: 'hidden', savedAt: '2026-04-22' },
   { spotId: 'vista', savedAt: '2026-03-30' },
 ];
 

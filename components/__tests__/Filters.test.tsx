@@ -49,7 +49,7 @@ describe('passesFilters', () => {
   });
 
   test('favoritesOnly includes only saved spots', () => {
-    const saved = SPOTS.find((s) => s.id === 'mossy')!; // in SAVED_SPOTS
+    const saved = SPOTS.find((s) => s.id === 'hidden')!; // in SAVED_SPOTS
     const notSaved = SPOTS.find((s) => s.id === 'eagle')!; // not in SAVED_SPOTS
     const f: FilterValues = { ...EMPTY_FILTERS, favoritesOnly: true };
     expect(passesFilters(saved, f)).toBe(true);

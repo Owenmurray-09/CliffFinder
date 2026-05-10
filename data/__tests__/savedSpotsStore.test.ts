@@ -8,7 +8,7 @@ describe('savedSpotsStore', () => {
   test('seeds from SAVED_SPOTS', () => {
     const { saved, isSaved } = useSavedSpotsStore.getState();
     expect(saved.length).toBeGreaterThan(0);
-    expect(isSaved('mossy')).toBe(true);
+    expect(isSaved('hidden')).toBe(true);
     expect(isSaved('eagle')).toBe(false);
   });
 
@@ -24,17 +24,17 @@ describe('savedSpotsStore', () => {
   });
 
   test('toggleSaved removes a saved spot', () => {
-    useSavedSpotsStore.getState().toggleSaved('mossy');
-    expect(useSavedSpotsStore.getState().isSaved('mossy')).toBe(false);
+    useSavedSpotsStore.getState().toggleSaved('hidden');
+    expect(useSavedSpotsStore.getState().isSaved('hidden')).toBe(false);
   });
 
   test('reset restores seeded state', () => {
     useSavedSpotsStore.getState().toggleSaved('eagle');
-    useSavedSpotsStore.getState().toggleSaved('mossy');
+    useSavedSpotsStore.getState().toggleSaved('hidden');
     useSavedSpotsStore.getState().reset();
 
     const { isSaved } = useSavedSpotsStore.getState();
     expect(isSaved('eagle')).toBe(false);
-    expect(isSaved('mossy')).toBe(true);
+    expect(isSaved('hidden')).toBe(true);
   });
 });
