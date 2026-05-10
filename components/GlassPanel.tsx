@@ -51,12 +51,18 @@ export function GlassPanel({
       <BlurView
         intensity={intensity}
         tint={t.dark ? 'dark' : 'light'}
+        // z-index: -1 keeps the blur behind static children (icons, text)
+        // but above the wrapper's backgroundColor — without this on web,
+        // RN's BlurView (rendered as an absolutely-positioned div) paints
+        // ON TOP of static children, washing them out (especially dark
+        // icons in light mode).
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
           top: 0,
           bottom: 0,
+          zIndex: -1,
         }}
       />
       {children}
