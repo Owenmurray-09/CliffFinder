@@ -889,6 +889,30 @@ Token corrections:
 
 **Out of scope**: distance-from-me slider (no real geolocation in mock); depth slider (deferred).
 
+---
+
+## Feature: Spot Details (loop 25)
+
+**Loop status**: complete
+
+**Files**:
+- `app/spot/[id].tsx` — dynamic route for any spot
+- `app/(tabs)/index.tsx` — Map's "View details" navigates here
+
+**Acceptance criteria**:
+- [ ] Hero PhotoCarousel (full-bleed, ~280 tall) at top
+- [ ] Back button (top-left, lucide ChevronLeft) over the hero
+- [ ] Save heart button (top-right, lucide Heart) — toggle in local state
+- [ ] Title (Poppins 700/24) + area (Inter / 14, ink3)
+- [ ] Inline read-only star + rating + (count) below title
+- [ ] 3 StatBoxes (Height / Depth / Water)
+- [ ] Description in body text
+- [ ] SegmentedControl (Photos / Reviews / Map) with section content (Photos = thumbnails, Reviews = stub, Map = lat/lng)
+- [ ] Sticky "Log a jump" Button at bottom (above safe area)
+- [ ] No hard-coded colors
+
+**Out of scope**: review composition (real comments deferred); pinch-zoom; share.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

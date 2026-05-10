@@ -64,7 +64,7 @@ export function PhotoCarousel({
           renderItem={({ item }) => (
             <Image
               source={{ uri: item }}
-              style={{ width, height: '100%' }}
+              style={{ width, height }}
               resizeMode="cover"
             />
           )}

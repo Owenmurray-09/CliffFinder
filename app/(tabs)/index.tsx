@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { SlidersHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import {
@@ -39,6 +40,7 @@ const FILTERS: ReadonlyArray<{ key: SpotCategory; label: string }> = [
 
 export default function MapScreen() {
   const t = useTheme();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [activeFilters, setActiveFilters] = useState<Set<SpotCategory>>(new Set());
   const [search, setSearch] = useState('');
@@ -175,7 +177,16 @@ export default function MapScreen() {
       </View>
 
       <Sheet visible={selectedSpot !== null} onClose={() => setSelectedSpot(null)}>
-        {selectedSpot ? <SpotPreview spot={selectedSpot} /> : null}
+        {selectedSpot ? (
+          <SpotPreview
+            spot={selectedSpot}
+            onViewDetails={() => {
+              const id = selectedSpot.id;
+              setSelectedSpot(null);
+              router.push(`/spot/${id}`);
+            }}
+          />
+        ) : null}
       </Sheet>
 
       <Filters
@@ -218,7 +229,7 @@ function Legend() {
   );
 }
 
-function SpotPreview({ spot }: { spot: Spot }) {
+function SpotPreview({ spot, onViewDetails }: { spot: Spot; onViewDetails: () => void }) {
   const t = useTheme();
   return (
     <View style={{ padding: 20, gap: 14 }}>
@@ -236,7 +247,7 @@ function SpotPreview({ spot }: { spot: Spot }) {
         <StatBox value={`${spot.depth_m}m`} label="Depth" />
         <StatBox value={spot.waterType} label="Water" />
       </View>
-      <Button label="View details" variant="primary" onPress={() => {}} />
+      <Button label="View details" variant="primary" onPress={onViewDetails} />
     </View>
   );
 }
