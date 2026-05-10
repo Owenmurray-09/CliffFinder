@@ -19,6 +19,8 @@ export type ButtonProps = {
   disabled?: boolean;
   icon?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  /** Override label typography. Used by sign-in screen for heavier weight. */
+  textStyle?: StyleProp<TextStyle>;
   testID?: string;
 };
 
@@ -36,6 +38,7 @@ export function Button({
   disabled = false,
   icon,
   style,
+  textStyle,
   testID,
 }: ButtonProps) {
   const t = useTheme();
@@ -115,7 +118,7 @@ export function Button({
       ) : (
         <>
           {icon}
-          <Text style={labelStyle}>{label}</Text>
+          <Text style={[labelStyle, textStyle]}>{label}</Text>
         </>
       )}
     </Pressable>

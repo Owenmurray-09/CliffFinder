@@ -24,6 +24,8 @@ export type FieldProps = {
   returnKeyType?: TextInputProps['returnKeyType'];
   onSubmitEditing?: TextInputProps['onSubmitEditing'];
   blurOnSubmit?: TextInputProps['blurOnSubmit'];
+  /** Optional element rendered to the right of the input (e.g. SHOW/HIDE toggle). */
+  rightAdornment?: React.ReactNode;
   testID?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -42,6 +44,7 @@ export function Field({
   returnKeyType,
   onSubmitEditing,
   blurOnSubmit,
+  rightAdornment,
   testID,
   style,
 }: FieldProps) {
@@ -64,36 +67,49 @@ export function Field({
     width: '100%',
   };
 
+  const labelAndInput = (
+    <>
+      <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>{label}</Text>
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor={t.palette.ink3}
+        secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
+        autoComplete={autoComplete}
+        autoCorrect={autoCorrect}
+        returnKeyType={returnKeyType}
+        onSubmitEditing={onSubmitEditing}
+        blurOnSubmit={blurOnSubmit}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        accessibilityLabel={label}
+        accessibilityHint={error}
+        style={[
+          t.typography.input,
+          {
+            color: t.palette.ink,
+            marginTop: 4,
+            padding: 0,
+          },
+        ]}
+      />
+    </>
+  );
+
   return (
     <View style={style}>
       <View testID={testID} style={fieldStyle}>
-        <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>{label}</Text>
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={t.palette.ink3}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
-          autoCapitalize={autoCapitalize}
-          autoComplete={autoComplete}
-          autoCorrect={autoCorrect}
-          returnKeyType={returnKeyType}
-          onSubmitEditing={onSubmitEditing}
-          blurOnSubmit={blurOnSubmit}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          accessibilityLabel={label}
-          accessibilityHint={error}
-          style={[
-            t.typography.input,
-            {
-              color: t.palette.ink,
-              marginTop: 4,
-              padding: 0,
-            },
-          ]}
-        />
+        {rightAdornment ? (
+          <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+            <View style={{ flex: 1, minWidth: 0 }}>{labelAndInput}</View>
+            {rightAdornment}
+          </View>
+        ) : (
+          labelAndInput
+        )}
       </View>
       {error ? (
         <Text
