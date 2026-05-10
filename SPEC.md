@@ -741,6 +741,63 @@ Token corrections:
 
 **Native-only verification deferred to simulator**: gesture smoothness, spring physics on flick-to-dismiss, and gesture-handler / reanimated worklet behavior on iOS/Android.
 
+---
+
+## Feature: Mock data (loop 20)
+
+**Loop status**: complete
+
+**Files**:
+- `data/types.ts` — Spot, User, Friend, LogEntry, RadarItem, Difficulty, SpotCategory, WaterType
+- `data/spots.ts` — 5 spots from `Map.html:2248` SPOTS array (Eagle Cliff, Hidden Quarry, Riverside Bridge, Mossy Falls, Vista Point); `getSpotById` helper
+- `data/user.ts` — current user (Alex Murray @alexjumps, 47 jumps)
+- `data/friends.ts` — 5 friends + a 5-item RADAR_FEED (jumps, spot_added, follow); `getFriendById` helper
+- `data/logEntries.ts` — 3 mock LOG_ENTRIES + SAVED_SPOT_IDS list
+- `data/__tests__/data.test.ts` — 21 validation tests
+
+**Acceptance criteria**:
+- [x] Spot schema matches HANDOFF "Spot data schema" verbatim
+- [x] All 5 design-source spots represented with sane lat/lng
+- [x] Categories cover all 3 (trending/saved/friends); difficulties cover all 3
+- [x] Photo URLs reachable (Unsplash, flagged as launch-blocker per design)
+- [x] Friend ids unique; handles start with `@`
+- [x] RADAR_FEED items reference real friends + spots; sorted most-recent first
+- [x] LOG_ENTRIES reference real spots; sorted most-recent first
+- [x] SAVED_SPOT_IDS reference real spots
+- [x] All data is `ReadonlyArray` so the tree-shaken bundle is immutable
+
+**Out of scope**: real backend, mutation helpers (Zustand stores will wrap mutations as screens land).
+
+---
+
+## Feature: Navigation shell (loop 21)
+
+**Loop status**: complete
+
+**Files**:
+- `app/(tabs)/_layout.tsx` — Expo Router Tabs with custom tab bar
+- `app/(tabs)/index.tsx` — Map screen (placeholder; absorbs the existing debug surface for now)
+- `app/(tabs)/logbook.tsx` — Logbook screen stub
+- `app/(tabs)/radar.tsx` — Radar screen stub
+- `app/(tabs)/profile.tsx` — Profile screen stub
+- `components/TabBar.tsx` — custom glass tab bar with 4 tabs + center FAB cutout
+
+**Design source**:
+- HANDOFF "Map UI layout" → "Tab bar: 64px tall, glass, 24 corner radius, 12px inset from edges, bottom: 24"
+- `Components.html:123` `.tabbar{...border-radius:22px}` (design HTML uses 22; following design)
+- HANDOFF "Component variant matrix" → "FAB: 54×54, accent fill, marginTop: -22 to float above tab bar"
+
+**Acceptance criteria**:
+- [ ] 4 tabs: Map (index), Logbook, Radar, Profile
+- [ ] Custom tab bar: GlassPanel-wrapped, 64 tall, radius 22 (`radius.tabBar`), 12px horizontal insets, bottom 24
+- [ ] Each tab: lucide icon (Map / BookOpen / Radar / User) + Poppins 600/11 nav label, ink2 inactive / accent active
+- [ ] Center FAB at -22 marginTop, opens Add Spot (stubbed for now)
+- [ ] Active tab indicator: icon + label colored with `palette.accent`
+- [ ] Pressing a tab routes to that screen
+- [ ] No hard-coded colors
+
+**Out of scope this loop**: real screen content (placeholders only — actual screens land in subsequent loops).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
