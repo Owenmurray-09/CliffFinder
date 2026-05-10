@@ -89,11 +89,13 @@ export function buildHtml(spots: ReadonlyArray<Spot>): string {
     color: PIN_COLORS[s.category],
     saved: s.category === 'saved',
   }));
-  // BC area fits all 5 spots — frame around the centroid with reasonable zoom.
+  // Center on the spot centroid; if there are no spots yet (fresh user),
+  // fall back to HOME_POINT (San José, Costa Rica) so the map opens
+  // somewhere meaningful instead of the equator or — worse — leftover BC.
   const lats = spots.map((s) => s.lat);
   const lngs = spots.map((s) => s.lng);
-  const cLat = lats.length ? (Math.min(...lats) + Math.max(...lats)) / 2 : 49.5;
-  const cLng = lngs.length ? (Math.min(...lngs) + Math.max(...lngs)) / 2 : -123.1;
+  const cLat = lats.length ? (Math.min(...lats) + Math.max(...lats)) / 2 : 9.9333;
+  const cLng = lngs.length ? (Math.min(...lngs) + Math.max(...lngs)) / 2 : -84.0833;
 
   return `<!DOCTYPE html>
 <html lang="en">

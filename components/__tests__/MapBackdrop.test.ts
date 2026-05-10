@@ -69,10 +69,9 @@ describe('buildHtml — Leaflet iframe srcDoc', () => {
     expect(html).toContain('setView([50, -123]');
   });
 
-  test('falls back to a sensible default when given no spots', () => {
+  test('falls back to HOME_POINT (San José, CR) when given no spots', () => {
     const html = buildHtml([]);
-    // Default 49.5, -123.1
-    expect(html).toContain('setView([49.5, -123.1]');
+    expect(html).toContain('setView([9.9333, -84.0833]');
   });
 
   test('emits postMessage on marker click with the spot id', () => {
