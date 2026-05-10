@@ -19,7 +19,7 @@ import { Sheet } from '@/components/Sheet';
 import { StatBox } from '@/components/StatBox';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
-import { SPOTS } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import type { Spot, SpotCategory } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
 
@@ -40,10 +40,11 @@ export default function MapScreen() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const savedList = useSavedSpotsStore((s) => s.saved);
   const logEntries = useLogEntriesStore((s) => s.entries);
+  const allSpots = useSpotsStore((s) => s.spots);
   const savedIds = useMemo(() => new Set(savedList.map((x) => x.spotId)), [savedList]);
   const jumpedIds = useMemo(() => new Set(logEntries.map((e) => e.spotId)), [logEntries]);
 
-  const visibleSpots = SPOTS.filter((s) => {
+  const visibleSpots = allSpots.filter((s) => {
     const inFilter = activeFilters.size === 0 || activeFilters.has(s.category);
     const inSearch =
       search.length === 0 || s.name.toLowerCase().includes(search.toLowerCase());

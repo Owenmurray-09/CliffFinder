@@ -5,7 +5,7 @@ import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
-import { getSpotById } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import { CURRENT_USER } from '@/data/user';
 import { useTheme } from '@/theme/useTheme';
 
@@ -32,6 +32,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const recent = useLogEntriesStore((s) => s.entries.slice(0, 2));
+  const getSpotById = useSpotsStore((s) => s.getById);
 
   return (
     <ScrollView

@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Slider } from '@/components/Slider';
+import { useSpotsStore } from '@/data/spotsStore';
 import type { Difficulty, WaterType } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
 
@@ -63,6 +64,7 @@ export default function AddSpotScreen() {
   const [access, setAccess] = useState<Difficulty | 'expert'>('intermediate');
   const [waterType, setWaterType] = useState<WaterType>('lake');
   const [photos, setPhotos] = useState<string[]>([]);
+  const addSpot = useSpotsStore((s) => s.addSpot);
 
   const step = STEPS[stepIdx]!;
   const canNext =
@@ -74,10 +76,19 @@ export default function AddSpotScreen() {
 
   const next = () => {
     if (step === 'Review') {
-      // Real persistence lands in Loop 46.
-      // eslint-disable-next-line no-console
-      console.log('spot submitted', { name, location, height, depth, access, waterType, description, photos: photos.length });
-      router.replace('/');
+      const created = addSpot({
+        name: name.trim(),
+        area: '',
+        lat: location?.lat ?? 0,
+        lng: location?.lng ?? 0,
+        height_m: height,
+        depth_m: depth,
+        difficulty: access === 'expert' ? 'advanced' : access,
+        photos,
+        description: description.trim(),
+        waterType,
+      });
+      router.replace(`/spot/${created.id}`);
       return;
     }
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));

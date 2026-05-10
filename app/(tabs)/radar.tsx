@@ -4,7 +4,7 @@ import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { getFriendById, RADAR_FEED } from '@/data/friends';
-import { getSpotById, SPOTS } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import type { RadarItem, Spot } from '@/data/types';
 import { distanceKm, formatDistance, HOME_POINT } from '@/map/projection';
 import { useTheme } from '@/theme/useTheme';
@@ -20,9 +20,10 @@ const SECTION_LABEL: TextStyle = {
 export default function RadarScreen() {
   const t = useTheme();
   const insets = useSafeAreaInsets();
+  const allSpots = useSpotsStore((s) => s.spots);
 
-  const trending = SPOTS.filter((s) => s.category === 'trending').slice(0, 2);
-  const near = [...SPOTS]
+  const trending = allSpots.filter((s) => s.category === 'trending').slice(0, 2);
+  const near = [...allSpots]
     .map((s) => ({ s, km: distanceKm(HOME_POINT, s) }))
     .sort((a, b) => a.km - b.km)
     .slice(0, 3);
@@ -295,6 +296,7 @@ function NearRow({ spot, dist }: { spot: Spot; dist: string }) {
 function ActivityRow({ item, last }: { item: RadarItem; last: boolean }) {
   const t = useTheme();
   const router = useRouter();
+  const getSpotById = useSpotsStore((s) => s.getById);
   const friend = getFriendById(item.friendId);
   if (!friend) return null;
 

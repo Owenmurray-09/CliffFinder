@@ -31,7 +31,7 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { StarRow } from '@/components/StarRow';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
-import { getSpotById } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import type { Spot } from '@/data/types';
 import { openDirections } from '@/map/directions';
 import { distanceKm, formatDistance, HOME_POINT } from '@/map/projection';
@@ -69,7 +69,7 @@ export default function SpotDetailsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id: string }>();
-  const spot = getSpotById(params.id);
+  const spot = useSpotsStore((s) => s.getById(params.id));
   const saved = useSavedSpotsStore((s) => (spot ? s.isSaved(spot.id) : false));
   const toggleSaved = useSavedSpotsStore((s) => s.toggleSaved);
   const [photoIdx, setPhotoIdx] = useState(0);

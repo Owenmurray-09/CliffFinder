@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
-import { getSpotById } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import type { LogEntry, SavedSpot, Spot } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
 
@@ -32,6 +32,7 @@ export default function LogbookScreen() {
   const [tab, setTab] = useState<Tab>('visited');
   const savedSpots = useSavedSpotsStore((s) => s.saved);
   const logEntries = useLogEntriesStore((s) => s.entries);
+  const getSpotById = useSpotsStore((s) => s.getById);
 
   return (
     <ScrollView

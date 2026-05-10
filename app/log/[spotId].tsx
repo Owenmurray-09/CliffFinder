@@ -17,7 +17,7 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { Slider } from '@/components/Slider';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
-import { getSpotById } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import { useTheme } from '@/theme/useTheme';
 
 const TINY: TextStyle = {
@@ -41,7 +41,7 @@ export default function LogEntryScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ spotId: string }>();
-  const spot = getSpotById(params.spotId);
+  const spot = useSpotsStore((s) => s.getById(params.spotId));
   const addEntry = useLogEntriesStore((s) => s.addEntry);
 
   const [rating, setRating] = useState(4);

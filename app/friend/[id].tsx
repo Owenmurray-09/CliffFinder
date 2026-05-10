@@ -8,7 +8,7 @@ import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { getFriendById } from '@/data/friends';
-import { getSpotById, SPOTS } from '@/data/spots';
+import { useSpotsStore } from '@/data/spotsStore';
 import { useTheme } from '@/theme/useTheme';
 
 const COVER_URI =
@@ -70,6 +70,8 @@ export default function FriendProfileScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id: string }>();
   const friend = getFriendById(params.id);
+  const allSpots = useSpotsStore((s) => s.spots);
+  const getSpotById = useSpotsStore((s) => s.getById);
   const [following, setFollowing] = useState(true);
 
   if (!friend) {
@@ -92,7 +94,7 @@ export default function FriendProfileScreen() {
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
   const ach = stats.achievements.length
     ? stats.achievements
-    : SPOTS.length > 0
+    : allSpots.length > 0
       ? ['🏔', '🎯', '🌊', '🌎']
       : [];
 
