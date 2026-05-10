@@ -1,11 +1,10 @@
 import {
   EMAIL_RE,
   MIN_PASSWORD_LENGTH,
-  useAuthStore,
   validateForgot,
   validateSignin,
   validateSignup,
-} from '../store';
+} from '../validation';
 
 describe('EMAIL_RE', () => {
   test.each([
@@ -72,38 +71,5 @@ describe('validateForgot', () => {
   });
   test('invalid email → email_invalid', () => {
     expect(validateForgot('not-an-email')).toBe('email_invalid');
-  });
-});
-
-describe('useAuthStore', () => {
-  beforeEach(() => {
-    useAuthStore.setState({ isAuthenticated: false, hasGrantedLocation: false });
-  });
-
-  test('default state', () => {
-    expect(useAuthStore.getState().isAuthenticated).toBe(false);
-    expect(useAuthStore.getState().hasGrantedLocation).toBe(false);
-  });
-
-  test('signIn flips isAuthenticated', () => {
-    useAuthStore.getState().signIn();
-    expect(useAuthStore.getState().isAuthenticated).toBe(true);
-  });
-
-  test('signOut resets both flags', () => {
-    useAuthStore.setState({ isAuthenticated: true, hasGrantedLocation: true });
-    useAuthStore.getState().signOut();
-    expect(useAuthStore.getState().isAuthenticated).toBe(false);
-    expect(useAuthStore.getState().hasGrantedLocation).toBe(false);
-  });
-
-  test('grantLocation flips hasGrantedLocation', () => {
-    useAuthStore.getState().grantLocation();
-    expect(useAuthStore.getState().hasGrantedLocation).toBe(true);
-  });
-
-  test('declineLocation marks the prompt as resolved', () => {
-    useAuthStore.getState().declineLocation();
-    expect(useAuthStore.getState().hasGrantedLocation).toBe(true);
   });
 });

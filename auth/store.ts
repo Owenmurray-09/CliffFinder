@@ -1,67 +1,82 @@
+import type { Session } from '@supabase/supabase-js';
 import { create } from 'zustand';
+import { supabase } from '@/lib/supabase';
 
 type AuthStore = {
+  session: Session | null;
   isAuthenticated: boolean;
   hasGrantedLocation: boolean;
-  signIn: () => void;
-  signOut: () => void;
+  /** True once we've checked for an existing session on app boot. */
+  bootstrapped: boolean;
+  signInWithPassword: (email: string, password: string) => Promise<string | null>;
+  signUpWithPassword: (
+    email: string,
+    password: string,
+    name?: string,
+  ) => Promise<{ error: string | null; needsConfirmation: boolean }>;
+  signOut: () => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<string | null>;
   grantLocation: () => void;
   declineLocation: () => void;
 };
 
 export const useAuthStore = create<AuthStore>((set) => ({
+  session: null,
   isAuthenticated: false,
   hasGrantedLocation: false,
-  signIn: () => set({ isAuthenticated: true }),
-  signOut: () => set({ isAuthenticated: false, hasGrantedLocation: false }),
+  bootstrapped: false,
+
+  signInWithPassword: async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return error?.message ?? null;
+  },
+
+  signUpWithPassword: async (email, password, name) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: name ? { data: { name } } : undefined,
+    });
+    if (error) return { error: error.message, needsConfirmation: false };
+    return { error: null, needsConfirmation: !data.session };
+  },
+
+  signOut: async () => {
+    await supabase.auth.signOut();
+    set({ hasGrantedLocation: false });
+  },
+
+  sendPasswordReset: async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    return error?.message ?? null;
+  },
+
   grantLocation: () => set({ hasGrantedLocation: true }),
-  declineLocation: () => set({ hasGrantedLocation: true }), // sentinel: prompted
+  declineLocation: () => set({ hasGrantedLocation: true }),
 }));
 
-// Email regex per HANDOFF "Sign-in flow" — adequate for client-side validation.
-export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const MIN_PASSWORD_LENGTH = 6;
+// Restore an existing session on app boot, then keep the store in sync with
+// any later auth events (sign-in, sign-out, token refresh, password reset).
+supabase.auth.getSession().then(({ data }) => {
+  useAuthStore.setState({
+    session: data.session,
+    isAuthenticated: !!data.session,
+    bootstrapped: true,
+  });
+});
+supabase.auth.onAuthStateChange((_event, session) => {
+  useAuthStore.setState({
+    session,
+    isAuthenticated: !!session,
+  });
+});
 
-export type SigninError =
-  | 'email_required'
-  | 'email_invalid'
-  | 'password_required'
-  | 'password_too_short'
-  | 'name_required'
-  | 'confirm_mismatch';
-
-export const ERROR_MESSAGES: Record<SigninError, string> = {
-  email_required: 'Enter your email.',
-  email_invalid: 'Enter a valid email.',
-  password_required: 'Enter your password.',
-  password_too_short: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
-  name_required: 'Enter your name.',
-  confirm_mismatch: 'Passwords do not match.',
-};
-
-export const validateSignin = (email: string, password: string): SigninError | null => {
-  if (!email) return 'email_required';
-  if (!EMAIL_RE.test(email)) return 'email_invalid';
-  if (!password) return 'password_required';
-  if (password.length < MIN_PASSWORD_LENGTH) return 'password_too_short';
-  return null;
-};
-
-export const validateSignup = (
-  name: string,
-  email: string,
-  password: string,
-  confirm: string,
-): SigninError | null => {
-  if (!name.trim()) return 'name_required';
-  const base = validateSignin(email, password);
-  if (base) return base;
-  if (password !== confirm) return 'confirm_mismatch';
-  return null;
-};
-
-export const validateForgot = (email: string): SigninError | null => {
-  if (!email) return 'email_required';
-  if (!EMAIL_RE.test(email)) return 'email_invalid';
-  return null;
-};
+export {
+  EMAIL_RE,
+  ERROR_MESSAGES,
+  MIN_PASSWORD_LENGTH,
+  type SigninError,
+  validateForgot,
+  validateSignin,
+  validateSignup,
+} from './validation';

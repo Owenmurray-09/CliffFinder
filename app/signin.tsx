@@ -26,7 +26,6 @@ import { useTheme } from '@/theme/useTheme';
 
 const HERO_URI =
   'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1400&q=80';
-const BUSY_MS = 700;
 const HERO_HEIGHT = 280;
 
 type AuthView = 'signin' | 'signup' | 'forgot' | 'sent' | 'done' | 'location';
@@ -58,11 +57,14 @@ const HEADLINE_STYLE: TextStyle = {
 export default function SigninScreen() {
   const t = useTheme();
   const router = useRouter();
-  const signIn = useAuthStore((s) => s.signIn);
+  const signInWithPassword = useAuthStore((s) => s.signInWithPassword);
+  const signUpWithPassword = useAuthStore((s) => s.signUpWithPassword);
+  const sendPasswordReset = useAuthStore((s) => s.sendPasswordReset);
   const grantLocation = useAuthStore((s) => s.grantLocation);
   const declineLocation = useAuthStore((s) => s.declineLocation);
 
   const [view, setView] = useState<AuthView>('signin');
+  const [sentReason, setSentReason] = useState<'reset' | 'confirm'>('reset');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -70,40 +72,65 @@ export default function SigninScreen() {
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<SigninError | null>(null);
+  const [serverErr, setServerErr] = useState<string | null>(null);
 
-  const errMsg = err ? ERROR_MESSAGES[err] : undefined;
+  const errMsg = serverErr ?? (err ? ERROR_MESSAGES[err] : undefined);
 
-  const submitWithDelay = (next: AuthView) => {
-    setBusy(true);
-    setTimeout(() => {
-      setBusy(false);
-      setView(next);
-    }, BUSY_MS);
-  };
-
-  const doSignin = () => {
+  const doSignin = async () => {
+    setServerErr(null);
     const e = validateSignin(email, password);
     setErr(e);
     if (e) return;
-    submitWithDelay('done');
+    setBusy(true);
+    const message = await signInWithPassword(email, password);
+    setBusy(false);
+    if (message) {
+      setServerErr(message);
+      return;
+    }
+    setView('done');
   };
 
-  const doSignup = () => {
+  const doSignup = async () => {
+    setServerErr(null);
     const e = validateSignup(name, email, password, confirm);
     setErr(e);
     if (e) return;
-    submitWithDelay('done');
+    setBusy(true);
+    const result = await signUpWithPassword(email, password, name.trim());
+    setBusy(false);
+    if (result.error) {
+      setServerErr(result.error);
+      return;
+    }
+    if (result.needsConfirmation) {
+      setServerErr(null);
+      setSentReason('confirm');
+      setView('sent');
+      return;
+    }
+    setView('done');
   };
 
-  const doForgot = () => {
+  const doForgot = async () => {
+    setServerErr(null);
     const e = validateForgot(email);
     setErr(e);
     if (e) return;
-    submitWithDelay('sent');
+    setBusy(true);
+    const message = await sendPasswordReset(email);
+    setBusy(false);
+    if (message) {
+      setServerErr(message);
+      return;
+    }
+    setSentReason('reset');
+    setView('sent');
   };
 
   const goTo = (next: AuthView) => () => {
     setErr(null);
+    setServerErr(null);
     setView(next);
   };
 
@@ -112,7 +139,6 @@ export default function SigninScreen() {
   const completeLocation = (granted: boolean) => () => {
     if (granted) grantLocation();
     else declineLocation();
-    signIn();
     router.replace('/');
   };
 
@@ -277,13 +303,17 @@ export default function SigninScreen() {
               title="Check your inbox"
               body={
                 <>
-                  We sent a reset link to{' '}
+                  We sent a {sentReason === 'confirm' ? 'confirmation' : 'reset'} link to{' '}
                   <Text style={{ fontWeight: '600', color: t.palette.ink }}>{email}</Text>. It
                   should arrive in a minute.
                 </>
               }
               primary={{ label: 'Back to sign in', onPress: goTo('signin') }}
-              secondary={{ label: 'Resend', onPress: doForgot }}
+              secondary={
+                sentReason === 'reset'
+                  ? { label: 'Resend', onPress: doForgot }
+                  : undefined
+              }
             />
           ) : null}
 

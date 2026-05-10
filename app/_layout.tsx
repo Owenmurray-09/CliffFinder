@@ -58,15 +58,17 @@ function AuthGate() {
   const router = useRouter();
   const segments = useSegments();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const bootstrapped = useAuthStore((s) => s.bootstrapped);
 
   useEffect(() => {
+    if (!bootstrapped) return;
     const inAuthRoute = segments[0] === 'signin';
     if (!isAuthenticated && !inAuthRoute) {
       router.replace('/signin');
     } else if (isAuthenticated && inAuthRoute) {
       router.replace('/');
     }
-  }, [isAuthenticated, segments, router]);
+  }, [bootstrapped, isAuthenticated, segments, router]);
 
   return null;
 }
