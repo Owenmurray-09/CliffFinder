@@ -173,8 +173,7 @@ export default function SpotDetailsScreen() {
         <Button
           label="Log a jump"
           variant="primary"
-          // Loop 26 lands /log/[id]; cast for now.
-          onPress={() => router.push(`/log/${spot.id}` as never)}
+          onPress={() => router.push(`/log/${spot.id}`)}
         />
       </View>
     </View>

@@ -913,6 +913,26 @@ Token corrections:
 
 **Out of scope**: review composition (real comments deferred); pinch-zoom; share.
 
+---
+
+## Feature: Log Entry (loop 26)
+
+**Loop status**: complete
+
+**Files**: `app/log/[spotId].tsx`
+
+**Acceptance criteria**:
+- [ ] Header: spot name + today's date
+- [ ] Height jumped slider (0..spot.height_m, default = spot height, integer step)
+- [ ] Water temp slider (-5..30°C, integer)
+- [ ] Interactive StarRow for rating
+- [ ] Notes multi-line TextInput (uses Field's chrome conceptually but with multiline)
+- [ ] Save button: navigates back (real persistence deferred)
+- [ ] Cancel link to dismiss
+- [ ] No hard-coded colors
+
+**Out of scope**: real persistence (commit to Zustand store) — defer; photo attach.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
