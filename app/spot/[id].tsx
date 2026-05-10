@@ -30,6 +30,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { StarRow } from '@/components/StarRow';
+import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { getSpotById } from '@/data/spots';
 import type { Spot } from '@/data/types';
 import { openDirections } from '@/map/directions';
@@ -69,7 +70,8 @@ export default function SpotDetailsScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id: string }>();
   const spot = getSpotById(params.id);
-  const [saved, setSaved] = useState(spot?.category === 'saved');
+  const saved = useSavedSpotsStore((s) => (spot ? s.isSaved(spot.id) : false));
+  const toggleSaved = useSavedSpotsStore((s) => s.toggleSaved);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [photoWidth, setPhotoWidth] = useState(0);
 
@@ -156,7 +158,7 @@ export default function SpotDetailsScreen() {
             </CircleButton>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               <CircleButton
-                onPress={() => setSaved((s) => !s)}
+                onPress={() => toggleSaved(spot.id)}
                 accessibilityLabel={saved ? 'Remove from saved' : 'Save spot'}
                 bg={saved ? t.palette.accent : 'rgba(255,255,255,0.92)'}
               >

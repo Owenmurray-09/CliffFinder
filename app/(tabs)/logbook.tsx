@@ -10,7 +10,8 @@ import { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
-import { LOG_ENTRIES, SAVED_SPOTS } from '@/data/logEntries';
+import { LOG_ENTRIES } from '@/data/logEntries';
+import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { getSpotById } from '@/data/spots';
 import type { LogEntry, SavedSpot, Spot } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
@@ -29,6 +30,7 @@ export default function LogbookScreen() {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<Tab>('visited');
+  const savedSpots = useSavedSpotsStore((s) => s.saved);
 
   return (
     <ScrollView
@@ -84,7 +86,7 @@ export default function LogbookScreen() {
         <SegmentedTabs
           tab={tab}
           onChange={setTab}
-          counts={{ visited: LOG_ENTRIES.length, saved: SAVED_SPOTS.length }}
+          counts={{ visited: LOG_ENTRIES.length, saved: savedSpots.length }}
         />
       </View>
 
@@ -107,14 +109,14 @@ export default function LogbookScreen() {
         ) : null}
 
         {tab === 'saved' ? (
-          SAVED_SPOTS.length === 0 ? (
+          savedSpots.length === 0 ? (
             <EmptyState
               icon={<Heart size={40} color={t.palette.ink3} strokeWidth={1.5} />}
               title="No saved spots"
               message="Tap the heart on any spot to save it for later."
             />
           ) : (
-            SAVED_SPOTS.map((s) => {
+            savedSpots.map((s) => {
               const spot = getSpotById(s.spotId);
               if (!spot) return null;
               return <SavedCard key={s.spotId} saved={s} spot={spot} />;

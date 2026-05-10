@@ -69,14 +69,18 @@ export function isFilterActive(f: FilterValues): boolean {
 const JUMPED_SPOT_IDS: ReadonlySet<string> = new Set(
   LOG_ENTRIES.map((e) => e.spotId),
 );
-const SAVED_SET: ReadonlySet<string> = new Set(SAVED_SPOT_IDS);
+const SEEDED_SAVED_SET: ReadonlySet<string> = new Set(SAVED_SPOT_IDS);
 
 /** Pure filter predicate — applied alongside category + search filters on Map. */
-export function passesFilters(spot: Spot, f: FilterValues): boolean {
+export function passesFilters(
+  spot: Spot,
+  f: FilterValues,
+  savedIds: ReadonlySet<string> = SEEDED_SAVED_SET,
+): boolean {
   if (spot.height_m > f.heightMax) return false;
   if (spot.depth_m > f.depthMax) return false;
   if (distanceKm(HOME_POINT, spot) > f.distanceMaxKm) return false;
-  if (f.favoritesOnly && !SAVED_SET.has(spot.id)) return false;
+  if (f.favoritesOnly && !savedIds.has(spot.id)) return false;
   if (f.hasMedia && spot.photos.length === 0) return false;
   if (f.hasBeenJumped && !JUMPED_SPOT_IDS.has(spot.id)) return false;
   if (spot.rating < f.minRating) return false;

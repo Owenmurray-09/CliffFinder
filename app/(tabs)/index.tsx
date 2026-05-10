@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { SlidersHorizontal } from 'lucide-react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
@@ -17,6 +17,7 @@ import { MapBackdrop } from '@/components/MapBackdrop';
 import { SearchBar } from '@/components/SearchBar';
 import { Sheet } from '@/components/Sheet';
 import { StatBox } from '@/components/StatBox';
+import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { SPOTS } from '@/data/spots';
 import type { Spot, SpotCategory } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
@@ -36,12 +37,14 @@ export default function MapScreen() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [filterValues, setFilterValues] = useState<FilterValues>(EMPTY_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const savedList = useSavedSpotsStore((s) => s.saved);
+  const savedIds = useMemo(() => new Set(savedList.map((x) => x.spotId)), [savedList]);
 
   const visibleSpots = SPOTS.filter((s) => {
     const inFilter = activeFilters.size === 0 || activeFilters.has(s.category);
     const inSearch =
       search.length === 0 || s.name.toLowerCase().includes(search.toLowerCase());
-    return inFilter && inSearch && passesFilters(s, filterValues);
+    return inFilter && inSearch && passesFilters(s, filterValues, savedIds);
   });
 
   const toggleFilter = (key: SpotCategory) => {
