@@ -17,6 +17,7 @@ import { MapBackdrop } from '@/components/MapBackdrop';
 import { SearchBar } from '@/components/SearchBar';
 import { Sheet } from '@/components/Sheet';
 import { StatBox } from '@/components/StatBox';
+import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { SPOTS } from '@/data/spots';
 import type { Spot, SpotCategory } from '@/data/types';
@@ -38,13 +39,15 @@ export default function MapScreen() {
   const [filterValues, setFilterValues] = useState<FilterValues>(EMPTY_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const savedList = useSavedSpotsStore((s) => s.saved);
+  const logEntries = useLogEntriesStore((s) => s.entries);
   const savedIds = useMemo(() => new Set(savedList.map((x) => x.spotId)), [savedList]);
+  const jumpedIds = useMemo(() => new Set(logEntries.map((e) => e.spotId)), [logEntries]);
 
   const visibleSpots = SPOTS.filter((s) => {
     const inFilter = activeFilters.size === 0 || activeFilters.has(s.category);
     const inSearch =
       search.length === 0 || s.name.toLowerCase().includes(search.toLowerCase());
-    return inFilter && inSearch && passesFilters(s, filterValues, savedIds);
+    return inFilter && inSearch && passesFilters(s, filterValues, savedIds, jumpedIds);
   });
 
   const toggleFilter = (key: SpotCategory) => {

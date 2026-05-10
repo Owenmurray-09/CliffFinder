@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
-import { LOG_ENTRIES } from '@/data/logEntries';
+import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { getSpotById } from '@/data/spots';
 import type { LogEntry, SavedSpot, Spot } from '@/data/types';
@@ -31,6 +31,7 @@ export default function LogbookScreen() {
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<Tab>('visited');
   const savedSpots = useSavedSpotsStore((s) => s.saved);
+  const logEntries = useLogEntriesStore((s) => s.entries);
 
   return (
     <ScrollView
@@ -86,21 +87,21 @@ export default function LogbookScreen() {
         <SegmentedTabs
           tab={tab}
           onChange={setTab}
-          counts={{ visited: LOG_ENTRIES.length, saved: savedSpots.length }}
+          counts={{ visited: logEntries.length, saved: savedSpots.length }}
         />
       </View>
 
       {/* CARD LIST */}
       <View style={{ paddingHorizontal: 22, paddingTop: 14, gap: 10 }}>
         {tab === 'visited' ? (
-          LOG_ENTRIES.length === 0 ? (
+          logEntries.length === 0 ? (
             <EmptyState
               icon={<BookOpen size={40} color={t.palette.ink3} strokeWidth={1.5} />}
               title="No jumps yet"
               message="Tap a spot on the map and log your first jump."
             />
           ) : (
-            LOG_ENTRIES.map((entry) => {
+            logEntries.map((entry) => {
               const spot = getSpotById(entry.spotId);
               if (!spot) return null;
               return <VisitedCard key={entry.id} entry={entry} spot={spot} />;

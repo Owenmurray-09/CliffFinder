@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { Slider } from '@/components/Slider';
+import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { getSpotById } from '@/data/spots';
 import { useTheme } from '@/theme/useTheme';
 
@@ -41,6 +42,7 @@ export default function LogEntryScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ spotId: string }>();
   const spot = getSpotById(params.spotId);
+  const addEntry = useLogEntriesStore((s) => s.addEntry);
 
   const [rating, setRating] = useState(4);
   const [tricks, setTricks] = useState<Set<string>>(new Set());
@@ -75,16 +77,13 @@ export default function LogEntryScreen() {
   };
 
   const handleSave = () => {
-    // Persistence lands in Loop 45.
-    // eslint-disable-next-line no-console
-    console.log('log saved', {
+    addEntry({
       spotId: spot.id,
+      heightJumped_m: height,
+      waterTemp_c: waterTemp,
       rating,
+      notes: notes.trim() || undefined,
       tricks: Array.from(tricks),
-      notes,
-      photos: photos.length,
-      height,
-      waterTemp,
     });
     router.back();
   };

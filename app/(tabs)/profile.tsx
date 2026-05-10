@@ -4,7 +4,7 @@ import { ChevronRight, Moon, Settings, Sun } from 'lucide-react-native';
 import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
-import { LOG_ENTRIES } from '@/data/logEntries';
+import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { getSpotById } from '@/data/spots';
 import { CURRENT_USER } from '@/data/user';
 import { useTheme } from '@/theme/useTheme';
@@ -31,7 +31,7 @@ export default function ProfileScreen() {
   const t = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const recent = LOG_ENTRIES.slice(0, 2);
+  const recent = useLogEntriesStore((s) => s.entries.slice(0, 2));
 
   return (
     <ScrollView

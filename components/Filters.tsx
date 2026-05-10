@@ -66,7 +66,7 @@ export function isFilterActive(f: FilterValues): boolean {
   );
 }
 
-const JUMPED_SPOT_IDS: ReadonlySet<string> = new Set(
+const SEEDED_JUMPED_SET: ReadonlySet<string> = new Set(
   LOG_ENTRIES.map((e) => e.spotId),
 );
 const SEEDED_SAVED_SET: ReadonlySet<string> = new Set(SAVED_SPOT_IDS);
@@ -76,13 +76,14 @@ export function passesFilters(
   spot: Spot,
   f: FilterValues,
   savedIds: ReadonlySet<string> = SEEDED_SAVED_SET,
+  jumpedIds: ReadonlySet<string> = SEEDED_JUMPED_SET,
 ): boolean {
   if (spot.height_m > f.heightMax) return false;
   if (spot.depth_m > f.depthMax) return false;
   if (distanceKm(HOME_POINT, spot) > f.distanceMaxKm) return false;
   if (f.favoritesOnly && !savedIds.has(spot.id)) return false;
   if (f.hasMedia && spot.photos.length === 0) return false;
-  if (f.hasBeenJumped && !JUMPED_SPOT_IDS.has(spot.id)) return false;
+  if (f.hasBeenJumped && !jumpedIds.has(spot.id)) return false;
   if (spot.rating < f.minRating) return false;
   if (f.exp !== 'any' && spot.difficulty !== f.exp) return false;
   return true;
