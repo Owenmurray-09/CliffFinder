@@ -1,13 +1,16 @@
 import { useRouter } from 'expo-router';
 import { Bell, ChevronLeft, ChevronRight, Moon } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { Toggle } from '@/components/Toggle';
 import { useAuthStore } from '@/auth/store';
+import { useProfileStore } from '@/data/profileStore';
+import { pickImage } from '@/lib/pickImage';
 import { safeBack } from '@/lib/safeBack';
 import { type Units, useUnitsStore } from '@/lib/units';
+import { uploadPhoto } from '@/lib/uploadPhoto';
 import { CURRENT_USER } from '@/data/user';
 import { ACCENT_KEYS, ACCENTS, type AccentKey } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
@@ -28,6 +31,29 @@ export default function SettingsScreen() {
   const [pushOn, setPushOn] = useState(true);
   const units = useUnitsStore((s) => s.units);
   const setUnits = useUnitsStore((s) => s.setUnits);
+  const avatarUrl = useProfileStore((s) => s.avatarUrl);
+  const coverUrl = useProfileStore((s) => s.coverUrl);
+  const setAvatar = useProfileStore((s) => s.setAvatar);
+  const setCover = useProfileStore((s) => s.setCover);
+  const session = useAuthStore((s) => s.session);
+  const [uploading, setUploading] = useState<'avatar' | 'cover' | null>(null);
+
+  const pickAndSet = async (kind: 'avatar' | 'cover') => {
+    if (uploading || !session) return;
+    const picked = await pickImage();
+    if (!picked) return;
+    setUploading(kind);
+    try {
+      const url = await uploadPhoto(picked.uri, session.user.id, kind);
+      if (kind === 'avatar') await setAvatar(url);
+      else await setCover(url);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('avatar/cover upload failed', e);
+    } finally {
+      setUploading(null);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: t.palette.paper }}>
@@ -78,15 +104,48 @@ export default function SettingsScreen() {
           <Row
             left={
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <Avatar name={CURRENT_USER.name} size={42} />
+                <Avatar name={CURRENT_USER.name} uri={avatarUrl ?? undefined} size={42} />
                 <View>
                   <Text style={[bodyMedium(t)]}>Profile picture</Text>
-                  <Text style={[subBody(t), { marginTop: 1 }]}>Tap to change</Text>
+                  <Text style={[subBody(t), { marginTop: 1 }]}>
+                    {uploading === 'avatar' ? 'Uploading…' : 'Tap to change'}
+                  </Text>
                 </View>
               </View>
             }
             right={<ChevronRight size={18} color={t.palette.ink3} />}
-            onPress={() => {}}
+            onPress={() => pickAndSet('avatar')}
+          />
+          <Row
+            left={
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    backgroundColor: t.palette.line2,
+                  }}
+                >
+                  {coverUrl ? (
+                    <Image
+                      source={{ uri: coverUrl }}
+                      style={{ width: '100%', height: '100%' }}
+                      resizeMode="cover"
+                    />
+                  ) : null}
+                </View>
+                <View>
+                  <Text style={[bodyMedium(t)]}>Cover photo</Text>
+                  <Text style={[subBody(t), { marginTop: 1 }]}>
+                    {uploading === 'cover' ? 'Uploading…' : 'Tap to change'}
+                  </Text>
+                </View>
+              </View>
+            }
+            right={<ChevronRight size={18} color={t.palette.ink3} />}
+            onPress={() => pickAndSet('cover')}
           />
           <FieldRow label="Username" value={CURRENT_USER.handle} />
           <FieldRow label="Display name" value={CURRENT_USER.name} />

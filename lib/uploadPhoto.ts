@@ -21,17 +21,21 @@ const randomKey = (): string => Math.random().toString(36).slice(2, 12);
  * Upload a local image (web blob URL or native file URI) to Supabase Storage
  * and return its public URL. Throws on upload error.
  *
- * The path is `<userId>/spots/<random>.<ext>` so the storage RLS policies
+ * The path is `<userId>/<folder>/<random>.<ext>` so the storage RLS policies
  * (which scope writes to a folder named after auth.uid()) accept the call.
- * Photos aren't tied to a specific spotId in storage — that association
- * lives in the `photos` array on the spots row.
+ * The folder argument lets the same bucket carry spot photos, avatars, and
+ * cover images side-by-side without overlapping.
  */
-export async function uploadPhoto(localUri: string, userId: string): Promise<string> {
+export async function uploadPhoto(
+  localUri: string,
+  userId: string,
+  folder: string = 'spots',
+): Promise<string> {
   const res = await fetch(localUri);
   if (!res.ok) throw new Error(`Failed to read local image: ${res.status}`);
   const blob = await res.blob();
   const ext = extFromMime(blob.type);
-  const path = `${userId}/spots/${Date.now()}-${randomKey()}.${ext}`;
+  const path = `${userId}/${folder}/${Date.now()}-${randomKey()}.${ext}`;
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, blob, {
     contentType: blob.type || 'image/jpeg',

@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { parseLocalDate } from '@/data/date';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
+import { useProfileStore } from '@/data/profileStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { formatMeters, useUnitsStore } from '@/lib/units';
 import { CURRENT_USER } from '@/data/user';
@@ -38,6 +39,8 @@ export default function ProfileScreen() {
   const units = useUnitsStore((s) => s.units);
   const spots = useSpotsStore((s) => s.spots);
   const getSpotById = (id: string) => spots.find((s) => s.id === id);
+  const avatarUrl = useProfileStore((s) => s.avatarUrl);
+  const coverUrl = useProfileStore((s) => s.coverUrl);
 
   return (
     <ScrollView
@@ -46,8 +49,13 @@ export default function ProfileScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* COVER */}
-      <View style={{ height: 200, position: 'relative', overflow: 'hidden' }}>
-        <Image source={{ uri: COVER_URI }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+      <Pressable
+        onPress={() => router.push('/settings')}
+        accessibilityRole="button"
+        accessibilityLabel="Edit cover photo"
+        style={{ height: 200, position: 'relative', overflow: 'hidden' }}
+      >
+        <Image source={{ uri: coverUrl ?? COVER_URI }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
         <LinearGradient
           colors={['rgba(0,0,0,0.05)', t.palette.paper]}
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
@@ -73,17 +81,23 @@ export default function ProfileScreen() {
             <Settings size={16} color="#FFFFFF" />
           </CoverButton>
         </View>
-      </View>
+      </Pressable>
 
       {/* AVATAR + IDENTITY */}
       <View style={{ paddingHorizontal: 22 }}>
-        <View style={{ marginTop: -50 }}>
+        <Pressable
+          onPress={() => router.push('/settings')}
+          accessibilityRole="button"
+          accessibilityLabel="Edit profile picture"
+          style={{ marginTop: -50, alignSelf: 'flex-start' }}
+        >
           <Avatar
             name={CURRENT_USER.name}
+            uri={avatarUrl ?? undefined}
             size={96}
             style={{ borderWidth: 4, borderColor: t.palette.paper }}
           />
-        </View>
+        </Pressable>
         <View style={{ marginTop: 12, gap: 2 }}>
           <Text
             style={{

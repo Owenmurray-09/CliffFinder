@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/auth/store';
 import { useLogEntriesStore } from './logEntriesStore';
+import { useProfileStore } from './profileStore';
 import { useSavedSpotsStore } from './savedSpotsStore';
 import { useSpotsStore } from './spotsStore';
 
@@ -18,9 +19,11 @@ useAuthStore.subscribe((state) => {
     useSpotsStore.getState().loadSpots();
     useSavedSpotsStore.getState().loadSavedSpots();
     useLogEntriesStore.getState().loadLogEntries();
+    useProfileStore.getState().loadProfile();
   } else {
     useSpotsStore.getState().clear();
     useSavedSpotsStore.getState().clear();
     useLogEntriesStore.getState().clear();
+    useProfileStore.getState().clear();
   }
 });
