@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { getFriendById } from '@/data/friends';
 import { useSpotsStore } from '@/data/spotsStore';
 import { safeBack } from '@/lib/safeBack';
+import { formatMeters, useUnitsStore } from '@/lib/units';
 import { useTheme } from '@/theme/useTheme';
 
 const COVER_URI =
@@ -73,6 +74,7 @@ export default function FriendProfileScreen() {
   const friend = getFriendById(params.id);
   const allSpots = useSpotsStore((s) => s.spots);
   const getSpotById = (id: string) => allSpots.find((s) => s.id === id);
+  const units = useUnitsStore((s) => s.units);
   const [following, setFollowing] = useState(true);
 
   if (!friend) {
@@ -170,7 +172,7 @@ export default function FriendProfileScreen() {
         <View style={{ paddingHorizontal: 22, paddingTop: 18, flexDirection: 'row', gap: 10 }}>
           <StatBox value={String(stats.jumps)} label="Total jumps" />
           <StatBox value={`${stats.airTime_s}s`} label="Air time" />
-          <StatBox value={`${stats.fallen_m}m`} label="Fallen" />
+          <StatBox value={formatMeters(stats.fallen_m, units)} label="Fallen" />
         </View>
 
         {/* ACHIEVEMENTS */}

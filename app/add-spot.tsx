@@ -24,6 +24,7 @@ import { LocationPicker } from '@/components/LocationPicker';
 import { Slider } from '@/components/Slider';
 import { useAuthStore } from '@/auth/store';
 import { safeBack } from '@/lib/safeBack';
+import { lengthUnitLabel, useUnitsStore } from '@/lib/units';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { Difficulty, WaterType } from '@/data/types';
@@ -412,6 +413,9 @@ function DetailsStep({
   setDepth: (n: number) => void;
 }) {
   const t = useTheme();
+  const units = useUnitsStore((s) => s.units);
+  const heightDisplay = units === 'imperial' ? Math.round(height * 3.28084) : height;
+  const depthDisplay = units === 'imperial' ? Math.round(depth * 3.28084) : depth;
   return (
     <View style={{ gap: 18 }}>
       <View>
@@ -475,8 +479,22 @@ function DetailsStep({
         />
       </CardField>
 
-      <SliderRow label="Jump height" value={height} max={30} unit="m" onChange={setHeight} />
-      <SliderRow label="Water depth" value={depth} max={15} unit="+ m" onChange={setDepth} />
+      <SliderRow
+        label="Jump height"
+        value={height}
+        max={30}
+        unit={lengthUnitLabel(units)}
+        displayValue={heightDisplay}
+        onChange={setHeight}
+      />
+      <SliderRow
+        label="Water depth"
+        value={depth}
+        max={15}
+        unit={`+ ${lengthUnitLabel(units)}`}
+        displayValue={depthDisplay}
+        onChange={setDepth}
+      />
     </View>
   );
 }
@@ -713,6 +731,10 @@ function ReviewStep({
   photoCount: number;
 }) {
   const t = useTheme();
+  const units = useUnitsStore((s) => s.units);
+  const heightDisplay = units === 'imperial' ? Math.round(height * 3.28084) : height;
+  const depthDisplay = units === 'imperial' ? Math.round(depth * 3.28084) : depth;
+  const unitLabel = lengthUnitLabel(units);
   return (
     <View style={{ gap: 14 }}>
       <View style={{ alignItems: 'center', gap: 12, paddingTop: 8 }}>
@@ -767,7 +789,7 @@ function ReviewStep({
           {name || '—'}
         </Text>
         <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.ink3 }}>
-          {height}m · {depth}+m depth · {waterType} · {access}
+          {heightDisplay}{unitLabel} · {depthDisplay}+{unitLabel} depth · {waterType} · {access}
         </Text>
         {description ? (
           <Text
@@ -819,12 +841,15 @@ function SliderRow({
   value,
   max,
   unit,
+  displayValue,
   onChange,
 }: {
   label: string;
   value: number;
   max: number;
   unit: string;
+  /** Optional override for the rendered number (e.g. converted to feet); falls back to `value`. */
+  displayValue?: number;
   onChange: (v: number) => void;
 }) {
   const t = useTheme();
@@ -849,7 +874,7 @@ function SliderRow({
             color: t.palette.accent,
           }}
         >
-          {value} {unit}
+          {displayValue ?? value} {unit}
         </Text>
       </View>
       <Slider value={value} onValueChange={onChange} min={0} max={max} />

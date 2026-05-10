@@ -33,9 +33,10 @@ import { StarRow } from '@/components/StarRow';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { safeBack } from '@/lib/safeBack';
+import { formatDepth, formatDistance, formatMeters, useUnitsStore } from '@/lib/units';
 import type { Spot } from '@/data/types';
 import { openDirections } from '@/map/directions';
-import { distanceKm, formatDistance, HOME_POINT } from '@/map/projection';
+import { distanceKm, HOME_POINT } from '@/map/projection';
 import { useTheme } from '@/theme/useTheme';
 
 const HERO_HEIGHT = 380;
@@ -73,6 +74,7 @@ export default function SpotDetailsScreen() {
   const spot = useSpotsStore((s) => s.getById(params.id));
   const saved = useSavedSpotsStore((s) => (spot ? s.isSaved(spot.id) : false));
   const toggleSaved = useSavedSpotsStore((s) => s.toggleSaved);
+  const units = useUnitsStore((s) => s.units);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [photoWidth, setPhotoWidth] = useState(0);
 
@@ -84,7 +86,7 @@ export default function SpotDetailsScreen() {
     );
   }
 
-  const distLabel = spot.distLabel ?? formatDistance(distanceKm(HOME_POINT, spot));
+  const distLabel = spot.distLabel ?? formatDistance(distanceKm(HOME_POINT, spot), units);
   const expLabel = EXP_LABEL[spot.difficulty];
   const ctaBottom = Math.max(insets.bottom, 16);
 
@@ -306,8 +308,8 @@ export default function SpotDetailsScreen() {
 
         {/* 3 STAT CARDS */}
         <View style={{ paddingHorizontal: 22, paddingTop: 16, flexDirection: 'row', gap: 8 }}>
-          <StatCard Icon={Mountain} label="Jump h." value={`${spot.height_m} m`} />
-          <StatCard Icon={Waves} label="Depth" value={`${spot.depth_m}+ m`} />
+          <StatCard Icon={Mountain} label="Jump h." value={formatMeters(spot.height_m, units)} />
+          <StatCard Icon={Waves} label="Depth" value={formatDepth(spot.depth_m, units)} />
           <StatCard Icon={Shield} label="Exp." value={expLabel} />
         </View>
 

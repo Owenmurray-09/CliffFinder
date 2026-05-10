@@ -14,6 +14,7 @@ import { parseLocalDate } from '@/data/date';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
+import { useUnitsStore } from '@/lib/units';
 import type { LogEntry, SavedSpot, Spot } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
 
@@ -228,12 +229,17 @@ function SegmentedTabs({
 function VisitedCard({ entry, spot }: { entry: LogEntry; spot: Spot }) {
   const t = useTheme();
   const router = useRouter();
+  const units = useUnitsStore((s) => s.units);
   const dateLabel = parseLocalDate(entry.date).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
   const trickCount = entry.tricks?.length ?? 0;
+  const heightDisplay =
+    units === 'imperial'
+      ? `${Math.round(entry.heightJumped_m * 3.28084)}FT`
+      : `${entry.heightJumped_m}M`;
 
   return (
     <Pressable
@@ -319,7 +325,7 @@ function VisitedCard({ entry, spot }: { entry: LogEntry; spot: Spot }) {
           </Text>
           <View style={{ flexDirection: 'row', gap: 4 }}>
             <Pill
-              text={`${entry.heightJumped_m}M`}
+              text={heightDisplay}
               bg={`${t.palette.accent}1f`}
               fg={t.palette.accent}
             />
@@ -340,6 +346,11 @@ function VisitedCard({ entry, spot }: { entry: LogEntry; spot: Spot }) {
 function SavedCard({ saved, spot }: { saved: SavedSpot; spot: Spot }) {
   const t = useTheme();
   const router = useRouter();
+  const units = useUnitsStore((s) => s.units);
+  const heightDisplay =
+    units === 'imperial'
+      ? `${Math.round(spot.height_m * 3.28084)}FT`
+      : `${spot.height_m}M`;
   const savedLabel = `Saved ${parseLocalDate(saved.savedAt).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
@@ -405,7 +416,7 @@ function SavedCard({ saved, spot }: { saved: SavedSpot; spot: Spot }) {
             {savedLabel}
           </Text>
           <Pill
-            text={`${spot.height_m}M`}
+            text={heightDisplay}
             bg={`${t.palette.accent}1f`}
             fg={t.palette.accent}
           />

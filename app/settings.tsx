@@ -7,6 +7,7 @@ import { Avatar } from '@/components/Avatar';
 import { Toggle } from '@/components/Toggle';
 import { useAuthStore } from '@/auth/store';
 import { safeBack } from '@/lib/safeBack';
+import { type Units, useUnitsStore } from '@/lib/units';
 import { CURRENT_USER } from '@/data/user';
 import { ACCENT_KEYS, ACCENTS, type AccentKey } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
@@ -18,8 +19,6 @@ const SECTION_LABEL: TextStyle = {
   textTransform: 'uppercase',
 };
 
-type Units = 'metric' | 'imperial';
-
 export default function SettingsScreen() {
   const t = useTheme();
   const router = useRouter();
@@ -27,7 +26,8 @@ export default function SettingsScreen() {
   const signOut = useAuthStore((s) => s.signOut);
 
   const [pushOn, setPushOn] = useState(true);
-  const [units, setUnits] = useState<Units>('metric');
+  const units = useUnitsStore((s) => s.units);
+  const setUnits = useUnitsStore((s) => s.setUnits);
 
   return (
     <View style={{ flex: 1, backgroundColor: t.palette.paper }}>

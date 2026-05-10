@@ -7,6 +7,7 @@ import { Avatar } from '@/components/Avatar';
 import { parseLocalDate } from '@/data/date';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSpotsStore } from '@/data/spotsStore';
+import { formatMeters, useUnitsStore } from '@/lib/units';
 import { CURRENT_USER } from '@/data/user';
 import { useTheme } from '@/theme/useTheme';
 
@@ -34,6 +35,7 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const allEntries = useLogEntriesStore((s) => s.entries);
   const recent = allEntries.slice(0, 2);
+  const units = useUnitsStore((s) => s.units);
   const spots = useSpotsStore((s) => s.spots);
   const getSpotById = (id: string) => spots.find((s) => s.id === id);
 
@@ -111,7 +113,7 @@ export default function ProfileScreen() {
       <View style={{ paddingHorizontal: 22, paddingTop: 18, flexDirection: 'row', gap: 10 }}>
         <StatBox value={String(CURRENT_USER.jumpsCount)} label="Total jumps" />
         <StatBox value={`${CURRENT_USER.airTime_s}s`} label="Air time" />
-        <StatBox value={`${CURRENT_USER.fallen_m}m`} label="Fallen" />
+        <StatBox value={formatMeters(CURRENT_USER.fallen_m, units)} label="Fallen" />
       </View>
 
       {/* ACHIEVEMENTS */}

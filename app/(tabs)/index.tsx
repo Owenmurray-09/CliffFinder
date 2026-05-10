@@ -21,6 +21,7 @@ import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { Spot, SpotCategory } from '@/data/types';
+import { formatMeters, useUnitsStore } from '@/lib/units';
 import { useTheme } from '@/theme/useTheme';
 
 const FILTERS: ReadonlyArray<{ key: SpotCategory; label: string }> = [
@@ -202,6 +203,7 @@ function Legend() {
 
 function SpotPreview({ spot, onViewDetails }: { spot: Spot; onViewDetails: () => void }) {
   const t = useTheme();
+  const units = useUnitsStore((s) => s.units);
   return (
     <View style={{ padding: 20, gap: 14 }}>
       <Image
@@ -214,8 +216,8 @@ function SpotPreview({ spot, onViewDetails }: { spot: Spot; onViewDetails: () =>
         <Text style={[t.typography.body, { color: t.palette.ink3 }]}>{spot.area}</Text>
       </View>
       <View style={{ flexDirection: 'row', gap: 8 }}>
-        <StatBox value={`${spot.height_m}m`} label="Height" />
-        <StatBox value={`${spot.depth_m}m`} label="Depth" />
+        <StatBox value={formatMeters(spot.height_m, units)} label="Height" />
+        <StatBox value={formatMeters(spot.depth_m, units)} label="Depth" />
         <StatBox value={spot.waterType} label="Water" />
       </View>
       <Button label="View details" variant="primary" onPress={onViewDetails} />

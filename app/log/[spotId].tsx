@@ -20,6 +20,7 @@ import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { pickImage } from '@/lib/pickImage';
 import { safeBack } from '@/lib/safeBack';
+import { formatMeters, formatTemp, useUnitsStore } from '@/lib/units';
 import { useTheme } from '@/theme/useTheme';
 
 const TINY: TextStyle = {
@@ -45,6 +46,7 @@ export default function LogEntryScreen() {
   const params = useLocalSearchParams<{ spotId: string }>();
   const spot = useSpotsStore((s) => s.getById(params.spotId));
   const addEntry = useLogEntriesStore((s) => s.addEntry);
+  const units = useUnitsStore((s) => s.units);
 
   const [rating, setRating] = useState(4);
   const [tricks, setTricks] = useState<Set<string>>(new Set());
@@ -248,7 +250,7 @@ export default function LogEntryScreen() {
                 color: t.palette.accent,
               }}
             >
-              {height} m
+              {formatMeters(height, units)}
             </Text>
           </View>
           <Slider value={height} onValueChange={setHeight} min={0} max={Math.max(spot.height_m, 30)} />
@@ -266,7 +268,7 @@ export default function LogEntryScreen() {
                 color: t.palette.accent,
               }}
             >
-              {waterTemp}°C
+              {formatTemp(waterTemp, units)}
             </Text>
           </View>
           <Slider value={waterTemp} onValueChange={setWaterTemp} min={0} max={30} />

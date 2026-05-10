@@ -6,7 +6,8 @@ import { Avatar } from '@/components/Avatar';
 import { getFriendById, RADAR_FEED } from '@/data/friends';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { RadarItem, Spot } from '@/data/types';
-import { distanceKm, formatDistance, HOME_POINT } from '@/map/projection';
+import { formatDistance, formatMeters, useUnitsStore } from '@/lib/units';
+import { distanceKm, HOME_POINT } from '@/map/projection';
 import { useTheme } from '@/theme/useTheme';
 
 const SECTION_LABEL: TextStyle = {
@@ -21,6 +22,7 @@ export default function RadarScreen() {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const allSpots = useSpotsStore((s) => s.spots);
+  const units = useUnitsStore((s) => s.units);
 
   const trending = allSpots.filter((s) => s.category === 'trending').slice(0, 2);
   const near = [...allSpots]
@@ -126,7 +128,7 @@ export default function RadarScreen() {
           </View>
           <View style={{ paddingHorizontal: 22, gap: 8 }}>
             {near.map(({ s, km }) => (
-              <NearRow key={s.id} spot={s} dist={formatDistance(km)} />
+              <NearRow key={s.id} spot={s} dist={formatDistance(km, units)} />
             ))}
           </View>
         </View>
@@ -224,6 +226,7 @@ function TrendingCard({ spot }: { spot: Spot }) {
 function NearRow({ spot, dist }: { spot: Spot; dist: string }) {
   const t = useTheme();
   const router = useRouter();
+  const units = useUnitsStore((s) => s.units);
   return (
     <Pressable
       onPress={() => router.push(`/spot/${spot.id}`)}
@@ -273,7 +276,7 @@ function NearRow({ spot, dist }: { spot: Spot; dist: string }) {
             marginTop: 1,
           }}
         >
-          {spot.height_m} m · {dist}
+          {formatMeters(spot.height_m, units)} · {dist}
         </Text>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>

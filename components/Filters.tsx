@@ -7,6 +7,7 @@ import { Toggle } from './Toggle';
 import { LOG_ENTRIES, SAVED_SPOT_IDS } from '@/data/logEntries';
 import type { Difficulty, Spot } from '@/data/types';
 import { distanceKm, HOME_POINT } from '@/map/projection';
+import { lengthUnitLabel, useUnitsStore } from '@/lib/units';
 import { useTheme } from '@/theme/useTheme';
 
 const HEIGHT_MAX_DEFAULT = 30;
@@ -100,6 +101,7 @@ export type FiltersProps = {
 
 export function Filters({ visible, initialValues, onApply, onClose, previewCount }: FiltersProps) {
   const t = useTheme();
+  const units = useUnitsStore((s) => s.units);
   const [v, setV] = useState<FilterValues>(initialValues);
 
   useEffect(() => {
@@ -154,14 +156,20 @@ export function Filters({ visible, initialValues, onApply, onClose, previewCount
             label="Jump height"
             value={v.heightMax}
             max={HEIGHT_MAX_DEFAULT}
-            unit="m"
+            unit={lengthUnitLabel(units)}
+            displayValue={
+              units === 'imperial' ? Math.round(v.heightMax * 3.28084) : v.heightMax
+            }
             onChange={(x) => update('heightMax', x)}
           />
           <SliderRow
             label="Water depth"
             value={v.depthMax}
             max={DEPTH_MAX_DEFAULT}
-            unit="m"
+            unit={lengthUnitLabel(units)}
+            displayValue={
+              units === 'imperial' ? Math.round(v.depthMax * 3.28084) : v.depthMax
+            }
             onChange={(x) => update('depthMax', x)}
           />
 
@@ -242,12 +250,15 @@ function SliderRow({
   value,
   max,
   unit,
+  displayValue,
   onChange,
 }: {
   label: string;
   value: number;
   max: number;
   unit: string;
+  /** Optional override for the rendered number (e.g. converted to feet); falls back to `value`. */
+  displayValue?: number;
   onChange: (v: number) => void;
 }) {
   const t = useTheme();
@@ -272,7 +283,7 @@ function SliderRow({
             color: t.palette.accent,
           }}
         >
-          {value}
+          {displayValue ?? value}
           {unit}
         </Text>
       </View>
