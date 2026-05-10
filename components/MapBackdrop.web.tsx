@@ -21,9 +21,9 @@ const SAVED_COLOR_OUTLINE = '#1E2F23';
  * unpkg on demand. Markers post {type:'cf-spot-click', id} back to the
  * parent window when tapped; the parent listens via window.addEventListener.
  *
- * We use ESRI World Topo per the design (HANDOFF "Map tiles" — "Prototype
- * uses ESRI World Topo (Leaflet) for the satellite/terrain look"). No
- * API key required for this tile set.
+ * Tiles: ESRI World Imagery (satellite base) + ESRI Boundaries & Places
+ * (transparent labels overlay). Together they produce the Google-Maps
+ * "Satellite" hybrid look. Both endpoints are keyless.
  */
 export function MapBackdrop({ spots, onSpotPress }: MapBackdropProps) {
   // Build the iframe HTML once per spot list. The iframe is only re-rendered
@@ -112,10 +112,14 @@ export function buildHtml(spots: ReadonlyArray<Spot>): string {
 <div id="map"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  var map = L.map('map', { zoomControl: true, attributionControl: true }).setView([${cLat}, ${cLng}], 9);
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 18,
-    attribution: 'Tiles © Esri — Esri, DeLorme, NAVTEQ',
+  var map = L.map('map', { zoomControl: true, attributionControl: true }).setView([${cLat}, ${cLng}], 11);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19,
+    attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, USDA, USGS, AeroGRID, IGN',
+  }).addTo(map);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19,
+    pane: 'overlayPane',
   }).addTo(map);
   var SPOTS = ${JSON.stringify(markers)};
   SPOTS.forEach(function (s) {

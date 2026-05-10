@@ -27,10 +27,13 @@ describe('buildHtml — Leaflet iframe srcDoc', () => {
     expect(html).toContain('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
   });
 
-  test('uses ESRI World Topo tiles per HANDOFF', () => {
+  test('uses ESRI World Imagery as the base + Boundaries & Places overlay (Google-Satellite look)', () => {
     const html = buildHtml([spot({})]);
     expect(html).toContain(
-      'server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+      'server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    );
+    expect(html).toContain(
+      'server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
     );
   });
 
