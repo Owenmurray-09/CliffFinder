@@ -50,10 +50,14 @@ export default function LogEntryScreen() {
 
   const [rating, setRating] = useState(4);
   const [tricks, setTricks] = useState<Set<string>>(new Set());
+  const [customTricks, setCustomTricks] = useState<string[]>([]);
+  const [addingTrick, setAddingTrick] = useState(false);
+  const [newTrickInput, setNewTrickInput] = useState('');
   const [notes, setNotes] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
   const [height, setHeight] = useState(spot?.height_m ?? 10);
   const [waterTemp, setWaterTemp] = useState(15);
+  const [saving, setSaving] = useState(false);
 
   if (!spot) {
     return (
@@ -80,7 +84,19 @@ export default function LogEntryScreen() {
     });
   };
 
-  const [saving, setSaving] = useState(false);
+  const commitNewTrick = () => {
+    const name = newTrickInput.trim();
+    if (!name) {
+      setAddingTrick(false);
+      setNewTrickInput('');
+      return;
+    }
+    setCustomTricks((prev) => (prev.includes(name) ? prev : [...prev, name]));
+    setTricks((prev) => new Set(prev).add(name));
+    setNewTrickInput('');
+    setAddingTrick(false);
+  };
+
   const handleSave = async () => {
     if (saving) return;
     setSaving(true);
@@ -187,7 +203,7 @@ export default function LogEntryScreen() {
         <View>
           <Text style={[TINY, { color: t.palette.ink3, marginBottom: 8 }]}>Tricks</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            {TRICK_OPTIONS.map((trick) => {
+            {[...TRICK_OPTIONS, ...customTricks].map((trick) => {
               const on = tricks.has(trick);
               return (
                 <Pressable
@@ -217,24 +233,64 @@ export default function LogEntryScreen() {
                 </Pressable>
               );
             })}
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 4,
-                paddingVertical: 7,
-                paddingHorizontal: 14,
-                borderRadius: 20,
-                borderWidth: 1,
-                borderStyle: 'dashed',
-                borderColor: t.palette.ink3,
-              }}
-            >
-              <Plus size={14} color={t.palette.ink3} />
-              <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 13, color: t.palette.ink3 }}>
-                Add
-              </Text>
-            </View>
+            {addingTrick ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 4,
+                  paddingVertical: 7,
+                  paddingHorizontal: 14,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: t.palette.accent,
+                  backgroundColor: `${t.palette.accent}1a`,
+                  minWidth: 120,
+                }}
+              >
+                <TextInput
+                  value={newTrickInput}
+                  onChangeText={setNewTrickInput}
+                  onSubmitEditing={commitNewTrick}
+                  onBlur={commitNewTrick}
+                  placeholder="Trick name"
+                  placeholderTextColor={t.palette.ink3}
+                  autoFocus
+                  returnKeyType="done"
+                  style={{
+                    flex: 1,
+                    fontFamily: 'Inter_500Medium',
+                    fontWeight: '500',
+                    fontSize: 13,
+                    color: t.palette.accent,
+                    padding: 0,
+                    minWidth: 96,
+                  }}
+                />
+              </View>
+            ) : (
+              <Pressable
+                onPress={() => setAddingTrick(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Add custom trick"
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 4,
+                  paddingVertical: 7,
+                  paddingHorizontal: 14,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderStyle: 'dashed',
+                  borderColor: t.palette.ink3,
+                }}
+              >
+                <Plus size={14} color={t.palette.ink3} />
+                <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 13, color: t.palette.ink3 }}>
+                  Add
+                </Text>
+              </Pressable>
+            )}
           </View>
         </View>
 
