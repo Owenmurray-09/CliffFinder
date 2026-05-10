@@ -61,11 +61,11 @@ export function project(
 export const SPOTS_BBOX: BoundingBox = computeBoundingBox(SPOTS);
 
 /**
- * Mock "home" point — Vancouver center. Used to fake a "distance from me"
+ * Mock "home" point — San José, Costa Rica. Used to fake a "distance from me"
  * label until real geolocation lands. The 5 mock spots all sit within
- * ~100km of this point.
+ * ~50km of this point.
  */
-export const HOME_POINT = { lat: 49.2827, lng: -123.1207 };
+export const HOME_POINT = { lat: 9.9333, lng: -84.0833 };
 
 /** Haversine distance in kilometers between two lat/lng points. */
 export function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
