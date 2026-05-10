@@ -30,6 +30,10 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# Temp screenshots from Chrome DevTools MCP
+.tmp-*.png
+.tmp-*.jpg
+
 # local env files (NEVER commit secrets — repo is public)
 .env
 .env.*
