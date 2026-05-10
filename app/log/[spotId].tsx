@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, MoreHorizontal, Plus, Star } from 'lucide-react-native';
+import { ChevronLeft, MoreHorizontal, Plus, Star, X } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   Image,
@@ -380,7 +380,28 @@ export default function LogEntryScreen() {
           </View>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {photos.map((p, i) => (
-              <Image key={i} source={{ uri: p }} style={{ width: 78, height: 78, borderRadius: 14 }} />
+              <View key={i} style={{ position: 'relative' }}>
+                <Image source={{ uri: p }} style={{ width: 78, height: 78, borderRadius: 14 }} />
+                <Pressable
+                  onPress={() => setPhotos(photos.filter((_, j) => j !== i))}
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove photo"
+                  hitSlop={6}
+                  style={{
+                    position: 'absolute',
+                    top: 4,
+                    right: 4,
+                    width: 22,
+                    height: 22,
+                    borderRadius: 11,
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <X size={12} color="#FFFFFF" strokeWidth={2.4} />
+                </Pressable>
+              </View>
             ))}
             {photos.length < 6 ? (
               <Pressable

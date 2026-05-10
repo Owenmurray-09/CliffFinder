@@ -675,12 +675,32 @@ function MediaStep({
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {photos.map((p, i) => (
-          <Image
-            key={i}
-            source={{ uri: p }}
-            style={{ width: 96, height: 96, borderRadius: 14 }}
-            resizeMode="cover"
-          />
+          <View key={i} style={{ position: 'relative' }}>
+            <Image
+              source={{ uri: p }}
+              style={{ width: 96, height: 96, borderRadius: 14 }}
+              resizeMode="cover"
+            />
+            <Pressable
+              onPress={() => setPhotos(photos.filter((_, j) => j !== i))}
+              accessibilityRole="button"
+              accessibilityLabel="Remove photo"
+              hitSlop={6}
+              style={{
+                position: 'absolute',
+                top: 4,
+                right: 4,
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <X size={14} color="#FFFFFF" strokeWidth={2.4} />
+            </Pressable>
+          </View>
         ))}
         {photos.length < 6 ? (
           <Pressable
