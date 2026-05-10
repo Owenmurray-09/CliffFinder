@@ -71,7 +71,7 @@ export default function FriendProfileScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const friend = getFriendById(params.id);
   const allSpots = useSpotsStore((s) => s.spots);
-  const getSpotById = useSpotsStore((s) => s.getById);
+  const getSpotById = (id: string) => allSpots.find((s) => s.id === id);
   const [following, setFollowing] = useState(true);
 
   if (!friend) {

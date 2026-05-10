@@ -33,7 +33,8 @@ export default function LogbookScreen() {
   const [tab, setTab] = useState<Tab>('visited');
   const savedSpots = useSavedSpotsStore((s) => s.saved);
   const logEntries = useLogEntriesStore((s) => s.entries);
-  const getSpotById = useSpotsStore((s) => s.getById);
+  const spots = useSpotsStore((s) => s.spots);
+  const getSpotById = (id: string) => spots.find((s) => s.id === id);
 
   return (
     <ScrollView

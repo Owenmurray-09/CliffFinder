@@ -34,7 +34,8 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const allEntries = useLogEntriesStore((s) => s.entries);
   const recent = allEntries.slice(0, 2);
-  const getSpotById = useSpotsStore((s) => s.getById);
+  const spots = useSpotsStore((s) => s.spots);
+  const getSpotById = (id: string) => spots.find((s) => s.id === id);
 
   return (
     <ScrollView

@@ -296,7 +296,8 @@ function NearRow({ spot, dist }: { spot: Spot; dist: string }) {
 function ActivityRow({ item, last }: { item: RadarItem; last: boolean }) {
   const t = useTheme();
   const router = useRouter();
-  const getSpotById = useSpotsStore((s) => s.getById);
+  const spots = useSpotsStore((s) => s.spots);
+  const getSpotById = (id: string) => spots.find((s) => s.id === id);
   const friend = getFriendById(item.friendId);
   if (!friend) return null;
 

@@ -77,8 +77,11 @@ export default function LogEntryScreen() {
     });
   };
 
-  const handleSave = () => {
-    addEntry({
+  const [saving, setSaving] = useState(false);
+  const handleSave = async () => {
+    if (saving) return;
+    setSaving(true);
+    const created = await addEntry({
       spotId: spot.id,
       heightJumped_m: height,
       waterTemp_c: waterTemp,
@@ -86,7 +89,8 @@ export default function LogEntryScreen() {
       notes: notes.trim() || undefined,
       tricks: Array.from(tricks),
     });
-    router.back();
+    setSaving(false);
+    if (created) router.back();
   };
 
   return (

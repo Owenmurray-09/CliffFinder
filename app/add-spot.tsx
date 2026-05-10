@@ -77,9 +77,12 @@ export default function AddSpotScreen() {
     (step === 'Media' && photos.length >= 1) ||
     step === 'Review';
 
-  const next = () => {
+  const [submitting, setSubmitting] = useState(false);
+  const next = async () => {
     if (step === 'Review') {
-      const created = addSpot({
+      if (submitting) return;
+      setSubmitting(true);
+      const created = await addSpot({
         name: name.trim(),
         area: '',
         lat: location?.lat ?? 0,
@@ -91,7 +94,12 @@ export default function AddSpotScreen() {
         description: description.trim(),
         waterType,
       });
-      toggleSaved(created.id);
+      if (!created) {
+        setSubmitting(false);
+        return;
+      }
+      await toggleSaved(created.id);
+      setSubmitting(false);
       router.replace(`/spot/${created.id}`);
       return;
     }
