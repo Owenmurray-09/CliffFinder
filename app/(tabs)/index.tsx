@@ -148,6 +148,7 @@ export default function MapScreen() {
       <Filters
         visible={filtersOpen}
         initialValues={filterValues}
+        matchCount={visibleSpots.length}
         onApply={setFilterValues}
         onClose={() => setFiltersOpen(false)}
       />
