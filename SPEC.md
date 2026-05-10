@@ -828,6 +828,41 @@ Token corrections:
 
 **Out of scope**: real auth backend (mock only); password show/hide toggle (deferred); social login.
 
+---
+
+## Feature: Map screen (loop 23)
+
+**Loop status**: complete
+
+**Files**:
+- `app/(tabs)/index.tsx` — replaces debug surface with the Map screen
+- `app/__debug.tsx` — preserves the debug component gallery at /__debug for visual checks
+- `map/projection.ts` — pure helper that maps lat/lng → normalized x/y within a bounding box
+- `map/__tests__/projection.test.ts`
+
+**Design source** (HANDOFF "Map screen" + "Map UI layout"):
+- Full-bleed map placeholder (image or simplified vector — NOT Mapbox native)
+- Floating glass: top SearchBar (48px, radius 16) + filter chip row (horizontally scrollable)
+- 5 pins absolutely positioned, color-coded by category
+- Bottom-left legend: 3 small dots + labels (Trending / Saved / Friends), glass card
+- FAB centered above tab bar (already wired by TabBar)
+- Tap pin → preview Sheet with name, area, photo, stats, "View details" CTA
+
+**Acceptance criteria**:
+- [ ] Full-bleed backdrop (topographic Unsplash or simple gradient)
+- [ ] 5 pins positioned via lat/lng → projection within the BC bounding box
+- [ ] SearchBar floats at top with safe-area inset
+- [ ] Filter chip row below SearchBar, horizontally scrollable, supports multi-select toggle
+- [ ] When 0 chips selected: show all spots; otherwise only spots whose category is in the selected set
+- [ ] Search filters by spot name (substring, case-insensitive)
+- [ ] Legend card bottom-left, glass surface, 3 colored dots + labels
+- [ ] Tap pin → Sheet opens with spot preview (name, area, photo, height/depth/water stats, "View details" Button)
+- [ ] No hard-coded colors
+
+**Tests**: projection math (corners + midpoint), filtering logic, integration sanity.
+
+**Out of scope**: real Mapbox tiles (deferred); pin scale-up animation on tap; clustering.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
