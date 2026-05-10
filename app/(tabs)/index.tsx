@@ -1,14 +1,7 @@
 import { useRouter } from 'expo-router';
 import { SlidersHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
-import {
-  Image,
-  type LayoutChangeEvent,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
@@ -20,17 +13,13 @@ import {
   passesFilters,
 } from '@/components/Filters';
 import { GlassPanel } from '@/components/GlassPanel';
-import { PinMarker } from '@/components/PinMarker';
+import { MapBackdrop } from '@/components/MapBackdrop';
 import { SearchBar } from '@/components/SearchBar';
 import { Sheet } from '@/components/Sheet';
 import { StatBox } from '@/components/StatBox';
 import { SPOTS } from '@/data/spots';
 import type { Spot, SpotCategory } from '@/data/types';
-import { project, SPOTS_BBOX } from '@/map/projection';
 import { useTheme } from '@/theme/useTheme';
-
-const BACKDROP_URI =
-  'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1600&q=80';
 
 const FILTERS: ReadonlyArray<{ key: SpotCategory; label: string }> = [
   { key: 'trending', label: 'Trending' },
@@ -45,14 +34,8 @@ export default function MapScreen() {
   const [activeFilters, setActiveFilters] = useState<Set<SpotCategory>>(new Set());
   const [search, setSearch] = useState('');
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
-  const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [filterValues, setFilterValues] = useState<FilterValues>(EMPTY_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
-
-  const onBackdropLayout = (e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout;
-    setLayout({ width, height });
-  };
 
   const visibleSpots = SPOTS.filter((s) => {
     const inFilter = activeFilters.size === 0 || activeFilters.has(s.category);
@@ -72,35 +55,8 @@ export default function MapScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.palette.paper }}>
-      <View
-        onLayout={onBackdropLayout}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-      >
-        <Image
-          source={{ uri: BACKDROP_URI }}
-          style={{ width: '100%', height: '100%' }}
-          resizeMode="cover"
-        />
-        {layout.width > 0
-          ? visibleSpots.map((spot) => {
-              const { x, y } = project(spot, SPOTS_BBOX);
-              return (
-                <Pressable
-                  key={spot.id}
-                  onPress={() => setSelectedSpot(spot)}
-                  style={{
-                    position: 'absolute',
-                    left: x * layout.width - 16,
-                    top: y * layout.height - 16,
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${spot.name} pin`}
-                >
-                  <PinMarker category={spot.category} />
-                </Pressable>
-              );
-            })
-          : null}
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+        <MapBackdrop spots={visibleSpots} onSpotPress={setSelectedSpot} />
       </View>
 
       <View
