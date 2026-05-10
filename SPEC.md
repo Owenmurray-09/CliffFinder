@@ -863,6 +863,32 @@ Token corrections:
 
 **Out of scope**: real Mapbox tiles (deferred); pin scale-up animation on tap; clustering.
 
+---
+
+## Feature: Filters bottom sheet (loop 24)
+
+**Loop status**: complete
+
+**Files**:
+- `components/Filters.tsx` — Filter sheet (sliders + chips + Apply/Reset)
+- `components/__tests__/Filters.test.tsx`
+- `app/(tabs)/index.tsx` — adds filter button next to search; wires sheet
+
+**Acceptance criteria**:
+- [ ] Filter button next to SearchBar (square glass, lucide SlidersHorizontal icon)
+- [ ] Tap opens a Sheet containing:
+  - Height max slider (0–50m, integer step)
+  - Difficulty chips (beginner / intermediate / advanced; multi-select)
+  - Water type chips (lake / ocean / river / quarry / falls; multi-select)
+  - Apply button (primary) + Reset link
+- [ ] Buffer-then-apply: editing chips/sliders inside the sheet doesn't update the map until Apply is tapped
+- [ ] Reset clears all filters
+- [ ] Combined filters apply alongside the Map's category chip row + search
+
+**Tests**: filter logic (apply each dimension independently + combined), Apply/Reset state behavior.
+
+**Out of scope**: distance-from-me slider (no real geolocation in mock); depth slider (deferred).
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:

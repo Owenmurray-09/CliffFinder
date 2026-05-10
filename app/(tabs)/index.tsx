@@ -1,3 +1,4 @@
+import { SlidersHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   Image,
@@ -10,6 +11,13 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
+import {
+  EMPTY_FILTERS,
+  Filters,
+  type FilterValues,
+  isFilterActive,
+  passesFilters,
+} from '@/components/Filters';
 import { GlassPanel } from '@/components/GlassPanel';
 import { PinMarker } from '@/components/PinMarker';
 import { SearchBar } from '@/components/SearchBar';
@@ -36,6 +44,8 @@ export default function MapScreen() {
   const [search, setSearch] = useState('');
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [layout, setLayout] = useState({ width: 0, height: 0 });
+  const [filterValues, setFilterValues] = useState<FilterValues>(EMPTY_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const onBackdropLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -46,7 +56,7 @@ export default function MapScreen() {
     const inFilter = activeFilters.size === 0 || activeFilters.has(s.category);
     const inSearch =
       search.length === 0 || s.name.toLowerCase().includes(search.toLowerCase());
-    return inFilter && inSearch;
+    return inFilter && inSearch && passesFilters(s, filterValues);
   });
 
   const toggleFilter = (key: SpotCategory) => {
@@ -101,7 +111,42 @@ export default function MapScreen() {
           gap: 10,
         }}
       >
-        <SearchBar value={search} onChangeText={setSearch} placeholder="Search spots" />
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          <View style={{ flex: 1 }}>
+            <SearchBar value={search} onChangeText={setSearch} placeholder="Search spots" />
+          </View>
+          <Pressable
+            onPress={() => setFiltersOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Open filters"
+          >
+            <GlassPanel
+              variant="search"
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 16,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <SlidersHorizontal size={20} color={t.palette.ink2} />
+              {isFilterActive(filterValues) ? (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: t.palette.accent,
+                  }}
+                />
+              ) : null}
+            </GlassPanel>
+          </Pressable>
+        </View>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -132,6 +177,13 @@ export default function MapScreen() {
       <Sheet visible={selectedSpot !== null} onClose={() => setSelectedSpot(null)}>
         {selectedSpot ? <SpotPreview spot={selectedSpot} /> : null}
       </Sheet>
+
+      <Filters
+        visible={filtersOpen}
+        initialValues={filterValues}
+        onApply={setFilterValues}
+        onClose={() => setFiltersOpen(false)}
+      />
     </View>
   );
 }
