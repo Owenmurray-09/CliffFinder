@@ -1,5 +1,13 @@
 import { useRouter } from 'expo-router';
-import { Check, ChevronLeft, MapPin } from 'lucide-react-native';
+import {
+  Camera,
+  Check,
+  ChevronRight,
+  MapPin,
+  Plus,
+  ShieldAlert,
+  X,
+} from 'lucide-react-native';
 import { useState } from 'react';
 import {
   Image,
@@ -9,24 +17,24 @@ import {
   ScrollView,
   Text,
   TextInput,
+  type TextStyle,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { Chip } from '@/components/Chip';
-import { Field } from '@/components/Field';
 import { Slider } from '@/components/Slider';
 import type { Difficulty, WaterType } from '@/data/types';
 import { useTheme } from '@/theme/useTheme';
 
-type Step = 'location' | 'form' | 'photos' | 'confirm';
+const STEPS = ['Location', 'Details', 'Safety', 'Media', 'Review'] as const;
+type StepKey = (typeof STEPS)[number];
 
-const DIFFICULTIES: ReadonlyArray<{ key: Difficulty; label: string }> = [
-  { key: 'beginner', label: 'Beginner' },
-  { key: 'intermediate', label: 'Intermediate' },
-  { key: 'advanced', label: 'Advanced' },
+const ACCESS_OPTIONS: ReadonlyArray<{ value: Difficulty | 'expert'; label: string }> = [
+  { value: 'beginner', label: 'easy' },
+  { value: 'intermediate', label: 'moderate' },
+  { value: 'advanced', label: 'hard' },
+  { value: 'expert', label: 'expert' },
 ];
+
 const WATER_TYPES: ReadonlyArray<{ key: WaterType; label: string }> = [
   { key: 'lake', label: 'Lake' },
   { key: 'ocean', label: 'Ocean' },
@@ -35,53 +43,48 @@ const WATER_TYPES: ReadonlyArray<{ key: WaterType; label: string }> = [
   { key: 'falls', label: 'Falls' },
 ];
 
+const TINY: TextStyle = {
+  fontFamily: 'Inter_400Regular',
+  fontSize: 11,
+  letterSpacing: 0.55,
+  textTransform: 'uppercase',
+};
+
 export default function AddSpotScreen() {
   const t = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState<Step>('location');
+  const [stepIdx, setStepIdx] = useState(0);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [name, setName] = useState('');
-  const [height, setHeight] = useState(10);
-  const [depth, setDepth] = useState(5);
-  const [difficulty, setDifficulty] = useState<Difficulty>('intermediate');
-  const [waterType, setWaterType] = useState<WaterType>('lake');
   const [description, setDescription] = useState('');
+  const [height, setHeight] = useState(15);
+  const [depth, setDepth] = useState(6);
+  const [access, setAccess] = useState<Difficulty | 'expert'>('intermediate');
+  const [waterType, setWaterType] = useState<WaterType>('lake');
   const [photos, setPhotos] = useState<string[]>([]);
 
-  const stepIndex = ['location', 'form', 'photos', 'confirm'].indexOf(step);
-  const canProceed =
-    (step === 'location' && location !== null) ||
-    (step === 'form' && name.trim().length > 0) ||
-    (step === 'photos' && photos.length >= 1) ||
-    step === 'confirm';
+  const step = STEPS[stepIdx]!;
+  const canNext =
+    (step === 'Location' && location !== null) ||
+    (step === 'Details' && name.trim().length > 0) ||
+    (step === 'Safety') ||
+    (step === 'Media' && photos.length >= 1) ||
+    step === 'Review';
 
   const next = () => {
-    if (step === 'location') setStep('form');
-    else if (step === 'form') setStep('photos');
-    else if (step === 'photos') setStep('confirm');
+    if (step === 'Review') {
+      // Real persistence lands in Loop 46.
+      // eslint-disable-next-line no-console
+      console.log('spot submitted', { name, location, height, depth, access, waterType, description, photos: photos.length });
+      router.replace('/');
+      return;
+    }
+    setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
   };
   const back = () => {
-    if (step === 'form') setStep('location');
-    else if (step === 'photos') setStep('form');
-    else if (step === 'confirm') setStep('photos');
-    else router.back();
-  };
-
-  const submit = () => {
-    // Real persistence (add to spots store) lands in a follow-up.
-    // eslint-disable-next-line no-console
-    console.log('spot submitted', {
-      name,
-      location,
-      height,
-      depth,
-      difficulty,
-      waterType,
-      description,
-      photos: photos.length,
-    });
-    router.replace('/');
+    if (stepIdx === 0) return router.back();
+    setStepIdx((i) => Math.max(0, i - 1));
   };
 
   return (
@@ -89,235 +92,724 @@ export default function AddSpotScreen() {
       style={{ flex: 1, backgroundColor: t.palette.paper }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      {/* TOP NAV */}
       <View
         style={{
+          paddingTop: Math.max(insets.top, 12) + 4,
+          paddingHorizontal: 20,
+          paddingBottom: 12,
           flexDirection: 'row',
           alignItems: 'center',
-          gap: 12,
-          paddingTop: Math.max(insets.top, 12) + 8,
-          paddingHorizontal: 16,
-          paddingBottom: 12,
+          justifyContent: 'space-between',
+        }}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="Close"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: t.palette.cardBg,
+            borderWidth: 1,
+            borderColor: t.palette.glassBorder,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <X size={18} color={t.palette.ink} />
+        </Pressable>
+        <Text
+          style={{
+            fontFamily: 'Poppins_600SemiBold',
+            fontWeight: '600',
+            fontSize: 16,
+            color: t.palette.ink,
+          }}
+        >
+          Add spot
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Montserrat_600SemiBold',
+            fontWeight: '600',
+            fontSize: 13,
+            color: t.palette.ink3,
+          }}
+        >
+          {stepIdx + 1} / {STEPS.length}
+        </Text>
+      </View>
+
+      {/* PROGRESS BAR + STEP LABELS */}
+      <View style={{ paddingHorizontal: 20, paddingTop: 4 }}>
+        <View style={{ flexDirection: 'row', gap: 6 }}>
+          {STEPS.map((_, i) => (
+            <View
+              key={i}
+              style={{
+                flex: 1,
+                height: 4,
+                borderRadius: 4,
+                backgroundColor: i <= stepIdx ? t.palette.accent : t.palette.line2,
+              }}
+            />
+          ))}
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 14 }}>
+          {STEPS.map((s, i) => (
+            <View key={s} style={{ flex: 1 }}>
+              <Text
+                style={[
+                  TINY,
+                  {
+                    textAlign: 'center',
+                    color: i === stepIdx ? t.palette.ink : t.palette.ink3,
+                    fontWeight: i === stepIdx ? '600' : '400',
+                  },
+                ]}
+              >
+                {s}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 22, paddingBottom: 24, gap: 18 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {step === 'Location' ? <LocationStep value={location} onChange={setLocation} /> : null}
+        {step === 'Details' ? (
+          <DetailsStep
+            name={name}
+            setName={setName}
+            description={description}
+            setDescription={setDescription}
+            height={height}
+            setHeight={setHeight}
+            depth={depth}
+            setDepth={setDepth}
+          />
+        ) : null}
+        {step === 'Safety' ? (
+          <SafetyStep
+            access={access}
+            setAccess={setAccess}
+            waterType={waterType}
+            setWaterType={setWaterType}
+          />
+        ) : null}
+        {step === 'Media' ? <MediaStep photos={photos} setPhotos={setPhotos} /> : null}
+        {step === 'Review' ? (
+          <ReviewStep
+            name={name}
+            description={description}
+            height={height}
+            depth={depth}
+            access={access}
+            waterType={waterType}
+            location={location}
+            photoCount={photos.length}
+          />
+        ) : null}
+      </ScrollView>
+
+      {/* FOOTER NAV */}
+      <View
+        style={{
+          paddingHorizontal: 22,
+          paddingTop: 14,
+          paddingBottom: Math.max(insets.bottom, 16) + 16,
+          borderTopWidth: 1,
+          borderTopColor: t.palette.line2,
+          flexDirection: 'row',
+          gap: 10,
+          backgroundColor: t.palette.paper,
         }}
       >
         <Pressable
           onPress={back}
           accessibilityRole="button"
-          accessibilityLabel="Back"
-          hitSlop={10}
+          style={{
+            flex: 1,
+            paddingVertical: 15,
+            borderRadius: 14,
+            borderWidth: 1.5,
+            borderColor: t.palette.line,
+            alignItems: 'center',
+          }}
         >
-          <ChevronLeft size={24} color={t.palette.ink} />
+          <Text
+            style={{
+              fontFamily: 'Poppins_600SemiBold',
+              fontWeight: '500',
+              fontSize: 14,
+              color: t.palette.ink,
+            }}
+          >
+            Back
+          </Text>
         </Pressable>
-        <Text style={[t.typography.title, { color: t.palette.ink, flex: 1 }]}>Add a spot</Text>
-        <Text style={[t.typography.label, { color: t.palette.ink3 }]}>
-          Step {stepIndex + 1} of 4
-        </Text>
-      </View>
-
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 20, paddingBottom: 96 }}>
-        {step === 'location' ? (
-          <>
-            <Text style={[t.typography.body, { color: t.palette.ink2 }]}>
-              Tap the map below where the spot is.
-            </Text>
-            <Pressable
-              onPress={() =>
-                // Stubbed: pretend the user tapped Squamish.
-                setLocation({ lat: 49.7016, lng: -123.1558 })
-              }
-              style={{
-                height: 240,
-                borderRadius: t.radius.card,
-                backgroundColor: t.palette.paper2,
-                borderWidth: 1,
-                borderColor: t.palette.line,
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Pick location"
-            >
-              <MapPin
-                size={28}
-                color={location ? t.palette.accent : t.palette.ink3}
-                fill={location ? `${t.palette.accent}33` : 'transparent'}
-              />
-              <Text style={[t.typography.body, { color: t.palette.ink2 }]}>
-                {location
-                  ? `${location.lat.toFixed(4)}°, ${location.lng.toFixed(4)}°`
-                  : 'Tap to drop a pin'}
-              </Text>
-            </Pressable>
-          </>
-        ) : null}
-
-        {step === 'form' ? (
-          <>
-            <Field label="Spot name" value={name} onChangeText={setName} placeholder="e.g. Eagle Cliff" />
-            <View style={{ gap: t.spacing.sm }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>height</Text>
-                <Text style={[t.typography.body, { color: t.palette.ink2 }]}>{height}m</Text>
-              </View>
-              <Slider value={height} onValueChange={setHeight} min={1} max={50} />
-            </View>
-            <View style={{ gap: t.spacing.sm }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>water depth</Text>
-                <Text style={[t.typography.body, { color: t.palette.ink2 }]}>{depth}m</Text>
-              </View>
-              <Slider value={depth} onValueChange={setDepth} min={1} max={30} />
-            </View>
-            <View style={{ gap: t.spacing.sm }}>
-              <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>difficulty</Text>
-              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-                {DIFFICULTIES.map((d) => (
-                  <Chip
-                    key={d.key}
-                    label={d.label}
-                    selected={difficulty === d.key}
-                    onPress={() => setDifficulty(d.key)}
-                  />
-                ))}
-              </View>
-            </View>
-            <View style={{ gap: t.spacing.sm }}>
-              <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>water type</Text>
-              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-                {WATER_TYPES.map((w) => (
-                  <Chip
-                    key={w.key}
-                    label={w.label}
-                    selected={waterType === w.key}
-                    onPress={() => setWaterType(w.key)}
-                  />
-                ))}
-              </View>
-            </View>
-            <View style={{ gap: t.spacing.sm }}>
-              <Text style={[t.typography.fieldLabel, { color: t.palette.ink3 }]}>description</Text>
-              <TextInput
-                value={description}
-                onChangeText={setDescription}
-                placeholder="What should other jumpers know?"
-                placeholderTextColor={t.palette.ink3}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-                style={{
-                  backgroundColor: t.palette.paper2,
-                  borderWidth: 1,
-                  borderColor: t.palette.line,
-                  borderRadius: t.radius.control,
-                  padding: 14,
-                  minHeight: 96,
-                  fontFamily: 'Inter_400Regular',
-                  fontSize: 14.5,
-                  color: t.palette.ink,
-                }}
-              />
-            </View>
-          </>
-        ) : null}
-
-        {step === 'photos' ? (
-          <>
-            <Text style={[t.typography.body, { color: t.palette.ink2 }]}>
-              Add 1–6 photos. They'll appear in the carousel on the spot's details page.
-            </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {photos.map((p, i) => (
-                <Image
-                  key={i}
-                  source={{ uri: p }}
-                  style={{ width: 96, height: 96, borderRadius: t.radius.cardSm }}
-                />
-              ))}
-              {photos.length < 6 ? (
-                <Pressable
-                  onPress={() =>
-                    // Stub: append a placeholder Unsplash image
-                    setPhotos((prev) => [
-                      ...prev,
-                      'https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?w=600&q=80',
-                    ])
-                  }
-                  accessibilityRole="button"
-                  accessibilityLabel="Add photo"
-                  style={{
-                    width: 96,
-                    height: 96,
-                    borderRadius: t.radius.cardSm,
-                    backgroundColor: t.palette.paper2,
-                    borderWidth: 1,
-                    borderStyle: 'dashed',
-                    borderColor: t.palette.line,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ color: t.palette.ink3, fontSize: 28 }}>+</Text>
-                </Pressable>
-              ) : null}
-            </View>
-            <Text style={[t.typography.label, { color: t.palette.ink3 }]}>
-              {photos.length}/6 photos added
-            </Text>
-          </>
-        ) : null}
-
-        {step === 'confirm' ? (
-          <>
-            <View style={{ alignItems: 'center', gap: 12, paddingVertical: 16 }}>
-              <View
-                style={{
-                  width: 84,
-                  height: 84,
-                  borderRadius: 42,
-                  backgroundColor: `${t.palette.accent}22`,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Check size={40} color={t.palette.accent} strokeWidth={2.6} />
-              </View>
-              <Text style={[t.typography.title, { color: t.palette.ink }]}>Looks good?</Text>
-              <Text
-                style={[
-                  t.typography.body,
-                  { color: t.palette.ink3, textAlign: 'center', maxWidth: 280 },
-                ]}
-              >
-                Submit to add {name} to the map. You can edit details after.
-              </Text>
-            </View>
-            <Card>
-              <Text style={[t.typography.cardTitle, { color: t.palette.ink }]}>{name}</Text>
-              <Text style={[t.typography.label, { color: t.palette.ink3 }]}>
-                {height}m · {depth}m depth · {waterType} · {difficulty}
-              </Text>
-              <Text style={[t.typography.body, { color: t.palette.ink2 }]} numberOfLines={3}>
-                {description || 'No description yet.'}
-              </Text>
-              <Text style={[t.typography.label, { color: t.palette.ink3 }]}>
-                {photos.length} photo{photos.length === 1 ? '' : 's'} ·{' '}
-                {location
-                  ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`
-                  : 'no location'}
-              </Text>
-            </Card>
-          </>
-        ) : null}
-      </ScrollView>
-
-      <View style={{ position: 'absolute', left: 16, right: 16, bottom: Math.max(insets.bottom, 16) + 16 }}>
-        <Button
-          label={step === 'confirm' ? 'Submit' : 'Continue'}
-          variant="primary"
-          onPress={step === 'confirm' ? submit : next}
-          disabled={!canProceed}
-        />
+        <Pressable
+          onPress={next}
+          accessibilityRole="button"
+          disabled={!canNext}
+          style={{
+            flex: 2,
+            paddingVertical: 15,
+            borderRadius: 14,
+            backgroundColor: t.palette.accent,
+            alignItems: 'center',
+            opacity: canNext ? 1 : 0.5,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: 'Poppins_600SemiBold',
+              fontWeight: '600',
+              fontSize: 14,
+              color: t.palette.on.accent,
+            }}
+          >
+            {step === 'Review' ? 'Submit' : `Next: ${STEPS[stepIdx + 1]} →`}
+          </Text>
+        </Pressable>
       </View>
     </KeyboardAvoidingView>
   );
 }
+
+function LocationStep({
+  value,
+  onChange,
+}: {
+  value: { lat: number; lng: number } | null;
+  onChange: (v: { lat: number; lng: number }) => void;
+}) {
+  const t = useTheme();
+  return (
+    <View style={{ gap: 14 }}>
+      <View>
+        <Text
+          style={{
+            fontFamily: 'Poppins_700Bold',
+            fontWeight: '700',
+            fontSize: 24,
+            letterSpacing: -0.24,
+            color: t.palette.ink,
+          }}
+        >
+          Where is it?
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 13,
+            color: t.palette.ink3,
+            marginTop: 4,
+          }}
+        >
+          Tap the map below to drop a pin.
+        </Text>
+      </View>
+      <Pressable
+        onPress={() => onChange({ lat: 49.7016, lng: -123.1558 })}
+        style={{
+          height: 280,
+          borderRadius: 14,
+          backgroundColor: t.palette.cardBg,
+          borderWidth: 1,
+          borderColor: t.palette.glassBorder,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <MapPin
+          size={32}
+          color={value ? t.palette.accent : t.palette.ink3}
+          fill={value ? `${t.palette.accent}33` : 'transparent'}
+        />
+        <Text
+          style={{
+            fontFamily: 'Inter_500Medium',
+            fontWeight: '500',
+            fontSize: 14,
+            color: value ? t.palette.ink : t.palette.ink3,
+          }}
+        >
+          {value ? `${value.lat.toFixed(4)}, ${value.lng.toFixed(4)}` : 'Tap to drop a pin'}
+        </Text>
+      </Pressable>
+    </View>
+  );
+}
+
+function DetailsStep({
+  name,
+  setName,
+  description,
+  setDescription,
+  height,
+  setHeight,
+  depth,
+  setDepth,
+}: {
+  name: string;
+  setName: (s: string) => void;
+  description: string;
+  setDescription: (s: string) => void;
+  height: number;
+  setHeight: (n: number) => void;
+  depth: number;
+  setDepth: (n: number) => void;
+}) {
+  const t = useTheme();
+  return (
+    <View style={{ gap: 18 }}>
+      <View>
+        <Text
+          style={{
+            fontFamily: 'Poppins_700Bold',
+            fontWeight: '700',
+            fontSize: 24,
+            letterSpacing: -0.24,
+            color: t.palette.ink,
+          }}
+        >
+          Tell us about it
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 13,
+            color: t.palette.ink3,
+            marginTop: 4,
+          }}
+        >
+          You can edit any of this later.
+        </Text>
+      </View>
+
+      <CardField label="Spot name">
+        <TextInput
+          value={name}
+          onChangeText={setName}
+          placeholder="e.g. Eagle Cliff"
+          placeholderTextColor={t.palette.ink3}
+          style={{
+            fontFamily: 'Inter_500Medium',
+            fontSize: 16,
+            fontWeight: '500',
+            color: t.palette.ink,
+            marginTop: 2,
+            padding: 0,
+          }}
+        />
+      </CardField>
+
+      <CardField label="Description" minHeight={78}>
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Granite cliff on the south side of the lake…"
+          placeholderTextColor={t.palette.ink3}
+          multiline
+          textAlignVertical="top"
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 14,
+            lineHeight: 20.3,
+            color: t.palette.ink,
+            marginTop: 4,
+            padding: 0,
+            minHeight: 56,
+          }}
+        />
+      </CardField>
+
+      <SliderRow label="Jump height" value={height} max={30} unit="m" onChange={setHeight} />
+      <SliderRow label="Water depth" value={depth} max={15} unit="+ m" onChange={setDepth} />
+    </View>
+  );
+}
+
+function SafetyStep({
+  access,
+  setAccess,
+  waterType,
+  setWaterType,
+}: {
+  access: Difficulty | 'expert';
+  setAccess: (a: Difficulty | 'expert') => void;
+  waterType: WaterType;
+  setWaterType: (w: WaterType) => void;
+}) {
+  const t = useTheme();
+  return (
+    <View style={{ gap: 18 }}>
+      <View>
+        <Text
+          style={{
+            fontFamily: 'Poppins_700Bold',
+            fontWeight: '700',
+            fontSize: 24,
+            letterSpacing: -0.24,
+            color: t.palette.ink,
+          }}
+        >
+          Safety
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 13,
+            color: t.palette.ink3,
+            marginTop: 4,
+          }}
+        >
+          Help others know what they're getting into.
+        </Text>
+      </View>
+
+      <View style={{ gap: 8 }}>
+        <Text style={[TINY, { color: t.palette.ink3 }]}>Access difficulty</Text>
+        <View style={{ flexDirection: 'row', gap: 6 }}>
+          {ACCESS_OPTIONS.map((a) => {
+            const on = a.value === access;
+            return (
+              <Pressable
+                key={a.value}
+                onPress={() => setAccess(a.value)}
+                style={{
+                  flex: 1,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: on ? t.palette.accent : t.palette.line2,
+                  backgroundColor: on ? `${t.palette.accent}1a` : 'transparent',
+                  alignItems: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter_500Medium',
+                    fontWeight: '500',
+                    fontSize: 12,
+                    color: on ? t.palette.accent : t.palette.ink,
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {a.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      <View style={{ gap: 8 }}>
+        <Text style={[TINY, { color: t.palette.ink3 }]}>Water type</Text>
+        <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+          {WATER_TYPES.map((w) => {
+            const on = w.key === waterType;
+            return (
+              <Pressable
+                key={w.key}
+                onPress={() => setWaterType(w.key)}
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 14,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: on ? t.palette.accent : t.palette.line2,
+                  backgroundColor: on ? `${t.palette.accent}1a` : 'transparent',
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter_500Medium',
+                    fontWeight: '500',
+                    fontSize: 12,
+                    color: on ? t.palette.accent : t.palette.ink,
+                  }}
+                >
+                  {w.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      <View
+        style={{
+          backgroundColor: t.palette.cardBg,
+          borderWidth: 1,
+          borderColor: t.palette.glassBorder,
+          borderRadius: 14,
+          padding: 14,
+          flexDirection: 'row',
+          gap: 12,
+          alignItems: 'flex-start',
+        }}
+      >
+        <ShieldAlert size={18} color={t.palette.accent} strokeWidth={2.2} />
+        <Text
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 13,
+            lineHeight: 19.5,
+            color: t.palette.ink3,
+            flex: 1,
+          }}
+        >
+          Be honest about hazards. Anyone you list as having jumped here can verify the rating.
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function MediaStep({
+  photos,
+  setPhotos,
+}: {
+  photos: string[];
+  setPhotos: (p: string[]) => void;
+}) {
+  const t = useTheme();
+  const PLACEHOLDER =
+    'https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?w=600&q=80';
+  return (
+    <View style={{ gap: 14 }}>
+      <View>
+        <Text
+          style={{
+            fontFamily: 'Poppins_700Bold',
+            fontWeight: '700',
+            fontSize: 24,
+            letterSpacing: -0.24,
+            color: t.palette.ink,
+          }}
+        >
+          Add photos
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 13,
+            color: t.palette.ink3,
+            marginTop: 4,
+          }}
+        >
+          1–6 photos. Bright, clear shots show the spot best.
+        </Text>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        {photos.map((p, i) => (
+          <Image
+            key={i}
+            source={{ uri: p }}
+            style={{ width: 96, height: 96, borderRadius: 14 }}
+            resizeMode="cover"
+          />
+        ))}
+        {photos.length < 6 ? (
+          <Pressable
+            onPress={() => setPhotos([...photos, PLACEHOLDER])}
+            accessibilityRole="button"
+            accessibilityLabel="Add photo"
+            style={{
+              width: 96,
+              height: 96,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderStyle: 'dashed',
+              borderColor: t.palette.ink3,
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+            }}
+          >
+            <Camera size={20} color={t.palette.ink3} />
+            <Plus size={14} color={t.palette.ink3} />
+          </Pressable>
+        ) : null}
+      </View>
+      <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.ink3 }}>
+        {photos.length} of 6 photos
+      </Text>
+    </View>
+  );
+}
+
+function ReviewStep({
+  name,
+  description,
+  height,
+  depth,
+  access,
+  waterType,
+  location,
+  photoCount,
+}: {
+  name: string;
+  description: string;
+  height: number;
+  depth: number;
+  access: Difficulty | 'expert';
+  waterType: WaterType;
+  location: { lat: number; lng: number } | null;
+  photoCount: number;
+}) {
+  const t = useTheme();
+  return (
+    <View style={{ gap: 14 }}>
+      <View style={{ alignItems: 'center', gap: 12, paddingTop: 8 }}>
+        <View
+          style={{
+            width: 84,
+            height: 84,
+            borderRadius: 42,
+            backgroundColor: `${t.palette.accent}22`,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Check size={40} color={t.palette.accent} strokeWidth={2.6} />
+        </View>
+        <Text
+          style={{
+            fontFamily: 'Poppins_700Bold',
+            fontWeight: '700',
+            fontSize: 22,
+            letterSpacing: -0.22,
+            color: t.palette.ink,
+            textAlign: 'center',
+          }}
+        >
+          Looks good?
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Inter_400Regular',
+            fontSize: 14,
+            lineHeight: 21,
+            color: t.palette.ink3,
+            textAlign: 'center',
+            maxWidth: 280,
+          }}
+        >
+          Submit to add {name || 'this spot'} to the map. You can edit details after.
+        </Text>
+      </View>
+      <View
+        style={{
+          backgroundColor: t.palette.cardBg,
+          borderWidth: 1,
+          borderColor: t.palette.glassBorder,
+          borderRadius: 14,
+          padding: 14,
+          gap: 6,
+        }}
+      >
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontWeight: '600', fontSize: 15, color: t.palette.ink }}>
+          {name || '—'}
+        </Text>
+        <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.ink3 }}>
+          {height}m · {depth}+m depth · {waterType} · {access}
+        </Text>
+        {description ? (
+          <Text
+            style={{ fontFamily: 'Inter_400Regular', fontSize: 13, color: t.palette.ink2 }}
+            numberOfLines={3}
+          >
+            {description}
+          </Text>
+        ) : null}
+        <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.ink3 }}>
+          {photoCount} photo{photoCount === 1 ? '' : 's'} ·{' '}
+          {location ? `${location.lat.toFixed(3)}, ${location.lng.toFixed(3)}` : 'no location'}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function CardField({
+  label,
+  minHeight,
+  children,
+}: {
+  label: string;
+  minHeight?: number;
+  children: React.ReactNode;
+}) {
+  const t = useTheme();
+  return (
+    <View
+      style={{
+        backgroundColor: t.palette.cardBg,
+        borderWidth: 1,
+        borderColor: t.palette.glassBorder,
+        borderRadius: 14,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        minHeight,
+      }}
+    >
+      <Text style={[TINY, { color: t.palette.ink3 }]}>{label}</Text>
+      {children}
+    </View>
+  );
+}
+
+function SliderRow({
+  label,
+  value,
+  max,
+  unit,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  unit: string;
+  onChange: (v: number) => void;
+}) {
+  const t = useTheme();
+  return (
+    <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+          marginBottom: 8,
+        }}
+      >
+        <Text style={{ fontFamily: 'Inter_500Medium', fontWeight: '500', fontSize: 14, color: t.palette.ink }}>
+          {label}
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Montserrat_600SemiBold',
+            fontWeight: '600',
+            fontSize: 13,
+            color: t.palette.accent,
+          }}
+        >
+          {value} {unit}
+        </Text>
+      </View>
+      <Slider value={value} onValueChange={onChange} min={0} max={max} />
+    </View>
+  );
+}
+
+// Suppress unused-import warnings for the icon set we may extend later.
+void ChevronRight;
