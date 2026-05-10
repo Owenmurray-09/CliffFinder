@@ -4,6 +4,7 @@ import { ChevronRight, Moon, Settings, Sun } from 'lucide-react-native';
 import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
+import { useAuthStore } from '@/auth/store';
 import { parseLocalDate } from '@/data/date';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useProfileStore } from '@/data/profileStore';
@@ -41,6 +42,12 @@ export default function ProfileScreen() {
   const getSpotById = (id: string) => spots.find((s) => s.id === id);
   const avatarUrl = useProfileStore((s) => s.avatarUrl);
   const coverUrl = useProfileStore((s) => s.coverUrl);
+  const displayName = useProfileStore((s) => s.displayName);
+  const handle = useProfileStore((s) => s.handle);
+  const session = useAuthStore((s) => s.session);
+  const emailLocalPart = session?.user.email?.split('@')[0] ?? '';
+  const renderedName = displayName ?? emailLocalPart ?? CURRENT_USER.name;
+  const renderedHandle = handle ? `@${handle}` : emailLocalPart ? `@${emailLocalPart}` : CURRENT_USER.handle;
 
   return (
     <ScrollView
@@ -92,7 +99,7 @@ export default function ProfileScreen() {
           style={{ marginTop: -50, alignSelf: 'flex-start' }}
         >
           <Avatar
-            name={CURRENT_USER.name}
+            name={renderedName}
             uri={avatarUrl ?? undefined}
             size={96}
             style={{ borderWidth: 4, borderColor: t.palette.paper }}
@@ -108,7 +115,7 @@ export default function ProfileScreen() {
               color: t.palette.ink,
             }}
           >
-            {CURRENT_USER.name}
+            {renderedName}
           </Text>
           <Text
             style={{
@@ -117,7 +124,7 @@ export default function ProfileScreen() {
               color: t.palette.ink3,
             }}
           >
-            {CURRENT_USER.handle}
+            {renderedHandle}
             {CURRENT_USER.role ? ` · ${CURRENT_USER.role}` : ''}
           </Text>
         </View>

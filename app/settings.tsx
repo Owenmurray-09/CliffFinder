@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Bell, ChevronLeft, ChevronRight, Moon } from 'lucide-react-native';
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, Text, type TextStyle, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, type TextStyle, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { Toggle } from '@/components/Toggle';
@@ -33,8 +33,12 @@ export default function SettingsScreen() {
   const setUnits = useUnitsStore((s) => s.setUnits);
   const avatarUrl = useProfileStore((s) => s.avatarUrl);
   const coverUrl = useProfileStore((s) => s.coverUrl);
+  const displayName = useProfileStore((s) => s.displayName);
+  const handle = useProfileStore((s) => s.handle);
   const setAvatar = useProfileStore((s) => s.setAvatar);
   const setCover = useProfileStore((s) => s.setCover);
+  const setDisplayName = useProfileStore((s) => s.setDisplayName);
+  const setHandle = useProfileStore((s) => s.setHandle);
   const session = useAuthStore((s) => s.session);
   const [uploading, setUploading] = useState<'avatar' | 'cover' | null>(null);
 
@@ -104,7 +108,11 @@ export default function SettingsScreen() {
           <Row
             left={
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <Avatar name={CURRENT_USER.name} uri={avatarUrl ?? undefined} size={42} />
+                <Avatar
+                  name={displayName ?? session?.user.email ?? CURRENT_USER.name}
+                  uri={avatarUrl ?? undefined}
+                  size={42}
+                />
                 <View>
                   <Text style={[bodyMedium(t)]}>Profile picture</Text>
                   <Text style={[subBody(t), { marginTop: 1 }]}>
@@ -147,9 +155,21 @@ export default function SettingsScreen() {
             right={<ChevronRight size={18} color={t.palette.ink3} />}
             onPress={() => pickAndSet('cover')}
           />
-          <FieldRow label="Username" value={CURRENT_USER.handle} />
-          <FieldRow label="Display name" value={CURRENT_USER.name} />
-          <FieldRow label="Email" value={CURRENT_USER.email} />
+          <FieldRow
+            label="Username"
+            value={handle ?? ''}
+            placeholder="pick a username"
+            prefix="@"
+            onSave={setHandle}
+          />
+          <FieldRow
+            label="Display name"
+            value={displayName ?? ''}
+            placeholder="Your name"
+            autoCapitalize="words"
+            onSave={setDisplayName}
+          />
+          <FieldRow label="Email" value={session?.user.email ?? CURRENT_USER.email} />
           <Row
             left={<Text style={bodyMedium(t)}>Change password</Text>}
             right={<ChevronRight size={18} color={t.palette.ink3} />}
@@ -342,8 +362,55 @@ function Row({
   );
 }
 
-function FieldRow({ label, value }: { label: string; value: string }) {
+function FieldRow({
+  label,
+  value,
+  placeholder,
+  onSave,
+  prefix,
+  autoCapitalize,
+}: {
+  label: string;
+  value: string;
+  placeholder?: string;
+  /** If omitted, the row is read-only. Returns error message or null. */
+  onSave?: (next: string) => Promise<string | null>;
+  /** Visual prefix for the value (e.g. "@" for handles). */
+  prefix?: string;
+  autoCapitalize?: 'none' | 'words';
+}) {
   const t = useTheme();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const startEdit = () => {
+    if (!onSave) return;
+    setDraft(value);
+    setError(null);
+    setEditing(true);
+  };
+
+  const commit = async () => {
+    if (!onSave) return;
+    if (saving) return;
+    setSaving(true);
+    const err = await onSave(draft);
+    setSaving(false);
+    if (err) {
+      setError(err);
+      return;
+    }
+    setEditing(false);
+    setError(null);
+  };
+
+  const cancel = () => {
+    setEditing(false);
+    setError(null);
+  };
+
   return (
     <Row
       left={
@@ -359,18 +426,92 @@ function FieldRow({ label, value }: { label: string; value: string }) {
           >
             {label}
           </Text>
-          <Text style={[bodyMedium(t), { marginTop: 2 }]}>{value}</Text>
+          {editing ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2, gap: 2 }}>
+              {prefix ? (
+                <Text style={[bodyMedium(t), { color: t.palette.ink3 }]}>{prefix}</Text>
+              ) : null}
+              <TextInput
+                value={draft}
+                onChangeText={setDraft}
+                onSubmitEditing={commit}
+                placeholder={placeholder}
+                placeholderTextColor={t.palette.ink3}
+                autoFocus
+                autoCapitalize={autoCapitalize ?? 'none'}
+                autoCorrect={false}
+                editable={!saving}
+                style={[
+                  bodyMedium(t),
+                  {
+                    flex: 1,
+                    padding: 0,
+                    minWidth: 120,
+                  },
+                ]}
+              />
+            </View>
+          ) : (
+            <Text style={[bodyMedium(t), { marginTop: 2 }]}>
+              {value || placeholder || '—'}
+            </Text>
+          )}
+          {error ? (
+            <Text
+              style={{
+                fontFamily: 'Inter_400Regular',
+                fontSize: 12,
+                color: t.palette.danger,
+                marginTop: 4,
+              }}
+            >
+              {error}
+            </Text>
+          ) : null}
         </View>
       }
       right={
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.accent }}>
-            Edit
-          </Text>
-          <ChevronRight size={18} color={t.palette.ink3} />
-        </View>
+        onSave ? (
+          editing ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Pressable onPress={cancel} hitSlop={6} accessibilityRole="button">
+                <Text
+                  style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.ink3 }}
+                >
+                  Cancel
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={commit}
+                hitSlop={6}
+                accessibilityRole="button"
+                disabled={saving}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter_500Medium',
+                    fontWeight: '500',
+                    fontSize: 12,
+                    color: t.palette.accent,
+                  }}
+                >
+                  {saving ? 'Saving…' : 'Save'}
+                </Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Text
+                style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: t.palette.accent }}
+              >
+                Edit
+              </Text>
+              <ChevronRight size={18} color={t.palette.ink3} />
+            </View>
+          )
+        ) : undefined
       }
-      onPress={() => {}}
+      onPress={!editing && onSave ? startEdit : undefined}
     />
   );
 }
