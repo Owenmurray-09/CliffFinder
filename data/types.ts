@@ -52,6 +52,14 @@ export type LogEntry = {
   waterTemp_c: number;
   rating: number; // 0-5
   notes?: string;
+  /** Tricks performed during the jump — shown as a stat pill on Logbook cards. */
+  tricks?: string[];
+};
+
+export type SavedSpot = {
+  spotId: string;
+  /** ISO date the user saved the spot. */
+  savedAt: string;
 };
 
 export type RadarItem =
