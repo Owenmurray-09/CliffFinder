@@ -1,4 +1,4 @@
-import { computeBoundingBox, project } from '../projection';
+import { computeBoundingBox, distanceKm, formatDistance, project } from '../projection';
 
 describe('computeBoundingBox', () => {
   test('single point: zero-area box gets defaults', () => {
@@ -66,5 +66,34 @@ describe('project', () => {
   test('zero-area box: returns center', () => {
     const r = project({ lat: 49, lng: -123 }, { minLat: 49, maxLat: 49, minLng: -123, maxLng: -123 });
     expect(r).toEqual({ x: 0.5, y: 0.5 });
+  });
+});
+
+describe('distanceKm', () => {
+  test('same point is 0', () => {
+    expect(distanceKm({ lat: 49, lng: -123 }, { lat: 49, lng: -123 })).toBe(0);
+  });
+
+  test('Vancouver to Squamish ≈ 47 km', () => {
+    const km = distanceKm({ lat: 49.2827, lng: -123.1207 }, { lat: 49.7016, lng: -123.1558 });
+    expect(km).toBeGreaterThan(40);
+    expect(km).toBeLessThan(55);
+  });
+
+  test('Vancouver to Whistler ≈ 95 km', () => {
+    const km = distanceKm({ lat: 49.2827, lng: -123.1207 }, { lat: 50.1163, lng: -122.9574 });
+    expect(km).toBeGreaterThan(85);
+    expect(km).toBeLessThan(105);
+  });
+});
+
+describe('formatDistance', () => {
+  test('< 10 km gets 1 decimal', () => {
+    expect(formatDistance(2.143)).toBe('2.1 km');
+    expect(formatDistance(9.9)).toBe('9.9 km');
+  });
+  test('>= 10 km gets integer', () => {
+    expect(formatDistance(10)).toBe('10 km');
+    expect(formatDistance(47.3)).toBe('47 km');
   });
 });

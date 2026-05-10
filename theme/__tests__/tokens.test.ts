@@ -14,7 +14,7 @@ import {
   typography,
 } from '../tokens';
 
-const colorKeys = ['paper', 'paper2', 'sheetBg', 'sheetSoft', 'ink', 'ink2', 'ink3', 'line', 'line2', 'chipBorder', 'glassBorder', 'handle'].sort();
+const colorKeys = ['paper', 'paper2', 'sheetBg', 'sheetSoft', 'ink', 'ink2', 'ink3', 'line', 'line2', 'chipBorder', 'glassBorder', 'handle', 'cardBg'].sort();
 
 describe('tokens — palettes', () => {
   test('light palette has the exact expected key set', () => {
@@ -39,6 +39,7 @@ describe('tokens — palettes', () => {
       chipBorder: 'rgba(30,47,35,0.12)',
       glassBorder: 'rgba(30,47,35,0.08)',
       handle: 'rgba(30,47,35,0.2)',
+      cardBg: '#FFFFFF',
     });
   });
 
@@ -56,6 +57,7 @@ describe('tokens — palettes', () => {
       chipBorder: 'rgba(234,226,200,0.12)',
       glassBorder: 'rgba(234,226,200,0.12)',
       handle: 'rgba(234,226,200,0.2)',
+      cardBg: '#1a241d',
     });
   });
 

@@ -1,5 +1,5 @@
 import { Inter_400Regular, Inter_500Medium, Inter_700Bold } from '@expo-google-fonts/inter';
-import { Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import {
   Poppins_400Regular,
   Poppins_600SemiBold,
@@ -25,6 +25,7 @@ export default function RootLayout() {
     Inter_400Regular,
     Inter_500Medium,
     Inter_700Bold,
+    Montserrat_600SemiBold,
     Montserrat_700Bold,
   });
 

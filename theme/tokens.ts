@@ -40,6 +40,9 @@ export const lightColors = {
   glassBorder: 'rgba(30,47,35,0.08)',
   // Bottom-sheet drag handle — ink at 0.2 alpha (HANDOFF "Bottom sheet").
   handle: 'rgba(30,47,35,0.2)',
+  // Card surface used by Spot Details / Logbook list cards. Brighter than
+  // paper2; pure white in light mode (Map.html SpotDetails: `card = #fff`).
+  cardBg: '#FFFFFF',
 } as const;
 
 export const darkColors = {
@@ -55,6 +58,8 @@ export const darkColors = {
   chipBorder: 'rgba(234,226,200,0.12)',
   glassBorder: 'rgba(234,226,200,0.12)',
   handle: 'rgba(234,226,200,0.2)',
+  // Map.html SpotDetails: `card = #1a241d` (slightly distinct from paper2 #1A2820).
+  cardBg: '#1a241d',
 } as const;
 
 // Dark mode background uses a radial gradient centered at 30%/0%, not flat.

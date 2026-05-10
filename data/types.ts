@@ -17,6 +17,11 @@ export type Spot = {
   photos: string[]; // URLs
   description: string;
   waterType: WaterType;
+  /** Short tip / safety note shown in the "Notes" section of Spot Details. */
+  notes?: string;
+  /** Distance from "me" rendered next to the area on Spot Details + Map.
+   * Hardcoded per design (Map.html SPOTS array) until real geolocation lands. */
+  distLabel?: string;
 };
 
 export type User = {

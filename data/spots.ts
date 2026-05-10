@@ -25,8 +25,10 @@ export const SPOTS: ReadonlyArray<Spot> = [
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
     ],
     description:
-      'Granite cliff on the south side of the lake. Climb the trail, rope assist on the last 20 ft. Crystal-clear water and wide entry zone.',
+      'Park at the trailhead lot. 15-min hike up the south path; rope assist on the last 20 ft.',
     waterType: 'ocean',
+    notes: 'Watch for boats in summer. Check water level after heavy rain.',
+    distLabel: '2.1 km',
   },
   {
     id: 'hidden',
@@ -45,8 +47,10 @@ export const SPOTS: ReadonlyArray<Spot> = [
       'https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?w=1200&q=80',
     ],
     description:
-      'Old quarry that fills with snowmelt. Calm flat surface, easy walk-in from the trailhead. Best on weekday mornings.',
+      'Old quarry that fills with snowmelt. Calm flat surface, easy walk-in from the trailhead.',
     waterType: 'quarry',
+    notes: 'Best on weekday mornings. Surface stays choppy in afternoon wind.',
+    distLabel: '5.4 km',
   },
   {
     id: 'riverside',
@@ -64,8 +68,10 @@ export const SPOTS: ReadonlyArray<Spot> = [
       'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1200&q=80',
     ],
     description:
-      'Footbridge with a wide swimming hole below. Watch the current after rain — entry zone shifts. Popular weekend hangout.',
+      'Footbridge with a wide swimming hole below. Park along the path and walk down to the bank.',
     waterType: 'river',
+    notes: 'Watch the current after rain — entry zone shifts. Popular weekend hangout.',
+    distLabel: '7.8 km',
   },
   {
     id: 'mossy',
@@ -86,8 +92,10 @@ export const SPOTS: ReadonlyArray<Spot> = [
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
     ],
     description:
-      'Two-tier waterfall with a deep plunge pool at the base. Advanced jumpers only — entry window is narrow. Cold year-round.',
+      'Hike 30 minutes from the road, scramble down the boulder field to the plunge pool at the falls base.',
     waterType: 'falls',
+    notes: 'Advanced jumpers only — entry window is narrow. Cold year-round.',
+    distLabel: '9.2 km',
   },
   {
     id: 'vista',
@@ -106,8 +114,10 @@ export const SPOTS: ReadonlyArray<Spot> = [
       'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1200&q=80',
     ],
     description:
-      'Lakeside cliff with a viewpoint at the top. Mid-range height, clean water, broad landing area. Great first-trip spot.',
+      'Lakeside cliff with a viewpoint at the top. 10-minute walk from the lakeshore trailhead.',
     waterType: 'lake',
+    notes: 'Mid-range height, clean water, broad landing area. Great first-trip spot.',
+    distLabel: '12 km',
   },
 ];
 
