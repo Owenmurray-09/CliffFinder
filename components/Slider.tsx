@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
-import { PanResponder, type StyleProp, View, type ViewStyle } from 'react-native';
+import { type StyleProp, View, type ViewStyle } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
 import { useTheme } from '@/theme/useTheme';
 
 const TRACK_HEIGHT = 6;
@@ -54,69 +56,80 @@ export function Slider({
   const [trackWidth, setTrackWidth] = useState(0);
   const valueRef = useRef(value);
   valueRef.current = value;
+  const trackWidthRef = useRef(trackWidth);
+  trackWidthRef.current = trackWidth;
 
   const ratio = sliderMath.valueToRatio(value, min, max);
   const fillWidth = ratio * trackWidth;
 
   const handleAtX = (x: number) => {
-    const next = sliderMath.positionToValue(x, trackWidth, min, max, step);
+    const next = sliderMath.positionToValue(
+      x,
+      trackWidthRef.current,
+      min,
+      max,
+      step,
+    );
     if (next !== valueRef.current) onValueChange(next);
   };
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (e) => handleAtX(e.nativeEvent.locationX),
-      onPanResponderMove: (e) => handleAtX(e.nativeEvent.locationX),
-    }),
-  ).current;
+  // Gesture.Pan() handles both touch (native) and mouse (web) properly,
+  // unlike PanResponder which doesn't reliably emit mousemove on RN-Web.
+  // `e.x` is in the gesture target's local coordinates → that's what we
+  // need. minDistance:0 ensures a simple tap (no drag) also fires onBegin.
+  const gesture = Gesture.Pan()
+    .minDistance(0)
+    .onBegin((e) => {
+      runOnJS(handleAtX)(e.x);
+    })
+    .onUpdate((e) => {
+      runOnJS(handleAtX)(e.x);
+    });
 
   return (
-    <View
-      style={[{ paddingVertical: HIT_PADDING }, style]}
-      {...panResponder.panHandlers}
-    >
-      <View
-        testID={testID}
-        onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
-        style={{
-          height: TRACK_HEIGHT,
-          width: '100%',
-          borderRadius: t.radius.pill,
-          backgroundColor: t.palette.line,
-        }}
-      >
+    <GestureDetector gesture={gesture}>
+      <View style={[{ paddingVertical: HIT_PADDING }, style]}>
         <View
+          testID={testID}
+          onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
           style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: fillWidth,
+            height: TRACK_HEIGHT,
+            width: '100%',
             borderRadius: t.radius.pill,
-            backgroundColor: t.palette.accent,
+            backgroundColor: t.palette.line,
           }}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            left: fillWidth - THUMB_SIZE / 2,
-            top: -(THUMB_SIZE - TRACK_HEIGHT) / 2,
-            width: THUMB_SIZE,
-            height: THUMB_SIZE,
-            borderRadius: t.radius.pill,
-            backgroundColor: '#FFFFFF',
-            borderWidth: 2,
-            borderColor: t.palette.accent,
-            shadowColor: '#000',
-            shadowOpacity: 0.18,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 2 },
-            elevation: 3,
-          }}
-        />
+        >
+          <View
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: fillWidth,
+              borderRadius: t.radius.pill,
+              backgroundColor: t.palette.accent,
+            }}
+          />
+          <View
+            style={{
+              position: 'absolute',
+              left: fillWidth - THUMB_SIZE / 2,
+              top: -(THUMB_SIZE - TRACK_HEIGHT) / 2,
+              width: THUMB_SIZE,
+              height: THUMB_SIZE,
+              borderRadius: t.radius.pill,
+              backgroundColor: '#FFFFFF',
+              borderWidth: 2,
+              borderColor: t.palette.accent,
+              shadowColor: '#000',
+              shadowOpacity: 0.18,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 2 },
+              elevation: 3,
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </GestureDetector>
   );
 }
