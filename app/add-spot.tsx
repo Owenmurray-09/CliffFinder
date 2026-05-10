@@ -77,8 +77,8 @@ export default function AddSpotScreen() {
   const canNext =
     (step === 'Location' && location !== null) ||
     (step === 'Details' && name.trim().length > 0) ||
-    (step === 'Safety') ||
-    (step === 'Media' && photos.length >= 1) ||
+    step === 'Safety' ||
+    step === 'Media' ||
     step === 'Review';
 
   const [submitting, setSubmitting] = useState(false);
@@ -670,7 +670,7 @@ function MediaStep({
             marginTop: 4,
           }}
         >
-          1–6 photos. Bright, clear shots show the spot best.
+          Optional — up to 6. Bright, clear shots show the spot best.
         </Text>
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
