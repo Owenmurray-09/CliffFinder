@@ -15,12 +15,15 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
+import { MediaThumb } from '@/components/MediaThumb';
 import { Slider } from '@/components/Slider';
+import { useAuthStore } from '@/auth/store';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { pickImage } from '@/lib/pickImage';
 import { safeBack } from '@/lib/safeBack';
 import { formatMeters, formatTemp, useUnitsStore } from '@/lib/units';
+import { uploadPhoto } from '@/lib/uploadPhoto';
 import { useTheme } from '@/theme/useTheme';
 
 const TINY: TextStyle = {
@@ -55,6 +58,7 @@ export default function LogEntryScreen() {
   const [newTrickInput, setNewTrickInput] = useState('');
   const [notes, setNotes] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [videoUris, setVideoUris] = useState<Set<string>>(new Set());
   const [height, setHeight] = useState(spot?.height_m ?? 10);
   const [waterTemp, setWaterTemp] = useState(15);
   const [saving, setSaving] = useState(false);
@@ -100,6 +104,16 @@ export default function LogEntryScreen() {
   const handleSave = async () => {
     if (saving) return;
     setSaving(true);
+    const userId = useAuthStore.getState().session?.user.id;
+    let uploaded: string[] = [];
+    if (userId && photos.length > 0) {
+      try {
+        uploaded = await Promise.all(photos.map((uri) => uploadPhoto(uri, userId, 'logs')));
+      } catch {
+        setSaving(false);
+        return;
+      }
+    }
     const created = await addEntry({
       spotId: spot.id,
       heightJumped_m: height,
@@ -107,6 +121,7 @@ export default function LogEntryScreen() {
       rating,
       notes: notes.trim() || undefined,
       tricks: Array.from(tricks),
+      photos: uploaded,
     });
     setSaving(false);
     if (created) safeBack(router, `/spot/${spot.id}`);
@@ -381,9 +396,16 @@ export default function LogEntryScreen() {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {photos.map((p, i) => (
               <View key={i} style={{ position: 'relative' }}>
-                <Image source={{ uri: p }} style={{ width: 78, height: 78, borderRadius: 14 }} />
+                <MediaThumb uri={p} size={78} isVideo={videoUris.has(p)} />
                 <Pressable
-                  onPress={() => setPhotos(photos.filter((_, j) => j !== i))}
+                  onPress={() => {
+                    setPhotos(photos.filter((_, j) => j !== i));
+                    setVideoUris((prev) => {
+                      const next = new Set(prev);
+                      next.delete(p);
+                      return next;
+                    });
+                  }}
                   accessibilityRole="button"
                   accessibilityLabel="Remove photo"
                   hitSlop={6}
@@ -407,7 +429,9 @@ export default function LogEntryScreen() {
               <Pressable
                 onPress={async () => {
                   const r = await pickImage();
-                  if (r) setPhotos([...photos, r.uri]);
+                  if (!r) return;
+                  setPhotos((prev) => [...prev, r.uri]);
+                  if (r.isVideo) setVideoUris((prev) => new Set(prev).add(r.uri));
                 }}
                 accessibilityRole="button"
                 accessibilityLabel="Add photo"

@@ -10,8 +10,14 @@ const extFromMime = (mime: string): string => {
       return 'webp';
     case 'image/gif':
       return 'gif';
+    case 'video/mp4':
+      return 'mp4';
+    case 'video/quicktime':
+      return 'mov';
+    case 'video/webm':
+      return 'webm';
     default:
-      return 'jpg';
+      return mime.startsWith('video/') ? 'mp4' : 'jpg';
   }
 };
 

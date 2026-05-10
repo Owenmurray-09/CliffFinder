@@ -60,6 +60,8 @@ export type LogEntry = {
   notes?: string;
   /** Tricks performed during the jump — shown as a stat pill on Logbook cards. */
   tricks?: string[];
+  /** Photo + video URLs attached to this log entry. */
+  photos?: string[];
 };
 
 export type SavedSpot = {

@@ -36,6 +36,7 @@ export type LogEntryRow = {
   rating: number;
   notes: string | null;
   tricks: string[];
+  photos: string[];
   created_at: string;
 };
 
@@ -93,6 +94,7 @@ export const logEntryFromRow = (r: LogEntryRow): LogEntry => ({
   rating: r.rating,
   ...(r.notes ? { notes: r.notes } : {}),
   ...(r.tricks ? { tricks: r.tricks } : {}),
+  ...(r.photos?.length ? { photos: r.photos } : {}),
 });
 
 export const logEntryInsertRow = (
@@ -107,4 +109,5 @@ export const logEntryInsertRow = (
   rating: e.rating,
   notes: e.notes ?? null,
   tricks: e.tricks ?? [],
+  photos: e.photos ?? [],
 });

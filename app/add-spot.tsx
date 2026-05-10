@@ -21,6 +21,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocationPicker } from '@/components/LocationPicker';
+import { MediaThumb } from '@/components/MediaThumb';
 import { Slider } from '@/components/Slider';
 import { useAuthStore } from '@/auth/store';
 import { safeBack } from '@/lib/safeBack';
@@ -70,6 +71,7 @@ export default function AddSpotScreen() {
   const [access, setAccess] = useState<Difficulty | 'expert'>('intermediate');
   const [waterType, setWaterType] = useState<WaterType>('lake');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [videoUris, setVideoUris] = useState<Set<string>>(new Set());
   const addSpot = useSpotsStore((s) => s.addSpot);
   const toggleSaved = useSavedSpotsStore((s) => s.toggleSaved);
 
@@ -245,7 +247,14 @@ export default function AddSpotScreen() {
             setWaterType={setWaterType}
           />
         ) : null}
-        {step === 'Media' ? <MediaStep photos={photos} setPhotos={setPhotos} /> : null}
+        {step === 'Media' ? (
+          <MediaStep
+            photos={photos}
+            setPhotos={setPhotos}
+            videoUris={videoUris}
+            setVideoUris={setVideoUris}
+          />
+        ) : null}
         {step === 'Review' ? (
           <ReviewStep
             name={name}
@@ -639,14 +648,28 @@ function SafetyStep({
 function MediaStep({
   photos,
   setPhotos,
+  videoUris,
+  setVideoUris,
 }: {
   photos: string[];
   setPhotos: (p: string[]) => void;
+  videoUris: Set<string>;
+  setVideoUris: React.Dispatch<React.SetStateAction<Set<string>>>;
 }) {
   const t = useTheme();
   const handleAdd = async () => {
     const r = await pickImage();
-    if (r) setPhotos([...photos, r.uri]);
+    if (!r) return;
+    setPhotos([...photos, r.uri]);
+    if (r.isVideo) setVideoUris((prev) => new Set(prev).add(r.uri));
+  };
+  const handleRemove = (uri: string) => {
+    setPhotos(photos.filter((p) => p !== uri));
+    setVideoUris((prev) => {
+      const next = new Set(prev);
+      next.delete(uri);
+      return next;
+    });
   };
   return (
     <View style={{ gap: 14 }}>
@@ -676,13 +699,9 @@ function MediaStep({
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {photos.map((p, i) => (
           <View key={i} style={{ position: 'relative' }}>
-            <Image
-              source={{ uri: p }}
-              style={{ width: 96, height: 96, borderRadius: 14 }}
-              resizeMode="cover"
-            />
+            <MediaThumb uri={p} size={96} isVideo={videoUris.has(p)} />
             <Pressable
-              onPress={() => setPhotos(photos.filter((_, j) => j !== i))}
+              onPress={() => handleRemove(p)}
               accessibilityRole="button"
               accessibilityLabel="Remove photo"
               hitSlop={6}

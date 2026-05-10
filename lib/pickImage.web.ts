@@ -1,12 +1,12 @@
-export type PickedImage = { uri: string };
+export type PickedImage = { uri: string; isVideo: boolean };
 
-/** Open a hidden <input type="file"> and resolve with a blob URL for the picked image. */
+/** Open a hidden <input type="file"> and resolve with a blob URL for the picked file. */
 export function pickImage(): Promise<PickedImage | null> {
   if (typeof document === 'undefined') return Promise.resolve(null);
   return new Promise((resolve) => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = 'image/*,video/*';
     input.style.display = 'none';
 
     let settled = false;
@@ -20,7 +20,10 @@ export function pickImage(): Promise<PickedImage | null> {
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) return settle(null);
-      settle({ uri: URL.createObjectURL(file) });
+      settle({
+        uri: URL.createObjectURL(file),
+        isVideo: (file.type || '').startsWith('video/'),
+      });
     };
     // Fires when the chooser closes; on most browsers this is the only signal
     // we get for a "cancel" because no `change` event fires when nothing was
