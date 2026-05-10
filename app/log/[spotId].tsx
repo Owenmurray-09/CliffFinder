@@ -18,6 +18,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Slider } from '@/components/Slider';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSpotsStore } from '@/data/spotsStore';
+import { pickImage } from '@/lib/pickImage';
 import { useTheme } from '@/theme/useTheme';
 
 const TINY: TextStyle = {
@@ -320,12 +321,10 @@ export default function LogEntryScreen() {
             ))}
             {photos.length < 6 ? (
               <Pressable
-                onPress={() =>
-                  setPhotos([
-                    ...photos,
-                    'https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?w=600&q=80',
-                  ])
-                }
+                onPress={async () => {
+                  const r = await pickImage();
+                  if (r) setPhotos([...photos, r.uri]);
+                }}
                 accessibilityRole="button"
                 accessibilityLabel="Add photo"
                 style={{

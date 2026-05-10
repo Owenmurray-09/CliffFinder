@@ -24,6 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Slider } from '@/components/Slider';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { Difficulty, WaterType } from '@/data/types';
+import { pickImage } from '@/lib/pickImage';
 import { useTheme } from '@/theme/useTheme';
 
 const STEPS = ['Location', 'Details', 'Safety', 'Media', 'Review'] as const;
@@ -593,8 +594,10 @@ function MediaStep({
   setPhotos: (p: string[]) => void;
 }) {
   const t = useTheme();
-  const PLACEHOLDER =
-    'https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?w=600&q=80';
+  const handleAdd = async () => {
+    const r = await pickImage();
+    if (r) setPhotos([...photos, r.uri]);
+  };
   return (
     <View style={{ gap: 14 }}>
       <View>
@@ -631,7 +634,7 @@ function MediaStep({
         ))}
         {photos.length < 6 ? (
           <Pressable
-            onPress={() => setPhotos([...photos, PLACEHOLDER])}
+            onPress={handleAdd}
             accessibilityRole="button"
             accessibilityLabel="Add photo"
             style={{
