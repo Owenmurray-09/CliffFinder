@@ -32,6 +32,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { StarRow } from '@/components/StarRow';
 import { getSpotById } from '@/data/spots';
 import type { Spot } from '@/data/types';
+import { openDirections } from '@/map/directions';
 import { distanceKm, formatDistance, HOME_POINT } from '@/map/projection';
 import { useTheme } from '@/theme/useTheme';
 
@@ -357,7 +358,9 @@ export default function SpotDetailsScreen() {
             >
               <Text style={[TINY_LABEL, { color: t.palette.ink3 }]}>How to access</Text>
               <Pressable
-                onPress={() => {}}
+                onPress={() =>
+                  openDirections({ lat: spot.lat, lng: spot.lng, name: spot.name })
+                }
                 accessibilityRole="link"
                 accessibilityLabel="Open in Maps"
                 hitSlop={6}
@@ -443,7 +446,9 @@ export default function SpotDetailsScreen() {
           <Button
             label="Directions"
             variant="primary"
-            onPress={() => {}}
+            onPress={() =>
+              openDirections({ lat: spot.lat, lng: spot.lng, name: spot.name })
+            }
             icon={<Route size={17} color={t.palette.on.accent} />}
             style={{
               flex: 1,
