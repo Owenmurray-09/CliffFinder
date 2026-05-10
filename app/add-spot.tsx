@@ -3,7 +3,6 @@ import {
   Camera,
   Check,
   ChevronRight,
-  MapPin,
   Plus,
   ShieldAlert,
   X,
@@ -21,6 +20,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LocationPicker } from '@/components/LocationPicker';
 import { Slider } from '@/components/Slider';
 import { useAuthStore } from '@/auth/store';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
@@ -371,38 +371,22 @@ function LocationStep({
             marginTop: 4,
           }}
         >
-          Tap the map below to drop a pin.
+          Pan and zoom the map, then tap the spot to drop a pin.
         </Text>
       </View>
-      <Pressable
-        onPress={() => onChange({ lat: 9.9333, lng: -84.0833 })}
-        style={{
-          height: 280,
-          borderRadius: 14,
-          backgroundColor: t.palette.cardBg,
-          borderWidth: 1,
-          borderColor: t.palette.glassBorder,
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-        }}
-      >
-        <MapPin
-          size={32}
-          color={value ? t.palette.accent : t.palette.ink3}
-          fill={value ? `${t.palette.accent}33` : 'transparent'}
-        />
+      <LocationPicker value={value} onChange={onChange} />
+      {value ? (
         <Text
           style={{
             fontFamily: 'Inter_500Medium',
             fontWeight: '500',
-            fontSize: 14,
-            color: value ? t.palette.ink : t.palette.ink3,
+            fontSize: 13,
+            color: t.palette.ink3,
           }}
         >
-          {value ? `${value.lat.toFixed(4)}, ${value.lng.toFixed(4)}` : 'Tap to drop a pin'}
+          Pin: {value.lat.toFixed(4)}, {value.lng.toFixed(4)}
         </Text>
-      </Pressable>
+      ) : null}
     </View>
   );
 }
