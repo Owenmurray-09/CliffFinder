@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocationPicker } from '@/components/LocationPicker';
 import { Slider } from '@/components/Slider';
 import { useAuthStore } from '@/auth/store';
+import { safeBack } from '@/lib/safeBack';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import type { Difficulty, WaterType } from '@/data/types';
@@ -124,7 +125,7 @@ export default function AddSpotScreen() {
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1));
   };
   const back = () => {
-    if (stepIdx === 0) return router.back();
+    if (stepIdx === 0) return safeBack(router);
     setStepIdx((i) => Math.max(0, i - 1));
   };
 
@@ -145,7 +146,7 @@ export default function AddSpotScreen() {
         }}
       >
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
           accessibilityRole="button"
           accessibilityLabel="Close"
           style={{

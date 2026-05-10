@@ -19,6 +19,7 @@ import { Slider } from '@/components/Slider';
 import { useLogEntriesStore } from '@/data/logEntriesStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { pickImage } from '@/lib/pickImage';
+import { safeBack } from '@/lib/safeBack';
 import { useTheme } from '@/theme/useTheme';
 
 const TINY: TextStyle = {
@@ -90,7 +91,7 @@ export default function LogEntryScreen() {
       tricks: Array.from(tricks),
     });
     setSaving(false);
-    if (created) router.back();
+    if (created) safeBack(router, `/spot/${spot.id}`);
   };
 
   return (
@@ -110,7 +111,7 @@ export default function LogEntryScreen() {
         }}
       >
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => safeBack(router, `/spot/${spot.id}`)}
           accessibilityRole="button"
           accessibilityLabel="Back"
           style={navBtn(t)}

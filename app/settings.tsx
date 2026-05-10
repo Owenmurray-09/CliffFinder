@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/Avatar';
 import { Toggle } from '@/components/Toggle';
 import { useAuthStore } from '@/auth/store';
+import { safeBack } from '@/lib/safeBack';
 import { CURRENT_USER } from '@/data/user';
 import { ACCENT_KEYS, ACCENTS, type AccentKey } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
@@ -42,7 +43,7 @@ export default function SettingsScreen() {
         }}
       >
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => safeBack(router, '/profile')}
           accessibilityRole="button"
           accessibilityLabel="Back"
           style={{

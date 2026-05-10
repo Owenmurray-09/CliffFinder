@@ -9,6 +9,7 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { getFriendById } from '@/data/friends';
 import { useSpotsStore } from '@/data/spotsStore';
+import { safeBack } from '@/lib/safeBack';
 import { useTheme } from '@/theme/useTheme';
 
 const COVER_URI =
@@ -272,7 +273,7 @@ export default function FriendProfileScreen() {
         style={{ position: 'absolute', top: Math.max(insets.top, 12), left: 12 }}
       >
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
           accessibilityRole="button"
           accessibilityLabel="Back"
           style={{

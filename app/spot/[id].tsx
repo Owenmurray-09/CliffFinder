@@ -32,6 +32,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { StarRow } from '@/components/StarRow';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
+import { safeBack } from '@/lib/safeBack';
 import type { Spot } from '@/data/types';
 import { openDirections } from '@/map/directions';
 import { distanceKm, formatDistance, HOME_POINT } from '@/map/projection';
@@ -153,7 +154,7 @@ export default function SpotDetailsScreen() {
               justifyContent: 'space-between',
             }}
           >
-            <CircleButton onPress={() => router.back()} accessibilityLabel="Back">
+            <CircleButton onPress={() => safeBack(router)} accessibilityLabel="Back">
               <ChevronLeft size={20} color={t.palette.ink} />
             </CircleButton>
             <View style={{ flexDirection: 'row', gap: 8 }}>
