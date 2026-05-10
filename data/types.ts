@@ -29,12 +29,18 @@ export type User = {
   name: string;
   handle: string; // "@alexjumps"
   email: string;
+  /** Short role/tier label after the handle, e.g. "Explorer". */
+  role?: string;
   avatarUri?: string;
   bio?: string;
   joinedDate: string; // ISO
   jumpsCount: number;
   spotsAddedCount: number;
   followersCount: number;
+  /** Cumulative air time in seconds, derived/cached metric. */
+  airTime_s: number;
+  /** Cumulative fallen height in meters across all logged jumps. */
+  fallen_m: number;
 };
 
 export type Friend = {
