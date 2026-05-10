@@ -798,6 +798,36 @@ Token corrections:
 
 **Out of scope this loop**: real screen content (placeholders only — actual screens land in subsequent loops).
 
+---
+
+## Feature: Sign-in flow (loop 22)
+
+**Loop status**: complete
+
+**Files**:
+- `auth/store.ts` — Zustand store + `EMAIL_RE`, `MIN_PASSWORD_LENGTH`, `validateSignin/Signup/Forgot`, `ERROR_MESSAGES`
+- `auth/__tests__/store.test.ts` — 27 validation + store tests
+- `app/signin.tsx` — single screen handling 6 views: signin / signup / forgot / sent / done / location
+- `app/_layout.tsx` — adds `<AuthGate>` that redirects to `/signin` when unauthenticated, back to `/(tabs)` once authenticated
+
+**Acceptance criteria**:
+- [x] 5 auth sub-views per HANDOFF "Sign-in flow"
+- [x] Email regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`; password ≥ 6 chars; name required for signup; confirm matches
+- [x] Inline `⚠ {message}` error below the form (Field has built-in error state too)
+- [x] 700ms simulated busy state (`Button.busy`) on submit
+- [x] Hero photo (waterfall) at top of signin/signup with logo + tagline overlaid
+- [x] No hero on forgot/sent/done/location (per design's `Wrap hero={false}`)
+- [x] Sent view: ✉ icon, "Check your inbox {email}", Back to sign in (primary), Resend (link)
+- [x] Done view: ✓ icon, "You're in. Welcome to CliffFinder, {name}.", Continue button → location prompt
+- [x] Location prompt: radar graphic (3 concentric rings, decreasing opacity, central MapPin) + "Allow while using app" (primary) + "Maybe later" (link) — matches HANDOFF distilled spec
+- [x] Auth gate: unauthenticated users land on /signin; signing in (after location prompt resolves) routes to /(tabs)
+
+**Tests**: 290 total (added 27). Cover EMAIL_RE positive + negative cases, validateSignin/Signup/Forgot all branches, store transitions (signIn, signOut, grantLocation, declineLocation).
+
+**Visually verified**: signin → invalid empty submit shows error → fill in valid → busy spinner → "You're in" → Continue → radar location prompt → Allow → tabs.
+
+**Out of scope**: real auth backend (mock only); password show/hide toggle (deferred); social login.
+
 **Native-only verification deferred to simulator**: none — colors are deterministic on web.
 
 **Discrepancies found and resolved during visual verification + independent review**:
