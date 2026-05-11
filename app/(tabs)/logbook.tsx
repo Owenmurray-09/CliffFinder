@@ -117,8 +117,8 @@ export default function LogbookScreen() {
           savedSpots.length === 0 ? (
             <EmptyState
               icon={<Heart size={40} color={t.palette.ink3} strokeWidth={1.5} />}
-              title="No saved spots"
-              message="Tap the heart on any spot to save it for later."
+              title="No favorites yet"
+              message="Tap the heart on any spot to add it to your favorites."
             />
           ) : (
             savedSpots.map((s) => {
@@ -158,7 +158,7 @@ function SegmentedTabs({
     >
       {(['visited', 'saved'] as const).map((key) => {
         const on = key === tab;
-        const label = key === 'visited' ? 'Visited' : 'Saved';
+        const label = key === 'visited' ? 'Logbook' : 'Favorites';
         return (
           <Pressable
             key={key}
@@ -351,7 +351,7 @@ function SavedCard({ saved, spot }: { saved: SavedSpot; spot: Spot }) {
     units === 'imperial'
       ? `${Math.round(spot.height_m * 3.28084)}FT`
       : `${spot.height_m}M`;
-  const savedLabel = `Saved ${parseLocalDate(saved.savedAt).toLocaleDateString(undefined, {
+  const savedLabel = `Favorited ${parseLocalDate(saved.savedAt).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
   })}`;

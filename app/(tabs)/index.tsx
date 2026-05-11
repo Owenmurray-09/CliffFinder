@@ -26,7 +26,7 @@ import { useTheme } from '@/theme/useTheme';
 
 const FILTERS: ReadonlyArray<{ key: SpotCategory; label: string }> = [
   { key: 'trending', label: 'Trending' },
-  { key: 'saved', label: 'Saved' },
+  { key: 'saved', label: 'Favorites' },
   { key: 'friends', label: 'Friends' },
 ];
 

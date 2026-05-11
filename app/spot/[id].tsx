@@ -50,7 +50,7 @@ const PIN_COLORS: Record<Spot['category'], string> = {
 };
 const CATEGORY_LABEL: Record<Spot['category'], string> = {
   trending: 'Trending',
-  saved: 'Saved',
+  saved: 'Favorited',
   friends: 'Friends jumped',
 };
 
@@ -173,7 +173,7 @@ export default function SpotDetailsScreen() {
             <View style={{ flexDirection: 'row', gap: 8 }}>
               <CircleButton
                 onPress={() => toggleSaved(spot.id)}
-                accessibilityLabel={saved ? 'Remove from saved' : 'Save spot'}
+                accessibilityLabel={saved ? 'Remove from favorites' : 'Add to favorites'}
                 bg={saved ? t.palette.accent : 'rgba(255,255,255,0.92)'}
               >
                 <Heart
