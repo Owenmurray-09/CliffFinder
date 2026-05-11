@@ -13,7 +13,7 @@ import {
   Star,
   Waves,
 } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Image,
   type LayoutChangeEvent,
@@ -29,7 +29,9 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
+import { StarRater } from '@/components/StarRater';
 import { StarRow } from '@/components/StarRow';
+import { useRatingsStore } from '@/data/ratingsStore';
 import { useSavedSpotsStore } from '@/data/savedSpotsStore';
 import { useSpotsStore } from '@/data/spotsStore';
 import { safeBack } from '@/lib/safeBack';
@@ -75,8 +77,17 @@ export default function SpotDetailsScreen() {
   const saved = useSavedSpotsStore((s) => (spot ? s.isSaved(spot.id) : false));
   const toggleSaved = useSavedSpotsStore((s) => s.toggleSaved);
   const units = useUnitsStore((s) => s.units);
+  const userRating = useRatingsStore((s) => (spot ? s.userRatings[spot.id] ?? 0 : 0));
+  const aggregate = useRatingsStore((s) => (spot ? s.aggregates[spot.id] : undefined));
+  const loadForSpot = useRatingsStore((s) => s.loadForSpot);
+  const setSpotRating = useRatingsStore((s) => s.setRating);
+  const clearSpotRating = useRatingsStore((s) => s.clearRating);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [photoWidth, setPhotoWidth] = useState(0);
+
+  useEffect(() => {
+    if (spot?.id) loadForSpot(spot.id);
+  }, [spot?.id, loadForSpot]);
 
   if (!spot) {
     return (
@@ -316,37 +327,74 @@ export default function SpotDetailsScreen() {
         {/* SAFETY RATING CARD */}
         <View style={{ paddingHorizontal: 22, paddingTop: 14 }}>
           <Card>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-              <View style={{ flex: 1 }}>
-                <Text style={[TINY_LABEL, { color: t.palette.ink3 }]}>Safety rating</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 6 }}>
-                  <StarRow value={Math.round(spot.rating)} size={14} />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+              <Text style={[TINY_LABEL, { color: t.palette.ink3 }]}>Safety rating</Text>
+              {userRating > 0 ? (
+                <Pressable onPress={() => clearSpotRating(spot.id)} hitSlop={6} accessibilityRole="button">
                   <Text
                     style={{
-                      fontFamily: 'Montserrat_700Bold',
-                      fontWeight: '700',
-                      fontSize: 14,
-                      color: t.palette.ink,
+                      fontFamily: 'Inter_400Regular',
+                      fontSize: 11,
+                      color: t.palette.ink3,
                     }}
                   >
-                    {spot.rating.toFixed(1)} / 5
+                    Clear
                   </Text>
-                </View>
-              </View>
-              <View>
+                </Pressable>
+              ) : null}
+            </View>
+
+            <StarRater
+              value={userRating}
+              onChange={(v) => (v === 0 ? clearSpotRating(spot.id) : setSpotRating(spot.id, v))}
+              size={32}
+            />
+
+            <Text
+              style={{
+                fontFamily: 'Inter_400Regular',
+                fontSize: 12,
+                color: t.palette.ink3,
+                marginTop: 8,
+              }}
+            >
+              {userRating > 0 ? 'Your rating · tap a different star to change' : 'Tap to rate the safety of this spot'}
+            </Text>
+
+            {aggregate && aggregate.count > 0 ? (
+              <View
+                style={{
+                  marginTop: 12,
+                  paddingTop: 10,
+                  borderTopWidth: 1,
+                  borderTopColor: t.palette.line2,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <StarRow value={Math.round(aggregate.avg)} size={12} />
+                <Text
+                  style={{
+                    fontFamily: 'Montserrat_700Bold',
+                    fontWeight: '700',
+                    fontSize: 13,
+                    color: t.palette.ink,
+                  }}
+                >
+                  {aggregate.avg.toFixed(1)}
+                </Text>
                 <Text
                   style={{
                     fontFamily: 'Inter_400Regular',
                     fontSize: 12,
                     color: t.palette.ink3,
-                    textAlign: 'right',
                   }}
                 >
-                  {spot.reviewCount}
-                  {'\n'}reviews
+                  · {aggregate.count} {aggregate.count === 1 ? 'rating' : 'ratings'}
                 </Text>
               </View>
-            </View>
+            ) : null}
           </Card>
         </View>
 
