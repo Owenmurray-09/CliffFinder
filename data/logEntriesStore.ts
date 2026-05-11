@@ -16,6 +16,7 @@ type LogEntriesState = {
   error: string | null;
   loadLogEntries: () => Promise<void>;
   addEntry: (entry: NewLogEntry) => Promise<LogEntry | null>;
+  removeEntry: (id: string) => Promise<string | null>;
   clear: () => void;
 };
 
@@ -60,6 +61,17 @@ export const useLogEntriesStore = create<LogEntriesState>((set, get) => ({
     const created = logEntryFromRow(data as LogEntryRow);
     set((state) => ({ entries: [created, ...state.entries], error: null }));
     return created;
+  },
+
+  removeEntry: async (id) => {
+    const prev = get().entries;
+    set({ entries: prev.filter((e) => e.id !== id) });
+    const { error } = await supabase.from('log_entries').delete().eq('id', id);
+    if (error) {
+      set({ entries: prev, error: error.message });
+      return error.message;
+    }
+    return null;
   },
 
   clear: () => set({ entries: [], error: null }),

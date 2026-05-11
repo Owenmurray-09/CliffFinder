@@ -243,7 +243,7 @@ function VisitedCard({ entry, spot }: { entry: LogEntry; spot: Spot }) {
 
   return (
     <Pressable
-      onPress={() => router.push(`/spot/${spot.id}`)}
+      onPress={() => router.push(`/logentry/${entry.id}`)}
       accessibilityRole="button"
       accessibilityLabel={`${spot.name}, ${dateLabel}`}
       style={{
